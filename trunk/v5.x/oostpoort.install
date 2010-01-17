@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Install the initial schema.
+ */
+function oostpoort_install() {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+
+      db_query("
+CREATE TABLE `oostpoort_members` (
+  `MID` int(11) NOT NULL auto_increment COMMENT 'Family ID',
+  `STATUS` varchar(10) default NULL,
+  `WIJKNAAM` varchar(20) default NULL,
+  `SECTIE` varchar(20) default NULL,
+  `GESLACHT` varchar(10) default NULL,
+  `AANSCHRIJF_NAAM` varchar(50) default NULL,
+  `VOEGSEL` varchar(20) default NULL,
+  `VOORNAMEN` varchar(100) default NULL,
+  `ACHTERNAAM` varchar(50) default NULL,
+  `STRAATNAAM` varchar(100) default NULL,
+  `HUISNUMMER` varchar(10) default NULL,
+  `POSTCODE` varchar(10) default NULL,
+  `WOONPLAATS` varchar(50) default NULL,
+  `LEEFTIJD` int(11),
+  `GEBOORTE_DATUM` date default null,
+  `GEBOORTE_PLAATS` varchar(50) default NULL,
+  `BURGELIJKESTAAT` varchar(50) default NULL,
+  `KERKELIJKESTAAT` varchar(50) default NULL,
+  `HUWELIJK_DATUM` date default null,
+  `HUWELIJK_PLAATS` varchar(50) default NULL,
+  `DOOP_DATUM` date default null, 
+  `DOOP_PLAATS` varchar(20) default NULL,
+  `KERKELIJKE_GEZINDTE` varchar(50) default NULL,
+  `BELIJDENIS_DATUM` date default null,
+  `BELIJDENIS_PLAATS` varchar(50) default NULL,
+  `HERKOMST_DATUM` date default null,
+  `HERKOMST_PLAATS` varchar(50) default NULL,
+  `MUTATIE_DATUM` date default null,
+  `KERKELIJK_RELATIE` varchar(50) default NULL,
+  `VOORKEUR_WIJK` varchar(50) default NULL,
+  `KERKBLAD` varchar(50) default NULL,
+  `KERKLIDNR` int(11),
+  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`MID`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      ");
+
+      db_query("
+CREATE TABLE `oostpoort_items` (
+  `IID` int(11) NOT NULL auto_increment COMMENT 'Item ID',
+  `MID` int(11) default NULL,
+  `TYPE` int(11) default NULL,
+  `VALUE` varchar(2000) default NULL,
+  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`IID`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      ");
+
+	drupal_set_message(t("oostpoort database tables created."));
+      break;
+  }
+}
+
+/**
+* Implementation of hook_uninstall().
+*/
+
+function oostpoort_uninstall() 
+{
+   db_query('drop table {oostpoort_members}');
+   db_query('drop table {oostpoort_items}');
+}

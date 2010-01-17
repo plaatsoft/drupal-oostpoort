@@ -1,0 +1,5 @@
+name = Oostpoort
+description = Oostpoort church administration
+package = "Other"
+project = "Oostpoort"
+version = "5.x-0.1"

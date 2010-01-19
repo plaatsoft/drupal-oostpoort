@@ -10,7 +10,7 @@ function oostpoort_install() {
 
       db_query("
 CREATE TABLE `oostpoort_members` (
-  `MID` int(11) NOT NULL auto_increment COMMENT 'Family ID',
+  `MID` int(11) NOT NULL auto_increment COMMENT 'Member ID',
   `STATUS` varchar(10) default NULL,
   `WIJKNAAM` varchar(20) default NULL,
   `SECTIE` varchar(20) default NULL,
@@ -50,11 +50,41 @@ CREATE TABLE `oostpoort_members` (
       db_query("
 CREATE TABLE `oostpoort_items` (
   `IID` int(11) NOT NULL auto_increment COMMENT 'Item ID',
-  `MID` int(11) default NULL,
+  `KERKLIDNR` int(11) default NULL,
   `TYPE` int(11) default NULL,
   `VALUE` varchar(2000) default NULL,
   `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`IID`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      ");
+
+ db_query("
+CREATE TABLE `oostpoort_sections` (
+  `SID` int(11) NOT NULL auto_increment COMMENT 'Section ID',
+  `NAME` varchar(20) default NULL,
+  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`SID`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      ");
+
+      db_query("
+CREATE TABLE `oostpoort_visitors` (
+  `ID` int(11) NOT NULL auto_increment COMMENT 'ID',
+  `KERKLIDNR` int(11) default NULL,
+  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      ");
+
+db_query("
+CREATE TABLE `oostpoort_visits` (
+  `ID` int(11) NOT NULL auto_increment COMMENT 'Member ID',
+  `KERKLIDNR1` int(11) default NULL,
+  `KERKLIDNR2` int(11) default NULL,
+  `PLANNED` timestamp NOT NULL,
+  `ACTUAL` timestamp NOT NULL,
+  `NOTE` varchar(2000) default NULL,
+  PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
       ");
 
@@ -71,4 +101,7 @@ function oostpoort_uninstall()
 {
    db_query('drop table {oostpoort_members}');
    db_query('drop table {oostpoort_items}');
+   db_query('drop table {oostpoort_sections}');
+   db_query('drop table {oostpoort_visitors}');
+   db_query('drop table {oostpoort_visits}');
 }

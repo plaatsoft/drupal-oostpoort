@@ -1,16 +1,31 @@
 <?php
-/**
- * Created by wplaat (Plaatsoft)
- *
- * This software is open source and may be copied, distributed or modified 
- * under the terms of the GNU General Public License (GPL) Version 2
- *
- * For more information visit the following website.
- * Website : http://www.plaatsoft.nl 
- *
- * Or send an email to the following address.
- * Email   : info@plaatsoft.nl
- */
+/* 
+**  Church Administration (oostpoort) module for drupal 
+**
+**  Copyright (C) 2009-2010
+**  =======================
+**
+**  Created by wplaat
+**
+**  For more information visit the following website.
+**  Website : http://www.plaatsoft.nl 
+**
+**  Or send an email to the following address.
+**  Email   : info@plaatsoft.nl
+**
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation, version 2.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 // ##################################################################################
 // SQL FUNCTIONS
@@ -32,7 +47,7 @@ function oostpoort_get_item($mid,$type)
   $kerklidnr=oostpoort_get_id($mid);
 
   // Fetch configuration item
-  $query= 'select value from {oostpoort_items} where mid='.$kerklidnr.' and type='.$type;
+  $query= 'select value from {oostpoort_items} where kerklidnr='.$kerklidnr.' and type='.$type;
   $queryResult = db_query($query);
   $data = db_fetch_object($queryResult);
   
@@ -42,7 +57,7 @@ function oostpoort_get_item($mid,$type)
 function oostpoort_get_item2($kerklidnr,$type)
 {
   // Fetch configuration item
-  $query= 'select value from {oostpoort_items} where mid='.$kerklidnr.' and type='.$type;
+  $query= 'select value from {oostpoort_items} where kerklidnr='.$kerklidnr.' and type='.$type;
   $queryResult = db_query($query);
   $data = db_fetch_object($queryResult);
   

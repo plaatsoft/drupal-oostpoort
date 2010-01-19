@@ -1,5 +1,5 @@
 name = Oostpoort
-description = Oostpoort church administration
+description = Oostpoort leden administratie
 package = "Other"
 project = "Oostpoort"
-version = "5.x-0.1"
+version = "5.x-0.2"

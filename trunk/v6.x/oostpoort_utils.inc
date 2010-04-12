@@ -256,16 +256,16 @@ function oostpoort_check_number($str) {
  * Function check user access
  * @returns true if access is allowed else false 
  */
-function oostpoort_check_access($uid) {
+function oostpoort_check_access($uid, $account) {
 
-  global $user;
-  if ( ( (  ($user->uid==$uid) || 
+
+  if ( ( (  ($account->uid==$uid) || 
             ($uid==0) ||  
             (variable_get('addressbook_wiki_edit_mode',0)==1)
          ) 
-         && user_access('add address')
+         && user_access('add address', $account)
         ) 
-        || user_access('access administration pages') 
+        || user_access('access administration pages', $account) 
      ) 
   {
     return true;

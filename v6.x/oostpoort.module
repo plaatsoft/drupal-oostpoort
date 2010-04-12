@@ -1,0 +1,211 @@
+<?php
+
+/* 
+**  Church Administration (oostpoort) module for drupal 
+**
+**  Copyright (C) 2009-2010
+**  =======================
+**
+**  Created by wplaat
+**
+**  For more information visit the following website.
+**  Website : http://www.plaatsoft.nl 
+**
+**  Or send an email to the following address.
+**  Email   : info@plaatsoft.nl
+**
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation, version 2.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+// General
+include("oostpoort_general.inc");
+include("oostpoort_utils.inc"); 
+include("oostpoort_database.inc"); 
+
+// Module Pages
+include("oostpoort_mainmenu.inc");
+include("oostpoort_jubilea_birthday.inc");
+include("oostpoort_jubilea_married.inc");
+include("oostpoort_family_list.inc");
+include("oostpoort_family_members.inc");
+include("oostpoort_family_map.inc");
+include("oostpoort_visit.inc");
+include("oostpoort_member_age.inc");
+include("oostpoort_member_view.inc");
+include("oostpoort_upload.inc");
+include("oostpoort_picture_view.inc");
+include("oostpoort_picture_edit.inc");
+
+/**
+ * help hook()
+ * @return help texts
+ */
+function oostpoort_help($path, $arg) {
+
+  $output = '';
+  switch ($path) {
+    case 'admin/modules#description':
+      $output .= t('Oostpoort leden administratie module');
+      break;
+  }
+  return $output;
+}
+
+function oostpoort_mail($key, &$message, $params) 
+{
+  $message['subject'] = $params['subject']; 
+  $message['body'] = $params['body'];
+}
+
+/**
+  * Valid permisions for this module
+  * @return array an array of valid permission for the module
+  */
+function oostpoort_perm() 
+{
+  return array('view address','edit address', 'view all');
+}
+
+/**
+ * menu hook()
+ */
+function oostpoort_menu()
+{
+  $items[OOSTPOORT_MENU] = array(
+                   'title' => t('Oostpoort Menu'),
+                   'page callback' => 'oostpoort_mainmenu',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_UPLOAD] = array(
+                   'title' => t('Oostpoort CSV upload'),
+                   'page callback' => 'oostpoort_upload_csv',
+                   'access arguments' => array('add address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_FAMILY_LIST] = array(
+                   'title' => t('Oostpoort familie lijst'),
+                   'page callback' => 'oostpoort_family_list',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_FAMILY_VIEW] = array(
+                   'title' => t('Oostpoort familie details'),
+                   'page callback' => 'oostpoort_family_view',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_FAMILY_MAP] = array(
+                   'title' => t('Oostpoort kaart bekijken'),
+                   'page callback' => 'oostpoort_family_map',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_MEMBER_AGE] = array(
+                   'title' => t('Oostpoort ledenlijst leeftijd'),
+                   'page callback' => 'oostpoort_member_age',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_FAMILY_BLOCK] = array(
+                   'title' => t('Oostpoort familie blok'),
+                   'page callback' => 'oostpoort_family_block',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_MEMBER_VIEW] = array(
+                   'title' => t('Oostpoort lid details'),
+                   'page callback' => 'oostpoort_member_view',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_JUBILEA_BIRTHDAY] = array(
+                   'title' => t('Oostpoort jubilea verjaarday'),
+                   'page callback' => 'oostpoort_jubilea_birthday',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_JUBILEA_MARRIED] = array(
+                   'title' => t('Oostpoort jubilea huwelijk'),
+                   'page callback' => 'oostpoort_jubilea_married',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_PICTURE_VIEW] = array(
+                   'title' => t('Oostpoort foto bekijken'),
+                   'page callback' => 'oostpoort_picture_view',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_PICTURE_EDIT] = array(
+                   'title' => t('Oostpoort foto uploaden'),
+                   'page callback' => 'oostpoort_picture_edit',
+                   'access arguments' => array('add address'),
+                   'type' => MENU_CALLBACK);
+
+  $items['admin/settings/oostpoort'] = array(
+                   'title' => t('Oostpoort'),
+                   'description' => t('Instellingen Oostpoort leden administratie module.'),
+                   'page callback' => 'drupal_get_form',
+                   'page arguments' => array('oostpoort_settings'),
+                   'access arguments' => array('administer site configuration'),
+                   'type' => MENU_NORMAL_ITEM);
+
+  return $items;
+}
+
+/**
+ * Module configuration settings
+ * @return settings HTML or deny access
+ */
+function oostpoort_settings() {
+
+ //only administrators can access this module
+ if (!user_access('access administration pages')) 
+ {
+    return drupal_access_denied();
+ }
+
+ $form['settings_general'] = array('#type' => 'fieldset', '#title' => t('General settings'));
+
+ $form['settings_general']['oostpoort_roles'] = array(
+     '#type' => 'textarea',
+     '#title' => t('Roles'),
+     '#default_value' => variable_get('addressbook_roles', ''),
+     '#rows' => 1,
+     '#description' => t("Enter the roles which a person can have (Seperate items with commas (,). No spaces allowed).") );
+
+  $form['map24'] = array('#type' => 'fieldset', '#title' => t('Map settings'));
+  
+  $form['map24']['addressbook_map_link'] = array(
+     '#type' => 'select',
+     '#title' => t('Activate map link'),
+     '#default_value' => variable_get('addressbook_map_link',0),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / Disable Activate www.map24.com fast link.'));
+
+  $form['map24']['addressbook_map_key'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Free www.map24.com access key'),
+     '#default_value' => variable_get('addressbook_map_key', ''),
+     '#description' => t("Enter access key (Visit http://www.map24.com to obtain a free key)"),
+     '#maxlength' => '50',
+     '#size' => '50');
+
+  return system_settings_form($form);  
+}
+
+// ##################################################################################
+// THE END
+// ##################################################################################

@@ -70,7 +70,7 @@ function oostpoort_delete_item($mid,$type)
   $kerklidnr=oostpoort_get_id($mid);
 
   // First delete old entry (if any)
-  $query= 'delete from {oostpoort_items} where mid='.$kerklidnr.' and type='.$type;
+  $query= 'delete from {oostpoort_items} where kerklidnr='.$kerklidnr.' and type='.$type;
   $result = db_query($query);
 }
 
@@ -80,12 +80,12 @@ function oostpoort_set_item($mid,$type,$value)
   $kerklidnr=oostpoort_get_id($mid);
 
   // First delete old entry (if any)
-  $query= 'delete from {oostpoort_items} where mid='.$kerklidnr.' and type='.$type;
+  $query= 'delete from {oostpoort_items} where kerklidnr='.$kerklidnr.' and type='.$type;
   $result = db_query($query);
 
   if (strlen($value)>0)
   {  
-    $query = 'insert into {oostpoort_items} ( mid, type, value) values ( '.$kerklidnr.','.$type.',"'.$value.'")';
+    $query = 'insert into {oostpoort_items} ( kerklidnr, type, value) values ( '.$kerklidnr.','.$type.',"'.$value.'")';
     $result = db_query($query);
 
     if ($result==1) 

@@ -93,12 +93,13 @@ function oostpoort_view_roles($active_roles,$wanted_roles,$readonly)
       return $page;
    }
 
-   $page .= '<b>Gaven bank:</b><br/>';
+   $page .= '<b>Rollen:</b><br/>';
    $page .= '<table border=0 width=100% cellpadding=1>';
    $page .='<tr>';
-   $page .='<td valign="top" width=15%>';
-   $page .=t('Actieve rollen').'&nbsp;';
-   $page .='</td><td width=35%>';
+   //$page .='<td valign="top" width=15%>';
+   //$page .=t('Actieve rollen').'&nbsp;';
+   //$page .='</td>
+   $page .='<td width=35%>';
 
    $first=1;
    $i=0;
@@ -126,7 +127,7 @@ function oostpoort_view_roles($active_roles,$wanted_roles,$readonly)
    }
 
    $page.='</td>';
-   $page.='<td valign="top" width=15%>';
+   /*$page.='<td valign="top" width=15%>';
    $page.=t('Gewilde rollen').'&nbsp;';
    $page.='</td>';
    $page.='<td width=35%>';
@@ -155,8 +156,8 @@ function oostpoort_view_roles($active_roles,$wanted_roles,$readonly)
        $i++;
      }
    }
+   $page.='</td>';*/
 
-   $page.='</td>';
    $page.='</tr>';
    $page.='</table>';
    return $page;

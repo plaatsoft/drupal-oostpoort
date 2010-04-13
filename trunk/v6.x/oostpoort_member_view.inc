@@ -61,7 +61,7 @@ function oostpoort_member_view( $mid=0 )  {
 
   if ($commit=='1') 
   {
-    // Insert extra memeber information in database
+    // Insert extra member information in database
     $email=$_POST['email'];
     $mobile=$_POST['mobile'];
     $telephone=$_POST['telephone'];
@@ -71,8 +71,7 @@ function oostpoort_member_view( $mid=0 )  {
     /* Fetch all active and wanted roles from the HTTP request */
     $i=0;
     $active_first=1;
-    $wanted_first=1;
-    $tmp=split( ",", variable_get('addressbook_roles',''));
+    $tmp=split( ",", variable_get('oostpoort_roles',''));
     while ($tmp[$i]!='') 
     {
       if ($_POST["active_$tmp[$i]"]=='on')
@@ -84,16 +83,6 @@ function oostpoort_member_view( $mid=0 )  {
          }
          else $active_roles.=';'.$tmp[$i];
       }
-
-      if ($_POST["wanted_$tmp[$i]"]=='on')
-      {
-         if ($wanted_first=='1') 
-         {
-            $wanted_roles=$tmp[$i];
-            $wanted_first=0;
-         }
-         else $wanted_roles.=';'.$tmp[$i];
-      }
       $i++;
     }
 
@@ -103,11 +92,10 @@ function oostpoort_member_view( $mid=0 )  {
     oostpoort_set_item($mid,4,$work);
     oostpoort_set_item($mid,5,$notes);
     oostpoort_set_item($mid,6,$active_roles);
-    oostpoort_set_item($mid,7,$wanted_roles);
   }
   else
   { 
-    // Fetch extra memeber information out database
+    // Fetch extra member information out database
     $email        = oostpoort_get_item($mid,1);
     $telephone    = oostpoort_get_item($mid,2);
     $mobile       = oostpoort_get_item($mid,3);

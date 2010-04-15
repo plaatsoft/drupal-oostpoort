@@ -41,7 +41,7 @@ function oostpoort_family_block()
   global $user;
 
   $block=$_POST['block'];
-  if (strlen($block)==0) $block="blok 1";
+  if (strlen($block)==0) $block="0";
 
   // Breadcrumb menu
   $page  = '<div class="breadcrumb">';
@@ -52,63 +52,65 @@ function oostpoort_family_block()
 
   $page .= '<div class="oostpoort">';
 
-  drupal_set_title(t('Oostpoort familielijst gefilterd op blok' ) );
+  drupal_set_title(t('Oostpoort bezoekwerk' ) );
 
   $page .= '<br/>';
 
   $page .= '<form action="'.url(OOSTPOORT_FAMILY_BLOCK).'" method="POST">';
   $page .= '<select name="block">';
-  $query = 'select distinct sectie from {oostpoort_members} order by sectie';
+  
+  $query  = 'select concat(b.Prs_Roepnaam, " ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as naam, ';
+  $query .= 'b.Prs_GeslachtMV as geslacht, '; 
+  $query .= 'b.Prs_Kerklidnummer as kerkid, ';
+  $query .= 'b.Prs_id as PrsId, ';
+  $query .= 'a.Mdw_ActiefJN as actief ';
+  $query .= 'from oostpoort_medewerker a, oostpoort_persoon b ';
+  $query .= 'where a.Mdw_Prs_id=b.Prs_id order by naam';
+  // a.Mdw_ActiefJN LIKE "WAAR"
   $queryResult = db_query($query);
+  
   while ($data = db_fetch_object($queryResult))
   {
-     $page.='<option value="'.$data->sectie.'" ';
-     if ($block==$data->sectie) $page.='selected="selected" ';
-     $page.='>'.$data->sectie.'</option>';
-
-     //$page.='<option value="'.$data->sectie.'">'.$data->sectie.'</option>';
+     $page .= '<option value="'.$data->PrsId.'" ';
+     if ($block==$data->PrsId) $page.='selected="selected" ';
+     $page .= '>'.$data->naam.' ['.$data->PrsId.']';
+	  if ($data->actief=='ONWAAR') $page .= ' (Niet Actief)';
+	  $page .= '</option>';
   }
   $page .='</select> '; 
   $page .= '<input type="submit" value="'.t('Zoeken').'" />';
   $page .= '</form>';
 
   // Query Database
-  $query   = 'select distinct achternaam, straatnaam, huisnummer, postcode, woonplaats from {oostpoort_members} ';
-  $query  .= 'where sectie LIKE "'.$block.'"';
+  $query  = 'select concat (c.Adr_Straat," ", c.Adr_Huisnr) as straatnaam, ';
+  $query .= 'c.Adr_Plaats as plaats, ';
+  $query .= 'c.Adr_postcode as postcode, ';
+  $query .= 'a.Bzk_GeplandDatum as geplande_datum ';
+  $query .= 'from oostpoort_bezoek a, oostpoort_adres c ';
+  $query .= 'where a.Bzk_Adr_ID=c.Adr_id and a.Bzk_Mdw_id='.$block;
   $queryResult = db_query($query);
 
   $page .= '<table width=100% border="1" cellpadding="3" cellspacing="3">';
 
   // Show Banner
-  $page .= '<td>';
-  $page .= '<b>'.t('Naam').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Straat').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Postcode').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Plaats').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Laatste bezoekdatum').'</b>';
-  $page .= '</td></tr>';
+  $page .= '<tr>';
+  $page .= '<td><b>'.t('Straat').'</b></td>';
+  $page .= '<td><b>'.t('Postcode').'</b></td>';
+  $page .= '<td><b>'.t('Plaats').'</b></td>';
+  $page .= '<td><b>'.t('Geplande datum').'</b></td>';
+  $page .= '</tr>';
 
   // Show all found address
   $page_tmp='';
   while ($data = db_fetch_object($queryResult))
   {
-    //$key=oostpoort_encode($data->postcode.$data->huisnummer);
-    $key=$data->postcode.$data->huisnummer;
-    $page_tmp .= '<tr><td width=60>';
-    $page_tmp .= l($data->achternaam, OOSTPOORT_FAMILY_VIEW."/".$key);
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->straatnaam.' '.$data->huisnummer;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->postcode;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->woonplaats;
-    $page_tmp .= '</td></td>';
-    $page_tmp .= '</td></tr>';
-  }
+     $page_tmp .= '<tr>';
+	  $page_tmp .= '<td>'.$data->straatnaam.'</td>';;
+     $page_tmp .= '<td>'.$data->postcode.'</td>';
+     $page_tmp .= '<td>'.$data->plaats.'</td>';	
+     $page_tmp .= '<td>'.oostpoort_datum($data->geplande_datum).'</td>';
+	  $page_tmp .= '</tr>';
+   }
 
   if ( $page_tmp!='') {
      // Show Content

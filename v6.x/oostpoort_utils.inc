@@ -32,6 +32,13 @@
 // SUPPORT FUNCTIONS
 // ##################################################################################
 
+function oostpoort_datum($datum) {
+  
+	list($year, $month, $day) = split('[/.-]', $datum);
+   return "$day"."-".$month."-".$year;
+}
+
+
 // Call makeCksum once upon landing on the homepage
 function oostpoort_makeCksum() {
        $str = "";

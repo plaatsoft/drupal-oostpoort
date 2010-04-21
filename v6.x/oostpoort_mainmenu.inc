@@ -69,7 +69,7 @@ function oostpoort_mainmenu( )
   $page .= '</dd>';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Huis bezoek plannen</a>';
+  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Extra informatie is nu nog niet beschikbaar';
@@ -99,6 +99,13 @@ function oostpoort_mainmenu( )
   $page .= '<br/>';
   $page .= '<br/>';
 
+  $page .= '<dt>';
+  $page .= '<a href="'.url(OOSTPOORT_BEZOEK_ADMINISTATIE).'">Bezoekwerk Administratie</a>';
+  $page .= '</dt>';
+  $page .= '<dd>';
+  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= '</dd>';
+  
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_UPLOAD).'">Upload een nieuw ledenbestand</a>';
   $page .= '</dt>';

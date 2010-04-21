@@ -46,6 +46,9 @@ define('OOSTPOORT_MEMBER_VIEW',     'member/view');
 define('OOSTPOORT_PICTURE_VIEW',    'picture/view');
 define('OOSTPOORT_PICTURE_EDIT',    'picture/edit');
 
+define('OOSTPOORT_VISIT',           'visit/list');
+define('OOSTPOORT_VISIT_DETAIL',    'visit/detail');
+
 define('OOSTPOORT_IMAGE_DIR',       'files/oostpoort');
 define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
 

@@ -40,12 +40,13 @@ module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_married');
 module_load_include('inc', 'oostpoort', 'oostpoort_family_list');
 module_load_include('inc', 'oostpoort', 'oostpoort_family_members');
 module_load_include('inc', 'oostpoort', 'oostpoort_family_map');
-module_load_include('inc', 'oostpoort', 'oostpoort_visit');
 module_load_include('inc', 'oostpoort', 'oostpoort_member_age');
 module_load_include('inc', 'oostpoort', 'oostpoort_member_view');
 module_load_include('inc', 'oostpoort', 'oostpoort_upload');
 module_load_include('inc', 'oostpoort', 'oostpoort_picture_view');
 module_load_include('inc', 'oostpoort', 'oostpoort_picture_edit');
+module_load_include('inc', 'oostpoort', 'oostpoort_visit');
+module_load_include('inc', 'oostpoort', 'oostpoort_visit_detail');
 
 /**
  * help hook()
@@ -114,12 +115,6 @@ function oostpoort_menu() {
                    'access arguments' => array('view address'),
                    'type' => MENU_CALLBACK);
 
-  $items[OOSTPOORT_FAMILY_BLOCK] = array(
-                   'title' => 'Oostpoort familie blok',
-                   'page callback' => 'oostpoort_family_block',
-                   'access arguments' => array('view address'),
-                   'type' => MENU_CALLBACK);
-
   $items[OOSTPOORT_MEMBER_VIEW] = array(
                    'title' => 'Oostpoort lid details',
                    'page callback' => 'oostpoort_member_view',
@@ -148,6 +143,18 @@ function oostpoort_menu() {
                    'title' => 'Oostpoort foto uploaden',
                    'page callback' => 'oostpoort_picture_edit',
                    'access arguments' => array('add address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_VISIT] = array(
+                   'title' => 'Oostpoort bezoekwerk',
+                   'page callback' => 'oostpoort_visit',
+                   'access arguments' => array('view address'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_VISIT_DETAIL] = array(
+                   'title' => 'Oostpoort bezoekwerk detail', 
+                   'page callback' => 'oostpoort_visit_detail',
+                   'access arguments' => array('view address'),
                    'type' => MENU_CALLBACK);
 
   $items['admin/settings/oostpoort'] = array(

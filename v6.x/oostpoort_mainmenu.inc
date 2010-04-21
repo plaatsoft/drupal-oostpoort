@@ -69,7 +69,7 @@ function oostpoort_mainmenu( )
   $page .= '</dd>';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_FAMILY_BLOCK).'">Huis bezoek plannen</a>';
+  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Huis bezoek plannen</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Extra informatie is nu nog niet beschikbaar';

@@ -55,6 +55,9 @@ module_load_include('inc', 'oostpoort', 'oostpoort_visit');
 module_load_include('inc', 'oostpoort', 'oostpoort_visit_detail');
 module_load_include('inc', 'oostpoort', 'oostpoort_visit_admin');
 
+
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/oostpoort.js');
+
 /**
  * help hook()
  * @return help texts

@@ -100,7 +100,7 @@ function oostpoort_mainmenu( )
   $page .= '<br/>';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_BEZOEK_ADMINISTATIE).'">Bezoekwerk Administratie</a>';
+  $page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk Administratie</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Extra informatie is nu nog niet beschikbaar';

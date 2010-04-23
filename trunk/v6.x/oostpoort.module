@@ -80,7 +80,7 @@ function oostpoort_help($path, $arg) {
   */
 function oostpoort_perm() 
 {
-  return array('view address','edit address', 'view all','csv upload and download');
+  return array('view address','edit address');
 }
 
 /**
@@ -98,7 +98,7 @@ function oostpoort_menu() {
   $items[OOSTPOORT_UPLOAD] = array(
                    'title' => 'Oostpoort CSV upload',
                    'page callback' => 'oostpoort_upload_csv',
-                   'access arguments' => array('csv upload and download'),
+                   'access arguments' => array('administer site configuration'),
                    'type' => MENU_CALLBACK);
 
   $items[OOSTPOORT_FAMILY_LIST] = array(
@@ -179,7 +179,7 @@ function oostpoort_menu() {
   $items[OOSTPOORT_VISIT_ADMIN] = array(
                    'title' => 'Oostpoort bezoekwerk administratie', 
                    'page callback' => 'oostpoort_visit_admin',
-                   'access arguments' => array('view address'),
+                   'access arguments' => array('administer site configuration'),
                    'type' => MENU_CALLBACK);
 
   return $items;

@@ -28,30 +28,35 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// Oostpoort module URLs
-define('OOSTPOORT_MENU',            'base');
 
-define('OOSTPOORT_FAMILY_LIST',     'family/list');
-define('OOSTPOORT_FAMILY_VIEW',     'family/view');
-define('OOSTPOORT_FAMILY_MAP',      'family/map');
-define('OOSTPOORT_FAMILY_BLOCK',    'family/block');
-
-define('OOSTPOORT_JUBILEA_BIRTHDAY','jubilea/birthday');
-define('OOSTPOORT_JUBILEA_MARRIED', 'jubilea/married');
-
-define('OOSTPOORT_UPLOAD',          'member/upload');
-define('OOSTPOORT_MEMBER_AGE',      'member/age');
-define('OOSTPOORT_MEMBER_VIEW',     'member/view');
-
-define('OOSTPOORT_PICTURE_VIEW',    'picture/view');
-define('OOSTPOORT_PICTURE_EDIT',    'picture/edit');
-
+// Oostpoort Files store
 define('OOSTPOORT_IMAGE_DIR',       'files/oostpoort');
 define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
 
-define('OOSTPOORT_VISIT',           'visit/list');
-define('OOSTPOORT_VISIT_DETAIL',    'visit/detail');
-define('OOSTPOORT_VISIT_ADMIN',     'visit/admin');
+// Oostpoort URLs
+define('OOSTPOORT_MENU',            'oostpoort');
+
+define('OOSTPOORT_FAMILY_LIST',     'oostpoort/family/list');
+define('OOSTPOORT_FAMILY_VIEW',     'oostpoort/family/view');
+define('OOSTPOORT_FAMILY_MAP',      'oostpoort/family/map');
+define('OOSTPOORT_FAMILY_BLOCK',    'oostpoort/family/block');
+
+define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
+define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
+
+define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
+define('OOSTPOORT_MEMBER_VIEW',     'oostpoort/member/view');
+
+define('OOSTPOORT_PICTURE_VIEW',    'oostpoort/picture/view');
+define('OOSTPOORT_PICTURE_EDIT',    'oostpoort/picture/edit');
+
+define('OOSTPOORT_UPLOAD',          'oostpoort/upload');
+
+define('OOSTPOORT_VISIT',           'oostpoort/visit/list');
+define('OOSTPOORT_VISIT_DETAIL',    'oostpoort/visit/detail');
+define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');
+
+
 
 
 // ##################################################################################

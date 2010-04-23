@@ -36,13 +36,10 @@ function oostpoort_mainmenu( )
 {
   global $user;
 
-  // key to encrypt crc checksum
-  //oostpoort_makeCksum();
-
   // Breadcrumb menu
   $page  = '<div class="breadcrumb">';
-  $page .= '<a href="'.url("").'">Home</a> > ';
-  $page .= 'Menu';
+  $page .= '<a href="'.url("").'">Start</a> > ';
+  $page .= 'Oostpoort';
   $page .= '</div>';
 
   $page .= '<div class="oostpoort">';
@@ -65,7 +62,7 @@ function oostpoort_mainmenu( )
   $page .= '<a href="'.url(OOSTPOORT_FAMILY_LIST).'/A">Bekijk leden gegevens</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Dit rapport heeft informatie over de actuele Oostpoort leden.';
   $page .= '</dd>';
 
   $page .= '<dt>';
@@ -79,21 +76,21 @@ function oostpoort_mainmenu( )
   $page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Bepaalde leeftijdscategorie tonen</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Dit rapport geeft de leden weer per leeftijdscategorie.';
   $page .= '</dd>';
 
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea van dit jaar</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Dit rapport geeft alle verjaarsjubilea weer van het lopende jaar.';
   $page .= '</dd>';
 
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea van dit jaar</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Dit rapport geeft alle huwelijksjubilea weer van het lopende jaar.';
   $page .= '</dd>';
 
   $page .= '<br/>';
@@ -103,14 +100,14 @@ function oostpoort_mainmenu( )
   $page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk Administratie</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Op deze pagina kunnen bezoekmedewerkers worden beheerder. (Admin rechten nodig)';
   $page .= '</dd>';
   
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_UPLOAD).'">Upload een nieuw ledenbestand</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Op deze pagina kunnen nieuwe leden bestanden worden ingeladen. (Admin rechten nodig)';
   $page .= '</dd>';
 
   $page .= '</dl>';

@@ -50,17 +50,8 @@ function oostpoort_visit_admin()
   $page .= '<a href="'.url("").'">Start</a> > ';
   $page .= 'Oostpoort > Visit';
   $page .= '</div>';
-  
-  if (empty($action)) { 
-  
-	  $page = oostpoort_visit_admin_list_view();
-
-  } else if ($action=="Save1") { 
-  
-     oostpoort_visit_admin_save1();
-	  $page = oostpoort_visit_admin_list_view();
-	  
-  } else if ($action=="Edit") {
+  	  
+  if ($action=="Edit") {
   
      $page = oostpoort_visit_admin_member_view($id);
 	  
@@ -72,9 +63,9 @@ function oostpoort_visit_admin()
   
      $page = oostpoort_visit_admin_list_view();
 	  
-  } else if ($action=="Save2") { 
+  } else if ($action=="Save") { 
   
-	  oostpoort_visit_admin_save2();
+	  oostpoort_visit_admin_save();
      $page = oostpoort_visit_admin_list_view();
 	  
   }  else if ($action=="Add") {
@@ -86,7 +77,12 @@ function oostpoort_visit_admin()
   
      oostpoort_visit_admin_delete($id);
      $page = oostpoort_visit_admin_list_view();
+	  
+  } else {
+  
+	  $page = oostpoort_visit_admin_list_view();
   }
+  
   print theme("page", $page);
 }
 
@@ -146,7 +142,7 @@ function oostpoort_visit_admin_list_view()
 	{
 		$page .= '<tr>';
 		$page .= '<td>'.++$i.'</td>';	  
-		$page .= '<td>'.oostpoort_view_checkbox("id",$data->PrsId, $data->MdwActief).'</td>';	  
+		$page .= '<td>'.oostpoort_view_checkbox($data->MdwActief, true).'</td>';	  
 		$page .= '<td>'.$data->PrsId.'</td>';	  	  
 		$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</td>';
 		$page .= '<td>'.oostpoort_visit_admin_geslacht($data->geslacht).'</td>';
@@ -157,10 +153,7 @@ function oostpoort_visit_admin_list_view()
 		$page .= '</tr>';
 	}
 	$page .= '</table>';
-  
-	// Show button Bar
-	$page .= oostpoort_hiddenlink('OostpoortForm','Id','0','Save1',t('Opslaan'));
-  
+    
 	$page .= '</form>';  
 	$page .= '</div>';
   
@@ -182,12 +175,16 @@ function oostpoort_visit_admin_member_view($id)
   
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
-	$query .= ' concat(b.Prs_Roepnaam, " ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
+	$query .= ' concat(b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Achternaam, ';
 	$query .= ' b.Prs_GeslachtMV as Geslacht, '; 
 	$query .= ' a.Mdw_Blk_ID as MdwBlkID, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
 	$query .= ' a.Mdw_Rol_ID as MdwRolID, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
+	$query .= ' b.Prs_Voornamen as PrsVoornamen,';
+	$query .= ' b.Prs_Roepnaam as PrsRoepnaam, ';
+	$query .= ' b.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' b.Prs_TelefoonMobiel as PrsTelefoon, ';
 	$query .= ' (select count(*) as Amount from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID) as Amount ';
 	$query .= 'from ';
 	$query .= ' oostpoort_medewerker a, oostpoort_persoon b ';
@@ -209,8 +206,24 @@ function oostpoort_visit_admin_member_view($id)
 	$page .= '<td>'.$data->PrsId.'</td>';
 	$page .= '</tr>';
 	$page .= '<tr>';
-	$page .= '<td>'.t('Naam').'</td>';
-	$page .= '<td>'.$data->Naam.'</td>';
+	$page .= '<td>'.t('Roepnaam').'</td>';
+	$page .= '<td><input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'"></td>';
+	$page .= '</tr>';
+   $page .= '<tr>';
+	$page .= '<td>'.t('Voornamen').'</td>';
+	$page .= '<td>'.$data->PrsVoornamen.'</td>';
+	$page .= '</tr>';
+	$page .= '<tr>';
+	$page .= '<td>'.t('Achternaam').'</td>';
+	$page .= '<td>'.$data->Achternaam.'</td>';
+	$page .= '</tr>';
+	$page .= '<tr>';
+	$page .= '<td>'.t('Telefoon / Mobiel').'</td>';
+	$page .= '<td><input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->PrsTelefoon.'"></td>';
+	$page .= '</tr>';
+	$page .= '<tr>';
+	$page .= '<td>'.t('Email').'</td>';
+	$page .= '<td><input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'"></td>';
 	$page .= '</tr>';
 	$page .= '<tr>';
 	$page .= '<td>'.t('Geslacht').'</td>';
@@ -222,7 +235,7 @@ function oostpoort_visit_admin_member_view($id)
 	$page .= '</tr>';
 	$page .= '<tr>';
 	$page .= '<td>'.t('Actief').'</td>';
-	$page .= '<td>'.oostpoort_view_checkbox("Active", "", $data->MdwActief).'</td>';	  
+	$page .= '<td>'.oostpoort_view_checkbox($data->MdwActief, false).'</td>';	  
 	$page .= '</tr>';
 	$page .= '<tr>';
 	$page .= '<td>'.t('Rol Omschrijving').'</td>';
@@ -234,7 +247,7 @@ function oostpoort_visit_admin_member_view($id)
 	$page .= '</tr>';
 	$page .= '</table>';
     
-	$page .= oostpoort_hiddenlink('OostpoortForm','Id',$data->PrsId,'Save2',t('Opslaan'));
+	$page .= oostpoort_hiddenlink('OostpoortForm','Id',$data->PrsId,'Save',t('Opslaan'));
 	
 	// Only when no visit work is executed visit member can be deleted
 	if ($data->Amount==0) {
@@ -335,51 +348,31 @@ function oostpoort_visit_admin_member_search()
 // ACTIONS
 // ##################################################################################
  
-function oostpoort_visit_admin_save1() {
-	$query  = 'select '; 
-	$query .= ' a.Mdw_Prs_ID as PrsId, ';
-	$query .= ' a.Mdw_ActiefJN as active ';
-	$query .= 'from ';
-	$query .= ' oostpoort_medewerker a ';
-  
-	$queryResult = db_query($query);
-  
-	while ($data = db_fetch_object($queryResult)) {
-	
-		$value=$_POST['id'.$data->PrsId];
-	 
-		if ($value == 'on') {
-			if ($data->active == "ONWAAR") {			  
-				$sql = 'UPDATE oostpoort_medewerker SET Mdw_ActiefJN="WAAR" where Mdw_Prs_ID='.$data->PrsId;
-				//echo $sql;
-				db_query($sql);
-			}
-		} else {     
-		   if ($data->active == "WAAR") {
-				$sql = 'UPDATE oostpoort_medewerker SET Mdw_ActiefJN="ONWAAR" where Mdw_Prs_ID='.$data->PrsId;
-				//echo $sql;
-				db_query($sql);
-		   }
-		}
-	}  
-}
-
-function oostpoort_visit_admin_save2() {
+function oostpoort_visit_admin_save() {
 
    $block=$_POST["Block"];
-   //echo "[block=".$block."]";
+   echo "[block=".$block."]";
   
    $active=$_POST["Active"];
-   //echo "[active=".$active."]";
+   echo "[active=".$active."]";
 	
 	$owner=$_POST["Owner"];
-   //echo "[owner=".$owner."]";
+   echo "[owner=".$owner."]";
 
    $role=$_POST["Role"];
-   //echo "[role=".$role."]";
+   echo "[role=".$role."]";
 	
 	$id=$_POST["Id"];
-   //echo "[id=".$id."]";
+   echo "[id=".$id."]";
+
+	$firstName=$_POST["FirstName"];
+   echo "[firstName=".$firstName."]";
+
+	$email=$_POST["Email"];
+   echo "[email=".$email."]";
+
+	$phone=$_POST["Phone"];
+   echo "[phone=".$phone."]";
 	  
 	if ($active == 'on') { 
 	    $active_token="WAAR";
@@ -394,7 +387,17 @@ function oostpoort_visit_admin_save2() {
 	$query .= '  Mdw_Rol_ID='.$role.' ';
 	$query .= 'where ';
 	$query .= '  Mdw_Prs_ID='.$id;
+
+	//echo $query;
+	db_query($query); 
 			
+	$query  = 'UPDATE oostpoort_persoon SET ';
+	$query .= '  Prs_Roepnaam="'.$firstName.'", ';
+	$query .= '  Prs_EmailAdres="'.$email.'", ';
+	$query .= '  Prs_TelefoonMobiel="'.$phone.'" ';
+	$query .= 'where ';
+	$query .= '  Prs_ID='.$id;
+	
 	//echo $query;
 	db_query($query);  
 }
@@ -460,19 +463,25 @@ function oostpoort_visit_admin_geslacht($label) {
    }
 }
 
-function oostpoort_view_checkbox($label, $id, $value) {
-   if ( $value=='WAAR') {
-		return '<input type="checkbox" name="'.$label.$id.'" checked="true" />';
-   } else {
-      return '<input type="checkbox" name="'.$label.$id.'" />';
-   }
+function oostpoort_view_checkbox( $value, $readonly) {
+
+   if (! $readonly) {
+	
+		if ( $value=='WAAR') {
+			return '<input type="checkbox" name="Active" checked="true" />';
+		} else {
+			return '<input type="checkbox" name="Active" />';
+		}
+	} else {
+		return $value;
+	}
 }
 
 function oostpoort_view_owner($uid, $readonly) {
 
    global $user;
 
-   if ( $readonly=='0' ) {
+   if ( ! $readonly ) {
 		$query  = 'SELECT uid, name FROM {users} order by name';
 		$queryResult = db_query($query);     
 		$data = db_fetch_object($queryResult);
@@ -499,7 +508,7 @@ function oostpoort_view_owner($uid, $readonly) {
 
 function oostpoort_view_block($block, $readonly) {
 
-   if ( $readonly=='0' ) {
+   if ( ! $readonly ) {
 		$query  = 'SELECT Blk_ID, Blk_nummer, Blk_Omschrijving FROM {oostpoort_blok} order by Blk_nummer';
 		$queryResult = db_query($query);     
 		
@@ -526,7 +535,7 @@ function oostpoort_view_block($block, $readonly) {
 
 function oostpoort_view_role($role, $readonly) {
 
-   if ( $readonly=='0' ) {
+   if ( ! $readonly ) {
 		$query  = 'SELECT Rol_ID, Rol_Omschrijving FROM {oostpoort_rol} order by Rol_Omschrijving';
 		$queryResult = db_query($query);     
 		

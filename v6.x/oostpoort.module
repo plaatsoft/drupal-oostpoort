@@ -28,35 +28,30 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// General
+// PHP module files
 module_load_include('inc', 'oostpoort', 'oostpoort_general');
 module_load_include('inc', 'oostpoort', 'oostpoort_utils'); 
 module_load_include('inc', 'oostpoort', 'oostpoort_database'); 
-
-// Module Pages
 module_load_include('inc', 'oostpoort', 'oostpoort_mainmenu');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_birthday');
 module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_married');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_family_list');
 module_load_include('inc', 'oostpoort', 'oostpoort_family_members');
 module_load_include('inc', 'oostpoort', 'oostpoort_family_map');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_member_age');
 module_load_include('inc', 'oostpoort', 'oostpoort_member_view');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_upload');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_picture_view');
 module_load_include('inc', 'oostpoort', 'oostpoort_picture_edit');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_visit');
 module_load_include('inc', 'oostpoort', 'oostpoort_visit_detail');
 module_load_include('inc', 'oostpoort', 'oostpoort_visit_admin');
 
-
+// ADD Java Scripts files
 drupal_add_js(drupal_get_path('module', 'oostpoort'). '/oostpoort.js');
+
+// Add CSS files
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/oostpoort.css');
 
 /**
  * help hook()

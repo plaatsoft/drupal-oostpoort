@@ -48,16 +48,16 @@ function oostpoort_visit_admin()
    // Breadcrumb menu
   $page  = '<div class="breadcrumb">';
   $page .= '<a href="'.url("").'">Start</a> > ';
-  $page .= 'Oostpoort > Visit';
+  $page .= 'Oostpoort > Visit > Admin';
   $page .= '</div>';
   	  
   if ($action=="Edit") {
   
-     $page = oostpoort_visit_admin_member_view($id);
+     $page .= oostpoort_visit_admin_member_view($id);
 	  
   } else if ($action=="Search") {
   
-     $page = oostpoort_visit_admin_member_search();
+     $page .= oostpoort_visit_admin_member_search();
 	  
   } else if ($action=="Cancel") {
   
@@ -65,22 +65,22 @@ function oostpoort_visit_admin()
 	  
   } else if ($action=="Save") { 
   
-	  $page  = oostpoort_visit_admin_save();
+	  $page .= oostpoort_visit_admin_save();
      $page .= oostpoort_visit_admin_list_view();
 	  
   }  else if ($action=="Add") {
   
-     $page  = oostpoort_visit_admin_add($id);
+     $page .= oostpoort_visit_admin_add($id);
      $page .= oostpoort_visit_admin_member_view($id);
 	  
   } else if ($action=="Delete") {
   
-     $page  = oostpoort_visit_admin_delete($id);
+     $page .= oostpoort_visit_admin_delete($id);
      $page .= oostpoort_visit_admin_list_view();
 	  
   } else {
   
-	  $page = oostpoort_visit_admin_list_view();
+	  $page .= oostpoort_visit_admin_list_view();
   }
   
   print theme("page", $page);
@@ -136,7 +136,7 @@ function oostpoort_visit_admin_list_view()
 	$page .= '</tr>';
 	$page .= '</thead>';
 
-	// Show all found address
+	// Show all found members
 	$page .= '<tbody>';
 	while ($data = db_fetch_object($queryResult))
 	{
@@ -328,6 +328,7 @@ function oostpoort_visit_admin_member_search()
 		$query .= ' b.Prs_Achternaam LIKE "'.$search.'%"  '; 
 		$query .= 'order by ';
 		$query .= ' Naam';
+		//echo $query;
 		
 		$queryResult = db_query($query);
   		

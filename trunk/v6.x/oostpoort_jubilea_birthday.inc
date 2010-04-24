@@ -47,6 +47,7 @@ function oostpoort_jubilea_birthday()
 
   drupal_set_title(t('Oostpoort verjaardag jubilea' ) );
 
+
   $page .= '<br/>';
 
   $x=array(50, 65, 70, 75, 80, 85, 90, 95);

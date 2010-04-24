@@ -64,44 +64,48 @@ function oostpoort_mainmenu( )
   $page .= '<dd>';
   $page .= 'Dit rapport heeft informatie over de actuele Oostpoort leden.';
   $page .= '</dd>';
-
+  
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
+  $page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Extra informatie is nu nog niet beschikbaar';
+  $page .= 'Dit rapport geeft de leden per leeftijdscategorie weer.';
   $page .= '</dd>';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Bepaalde leeftijdscategorie tonen</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Dit rapport geeft de leden weer per leeftijdscategorie.';
-  $page .= '</dd>';
-
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea van dit jaar</a>';
+  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea rapport</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Dit rapport geeft alle verjaarsjubilea weer van het lopende jaar.';
   $page .= '</dd>';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea van dit jaar</a>';
+  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea rapport</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Dit rapport geeft alle huwelijksjubilea weer van het lopende jaar.';
   $page .= '</dd>';
-
+  
   $page .= '<br/>';
   $page .= '<br/>';
 
+  $page .= '<dt>';
+  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
+  $page .= '</dt>';
+  $page .= '<dd>';
+  $page .= 'Bezoekmedewerkers kunnen hier bezoeken plannen en verwerken.';
+  $page .= '</dd>';
+  
+  
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk Administratie</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Op deze pagina kunnen bezoekmedewerkers worden beheerder. (Admin rechten nodig)';
   $page .= '</dd>';
+ 
+  $page .= '<br/>';
+  $page .= '<br/>';  
   
   $page .= '<dt>';
   $page .= '<a href="'.url(OOSTPOORT_UPLOAD).'">Upload een nieuw ledenbestand</a>';

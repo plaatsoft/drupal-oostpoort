@@ -65,18 +65,18 @@ function oostpoort_visit_admin()
 	  
   } else if ($action=="Save") { 
   
-	  oostpoort_visit_admin_save();
-     $page = oostpoort_visit_admin_list_view();
+	  $page  = oostpoort_visit_admin_save();
+     $page .= oostpoort_visit_admin_list_view();
 	  
   }  else if ($action=="Add") {
   
-     oostpoort_visit_admin_add($id);
-     $page = oostpoort_visit_admin_member_view($id);
+     $page  = oostpoort_visit_admin_add($id);
+     $page .= oostpoort_visit_admin_member_view($id);
 	  
   } else if ($action=="Delete") {
   
-     oostpoort_visit_admin_delete($id);
-     $page = oostpoort_visit_admin_list_view();
+     $page  = oostpoort_visit_admin_delete($id);
+     $page .= oostpoort_visit_admin_list_view();
 	  
   } else {
   
@@ -97,12 +97,12 @@ function oostpoort_visit_admin_list_view()
 	drupal_set_title(t('Oostpoort bezoekwerk administratie' ) );
 
 	$page .= '<br/>';
-	$page .= 'Zit zijn alle medewerkers van de oostpoort.';
+	$page .= t('Dit zijn alle bezoekmedewerkers van de oostpoort.');
 
 	$page .= '<form name="OostpoortForm" method="POST" >';
   	
-	$query  = 'select ';
-	$query .= ' concat(b.Prs_Roepnaam, " ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
+	$query  = 'select ';	
+	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voornamen, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as geslacht, '; 
 	$query .= ' b.Prs_id as PrsId, ';
 	$query .= ' c.Blk_Nummer as BlkNummer, ';
@@ -126,7 +126,7 @@ function oostpoort_visit_admin_list_view()
 	$page .= '<thead>';
 	$page .= '<tr>';
 	//$page .= '<th><b>'.t('Rij').'</b></th>';
-	//$page .= '<th><b>'.t('Id').'</b></th>';
+	$page .= '<th><b>'.t('Id').'</b></th>';
 	$page .= '<th><b>'.t('Medewerker').'</b></th>';
 	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Rol').'</b></th>';
@@ -145,9 +145,9 @@ function oostpoort_visit_admin_list_view()
 		} else {
 			$page .= '<tr class="odd">';
 		}
-		//$page .= '<td>'.$i.'</td>';	   
-		//$page .= '<td>'.$data->PrsId.'</td>';	 
-	   if ($data->MdwActief=="ONWAAR") {
+		//$page .= '<td>'.$i.'</td>';	  
+	   $page .= '<td>'.$data->PrsId.'</td>'; 
+		if ($data->MdwActief=="ONWAAR") {
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</td>';
 		} else {
 			$page .= '<td><b>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</b></td>';		
@@ -175,27 +175,16 @@ function oostpoort_visit_admin_list_view()
 function oostpoort_visit_admin_member_view($id)
 {
    global $user;
- 
-	$page .= '<div class="oostpoort">';
-
-	drupal_set_title(t('Oostpoort bezoekwerk administratie' ) );
-
-	//$page .= '<br/>';
-
-   $page .= '<fieldset>' ;
-	$page .= '<legend>Medewerker instellingen</legend>';
-
-	$page .= '<form name="OostpoortForm" method="POST" >';
-  
+   
+	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
-	$query .= ' concat(b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Achternaam, ';
+	$query .= ' concat(b.Prs_Voornamen," ",b.Prs_Tussenvoegsels," ",b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as Geslacht, '; 
 	$query .= ' a.Mdw_Blk_ID as MdwBlkID, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
 	$query .= ' a.Mdw_Rol_ID as MdwRolID, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
-	$query .= ' b.Prs_Voornamen as PrsVoornamen,';
 	$query .= ' b.Prs_Roepnaam as PrsRoepnaam, ';
 	$query .= ' b.Prs_EmailAdres as PrsEmail, ';
 	$query .= ' b.Prs_TelefoonMobiel as PrsMobiel, ';
@@ -214,10 +203,21 @@ function oostpoort_visit_admin_member_view($id)
 	$queryResult = db_query($query);
 	$data = db_fetch_object($queryResult);
 	
-	$page .= '<h1>'.$data->PrsVoornamen.' '.$data->Achternaam.'</h1>';	
+	drupal_set_title(t('Oostpoort bezoekwerk administratie' ) );
+		
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
+	
+	$page .= '<fieldset>' ;
+	$page .= '<legend>Medewerker</legend>';
+	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
-	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';	
-
+	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';		
+	$page .= '</fieldset>' ;
+	
+	$page .= '<fieldset>' ;
+	$page .= '<legend>Instellingen</legend>';
+		
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Eigenaar').'</label>';
 	$page .= oostpoort_view_owner($data->MdwUid, false);
@@ -318,7 +318,7 @@ function oostpoort_visit_admin_member_search()
 	if ($search!="")
 	{
 		$query  = 'select ';
-		$query .= ' concat(b.Prs_Roepnaam, " ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
+		$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voornamen, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
 		$query .= ' b.Prs_Id as PrsId, ';
 		$query .= ' b.Prs_GeslachtMV as PrsGeslacht, ';
 		$query .= ' b.Prs_Geboortedatum as PrsGeboortedatum ';
@@ -326,8 +326,8 @@ function oostpoort_visit_admin_member_search()
 		$query .= ' oostpoort_persoon b ';
 		$query .= 'where ';
 		$query .= ' b.Prs_Achternaam LIKE "'.$search.'%"  '; 
-		//$query .= 'order by ';
-		//$query .= ' b.naam';
+		$query .= 'order by ';
+		$query .= ' Naam';
 		
 		$queryResult = db_query($query);
   		
@@ -369,8 +369,15 @@ function oostpoort_visit_admin_member_search()
 // ##################################################################################
  
 function oostpoort_visit_admin_save() {
-
-   $block=$_POST["Block"];
+	
+	$id=$_POST["Id"];
+   echo "[id=".$id."]";
+	
+	$page .= '<div class="messages status">';
+   $page .= t('Wijzingen voor medewerker '.$id.' zijn opgeslagen.');
+	$page .= '</div>';
+	
+	$block=$_POST["Block"];
    echo "[block=".$block."]";
   
    $active=$_POST["Active"];
@@ -382,9 +389,6 @@ function oostpoort_visit_admin_save() {
    $role=$_POST["Role"];
    echo "[role=".$role."]";
 	
-	$id=$_POST["Id"];
-   echo "[id=".$id."]";
-
 	$firstName=$_POST["FirstName"];
    echo "[firstName=".$firstName."]";
 
@@ -395,8 +399,7 @@ function oostpoort_visit_admin_save() {
    echo "[phone=".$phone."]";
 	
 	$mobile=$_POST["Mobile"];
-   echo "[mobile=".$mobile."]";
-	
+   echo "[mobile=".$mobile."]";	
 	  
 	if ($active == 'on') { 
 	    $active_token="WAAR";
@@ -422,32 +425,37 @@ function oostpoort_visit_admin_save() {
 	$query .= 'where ';
 	$query .= '  Prs_ID='.$id;
 	
-	//echo $query;
+	echo $query;
 	db_query($query); 
 	
 	$query  = 'select ';
 	$query .= '  Prs_Huidig_Adr_ID as AdrId ';
 	$query .= 'from ';
-	$query .= ' oostpoort_persoon ';
+	$query .= '  oostpoort_persoon ';
 	$query .= 'where ';
-	$query .= ' Prs_ID='.$id;
+	$query .= '  Prs_ID='.$id;
 	
 	echo $query;
 	$queryResult = db_query($query);
 	$data = db_fetch_object($queryResult);
 				
 	$query  = 'UPDATE oostpoort_adres SET ';
-	$query .= '  	Adr_Telefoon="'.$phone.'" ';
+	$query .= '  Adr_Telefoon="'.$phone.'" ';
 	$query .= 'where ';
 	$query .= '  Adr_ID='.$data->AdrId;
 	
 	echo $query;
 	db_query($query);  
 	
+	return $page;	
 }
 		  
 function oostpoort_visit_admin_add($id)
 {
+	$page .= '<div class="messages status">';
+   $page .= t('Medewerker '.$id.' is toegevoegd.');
+	$page .= '</div>';
+	
 	$id=$_POST["Id"];
    //echo "[id=".$id."]";
 			
@@ -474,9 +482,15 @@ function oostpoort_visit_admin_add($id)
 		//echo $query;
 		db_query($query); 
 	}
+	
+	return $page;
 }
  
 function oostpoort_visit_admin_delete($id) {
+
+	$page .= '<div class="messages status">';
+   $page .= t('Medewerker '.$id.' is verwijderd.');
+	$page .= '</div>';
 
    $id=$_POST["Id"];
    //echo "[id=".$id."]";
@@ -489,6 +503,8 @@ function oostpoort_visit_admin_delete($id) {
 	
 	//echo $query;
 	db_query($query); 
+	
+	return $page;
 }
 
 // ##################################################################################
@@ -531,6 +547,11 @@ function oostpoort_view_owner($uid, $readonly) {
 		$data = db_fetch_object($queryResult);
 
 		$page.='<select name="Owner">';
+
+		$page.='<option value="0"';
+			if ($uid==0) $page.='selected="selected" ';
+		$page.='>&nbsp;</option>';
+					
 		while ($data = db_fetch_object($queryResult)) {
 		
 			$page.='<option value="'.$data->uid.'" ';

@@ -259,7 +259,7 @@ function oostpoort_visit_admin_member_view()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Blok').'</label>';
-	$page .= oostpoort_view_block($data->MdwBlkID, false);
+	$page .= oostpoort_view_block($data->MdwBlkID, false, true);
 	$page .= '<div class="description">Selecteer blok waar medewerker actief is.</div>';
 	$page .= '</div>';
 
@@ -592,7 +592,7 @@ function oostpoort_view_owner($uid, $readonly) {
    return $page;
 }
 
-function oostpoort_view_block($block, $readonly) {
+function oostpoort_view_block($block, $readonly, $omschrijving) {
 
    if ( ! $readonly ) {
 		$query  = 'SELECT Blk_ID, Blk_nummer, Blk_Omschrijving FROM {oostpoort_blok} order by Blk_nummer';
@@ -603,9 +603,13 @@ function oostpoort_view_block($block, $readonly) {
 		
 			$page.='<option value="'.$data->Blk_ID.'" ';
 			if ($data->Blk_ID==$block) $page.='selected="selected" ';
-			$page.='>'.$data->Blk_Omschrijving.' [Blok '.$data->Blk_nummer.']</option>';
+			if ($omschrijving) {
+				$page.='>'.$data->Blk_Omschrijving.' [Blok '.$data->Blk_nummer.']</option>';
+			} else {
+				$page.='>Blok '.$data->Blk_nummer.'</option>';
+			}
 		}
-		$page.='</select>';
+		$page.='</select> ';
 	  
    } else {
 	 

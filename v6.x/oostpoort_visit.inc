@@ -29,34 +29,42 @@
 */
 
 // ##################################################################################
-// FAMILY LIST BLOCK
+// STATE MACHINE
 // ##################################################################################
 
-/**
- * Render a page showing the visit list
- * @return HTML
- */
 function oostpoort_visit()  
 {
 	$action=$_POST['action'];
 	echo "[action=".$action."]";
       
-	if ($action=="Select") {
+	if ($action=="Edit") {
 		
 		$page = oostpoort_visit_address_view();
 		
 	} else if ($action=="Cancel") {
 		
 		$page = oostpoort_visit_list_view();
-		
+	
+	} else if ($action=="Search") {
+
+		$page = oostpoort_visit_list_search();
+	
+	} else if ($action=="Select") {
+
+		// Store selected addresses.
+		$page = oostpoort_visit_list_view();
+	
 	} else {
-  
+
 		$page = oostpoort_visit_list_view();
 	}
     
 	print theme("page", $page);
 }
 
+// ##################################################################################
+// PAGES
+// ##################################################################################
 
 function oostpoort_visit_list_view() {
   
@@ -110,7 +118,7 @@ function oostpoort_visit_list_view() {
 		$page .= '</option>';
 	}
 	$page .='</select> '; 
-	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Search',t('Zoeken'));
+	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'List',t('Zoeken'));
   
    $page .= '<br/>';
 	$page .= '<br/>';
@@ -160,7 +168,7 @@ function oostpoort_visit_list_view() {
 			$page_tmp .= '<tr class="odd">';
 	 	}
 		$page_tmp .= '<td>'.$i.'</td>';	  
-		$page_tmp .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'Select', $data->Straatnaam).'</td>';
+		$page_tmp .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'Edit', $data->Straatnaam).'</td>';
 		$page_tmp .= '<td>'.$data->postcode.'</td>';
 		$page_tmp .= '<td>'.$data->plaats.'</td>';	
 		$page_tmp .= '<td>'.oostpoort_datum($data->geplande).'</td>';
@@ -360,6 +368,149 @@ function oostpoort_visit_address_view() {
    $page .= '</div>';
 
    return $page;  
+}
+
+function oostpoort_visit_list_search() {
+  
+	// Create Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= 'Visit > Search';
+	$page .= '</div>';
+
+   // Get posted parameters
+	$PrsId=$_POST["PrsId"];
+	if ($PrsId=="") {
+		$PrsId=0;
+	}	
+	echo "[PrsId=".$PrsId."]";
+	
+   // Store PrsId on session scope
+   $_SESSION["PrsId"]=$PrsId;
+  	
+	// Build page
+	$page .= '<div class="oostpoort">';
+	
+	drupal_set_title(t('Oostpoort bezoekwerk' ) );
+
+	$page .= '<form name="OostpoortForm" method="POST" >';
+     
+	$query  = 'select ';
+	$query .= '  a.Blk_ID as BlkId, '; 
+	$query .= '  a.Blk_Nummer as PrsNummer, ';
+	$query .= '  a.Blk_Omschrijving as BlkOmschrijving ';
+	$query .= 'from ';
+	$query .= '  oostpoort_blok a ';
+	$query .= 'where ';
+	$query .= ' a.Blk_Nummer != 0 ';
+	$query .= 'order by ';
+	$query .= ' a.Blk_Nummer';
+  
+	//echo $query;  
+	$queryResult = db_query($query); 
+  
+   $page .= '<br/>';
+	$page .= '<b>Blok </b>';  
+	$page .= '<select name="BlkId">';   
+	$page .= '<option value="0" selected="selected">';
+		
+	while ($data = db_fetch_object($queryResult))
+	{
+		$page .= '<option value="'.$data->BlkId.'" ';
+		$page .= '>Blok '.$data->PrsNummer;
+		$page .= '</option>';
+	}
+	$page .='</select> '; 
+	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Filteren',t('Filteren'));
+  
+	$page .= '<br/>';
+	$page .= '<br/>';
+   $page .= t('Selecteer nieuwe adressen om te bezoeken.');
+
+	// Query Database
+	$query  = 'select ';
+	$query .= '  a.Adr_Id as AdrId, ';
+	$query .= '  concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, ';
+	$query .= '  a.Adr_Plaats as AdrPlaats, ';
+	$query .= '  a.Adr_postcode as AdrPostcode, ';
+	$query .= '  a.Adr_Telefoon as AdrTelefoon ';
+	$query .= 'from ';
+	$query .= '  oostpoort_adres a ';
+	$query .= 'where ';
+	$query .= '  a.Adr_id not in (select b.Bzk_Adr_ID from oostpoort_bezoek b where b.Bzk_BezoekNietGewenstDatum=NULL) ';
+	$query .= 'order by ';
+	$query .= '  Straatnaam';
+  
+	$queryResult = db_query($query);
+	//echo $query;
+  
+	// Show Banner
+	$page .= '<table>';
+	$page .= '<tr>';
+	$page .= '<thead>';
+	$page .= '<tr>';
+	$page .= '<th><b>'.t('').'</b></th>';
+	$page .= '<th><b>'.t('Straat').'</b></th>';
+	$page .= '<th><b>'.t('Postcode').'</b></th>';
+	$page .= '<th><b>'.t('Plaats').'</b></th>';
+	$page .= '<th><b>'.t('Telefoon').'</b></th>';
+	$page .= '<th><b>'.t('Medewerker').'</b></th>';
+	$page .= '<th><b>'.t('Laatste Bezoek').'</b></th>';
+	$page .= '</tr>';
+	$page .= '</thead>';
+
+	// Show all found address
+	$page .= '<tbody>';
+	$page_tmp='';
+	while ($data = db_fetch_object($queryResult))
+	{
+		if ((++$i%2)==0) {
+			$page_tmp .= '<tr class="even">';
+		} else {
+			$page_tmp .= '<tr class="odd">';
+	 	}
+		$page_tmp .= '<td>'.oostpoort_view_checkbox2( "Active".$i).'</td>';	  
+		$page_tmp .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'Select', $data->Straatnaam).'</td>';
+		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
+		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';	
+		$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';	
+		$page_tmp .= '<td>-</td>';
+		$page_tmp .= '<td>'.oostpoort_datum($data->afgelegd).'</td>';
+		$page_tmp .= '</tr>';
+   }
+
+	if ( $page_tmp!='') {
+		$page .= $page_tmp;
+	} else  {	
+		$page .= '<tr class="even">';
+		$page .= '<td>'.t('Geen informatie gevonden').'</td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</tr>';
+	}
+	$page .= '</tbody>';
+	$page .= '</table>';
+
+  	// Button bar
+ 	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Select',t('Terug'));
+	
+	$page .= '</form>';
+	$page .= '</div>';
+
+	return $page;  
+}
+
+
+// ##################################################################################
+// UTILS
+// ##################################################################################
+
+function oostpoort_view_checkbox2( $label ) {
+
+	return '<input type="checkbox" name="'.$label.'" />';
 }
 
 

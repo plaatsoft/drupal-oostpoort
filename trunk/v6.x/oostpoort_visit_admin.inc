@@ -228,55 +228,55 @@ function oostpoort_visit_admin_member_view()
 	$page .= '<legend>Instellingen</legend>';
 		
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Eigenaar').'</label>';
+	$page .= '<label>'.t('Eigenaar').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_owner($data->MdwUid, false);
 	$page .= '<div class="description">Selecteer hier de login naam van de medewerker.</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Roepnaam').'</label>';
+	$page .= '<label>'.t('Roepnaam').': <span class="form-required">*</span></label>';
 	$page .= '<input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'">';
 	$page .= '<div class="description">Roepnaam van medewerker.</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Telefoon').'</label>';
+	$page .= '<label>'.t('Telefoon').':</label>';
 	$page .= '<input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->AdrTelefoon.'">';
 	$page .= '<div class="description">Telefoon nummer van medewerker.</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Mobiel').'</label>';
+	$page .= '<label>'.t('Mobiel').':</label>';
 	$page .= '<input id="text" name="Mobile" size="20" maxlength="20" type="text" value="'.$data->PrsMobiel.'">';
 	$page .= '<div class="description">Mobiele nummer van medewerker.</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Email').'</label>';
+	$page .= '<label>'.t('Email').': <span class="form-required">*</span></label>';
 	$page .= '<input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'">';
 	$page .= '<div class="description">Email adres van medewerker.</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Blok').'</label>';
+	$page .= '<label>'.t('Blok').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_block($data->MdwBlkID, false, true);
 	$page .= '<div class="description">Selecteer blok waar medewerker actief is.</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Actief').'</label>';
+	$page .= '<label>'.t('Actief').':</label>';
 	$page .= oostpoort_view_checkbox($data->MdwActief, false);	  
 	$page .= '<div class="description">Actief of niet actief.</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Rol Omschrijving').'</label>';
+	$page .= '<label>'.t('Rol Omschrijving').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_role($data->MdwRolID, false);
 	$page .= '<div class="description">Selecteer welk rol deze medewerker heeft.</div>';
 	$page .= '</div>';
-    
+    	 
 	$page .= oostpoort_hiddenlink('OostpoortForm','Id',$data->PrsId,'Save',t('Opslaan'));
-	
+		
 	// Only when no visit work is executed visit member can be deleted
 	if ($data->Amount==0) {
 		$page .= ' | ';
@@ -303,8 +303,7 @@ function oostpoort_visit_admin_member_search()
 	// Page title
 	drupal_set_title(t('Oostpoort bezoekwerk administratie' ) );
 
-	$page .= '<form name="OostpoortForm" method="POST" >';
-	
+		
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
@@ -314,8 +313,10 @@ function oostpoort_visit_admin_member_search()
 	
 	$page .= '<br/>';
   
-   $page .= '<table>';
+   $page .= '<form name="OostpoortForm" method="POST" >';  
 	
+   $page .= '<table>';	
+
    $page .= '<tr>';
    $page .= '<td>';
 	$page .= t('Voer een achternaam in:');
@@ -324,15 +325,14 @@ function oostpoort_visit_admin_member_search()
 	
    $page .= '<tr>';
    $page .= '<td>';
-   $page .= '<form action="'.url(URL_SEARCH).'" method="POST">';
+
    $page .= '<input id="text" name="search" size="65" maxlength="65" type="text" value="'.$search.'"> ';
 	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Search',t('Zoeken'));
-   $page .= '</form>';
    $page .= '</td>';	
 	$page .= '</tr>';
 	
 	$page .= '</table>';
-    
+   
 	if ($search!="")
 	{
 		$query  = 'select ';
@@ -353,26 +353,34 @@ function oostpoort_visit_admin_member_search()
 		// Show Banner
 		$page .= t('Als u een persoon selecteerd wordt hij automatisch toegevoegd aan de bezoekmedewerkerslijst');
 		
-		$page .= '<table border="1" cellpadding="3" cellspacing="3">';
+		$page .= '<table>';
+		$page .= '<thead>';
 		$page .= '<tr>';
-		$page .= '<td><b>'.t('Rij').'</b></td>';
-		$page .= '<td><b>'.t('Naam').'</b></td>';
-		$page .= '<td><b>'.t('Id').'</b></td>';
-		$page .= '<td><b>'.t('Geslacht').'</b></td>';  
-		$page .= '<td><b>'.t('Geboortedatm').'</b></td>';
+		$page .= '<th><b>'.t('Rij').'</b></th>';
+		$page .= '<th><b>'.t('Naam').'</b></th>';
+		$page .= '<th><b>'.t('Id').'</b></th>';
+		$page .= '<th><b>'.t('Geslacht').'</b></th>';  
+		$page .= '<th><b>'.t('Geboortedatm').'</b></th>';
 		$page .= '</tr>';
+		$page .= '</thead>';
+		$page .= '<tbody>';
 
 		// Show all found address
 		while ($data = db_fetch_object($queryResult))
 		{
-			$page .= '<tr>';
-			$page .= '<td>'.++$i.'</td>';	  
+			if ((++$i%2)==0) {
+				$page .= '<tr class="even">';
+			} else {
+				$page .= '<tr class="odd">';
+			}
+			$page .= '<td>'.$i.'</td>';	  
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Add', $data->Naam).'</td>';
 			$page .= '<td>'.$data->PrsId.'</td>';	  	  
 			$page .= '<td>'.oostpoort_visit_admin_geslacht($data->PrsGeslacht).'</td>'; 
 			$page .= '<td>'.oostpoort_view_date($data->PrsGeboortedatum).'</td>'; 
 			$page .= '</tr>';
 		}
+		$page .= '</tbody>';
 		$page .= '</table>';
 	}
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Cancel',t('Terug'));

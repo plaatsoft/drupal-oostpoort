@@ -69,12 +69,19 @@ function oostpoort_visit_admin()
      $page .= oostpoort_visit_admin_delete();
      $page .= oostpoort_visit_admin_list_view();
 	  
+	} else if ($action=="MainMenu") {
+	
+		oostpoort_mainmenu();
+		$page="";
+	  
 	} else {
   
 	  $page .= oostpoort_visit_admin_list_view();
 	}
   
-	print theme("page", $page);
+	if ($page!="") {
+		print theme("page", $page);
+	}
 }
 
 // ##################################################################################
@@ -161,7 +168,9 @@ function oostpoort_visit_admin_list_view()
 	$page .= '</table>';
     
 	// Button bar
- 	$page .= oostpoort_hiddenlink('OostpoortForm','Id','0','Search',t('Toevoegen'));
+ 	$page .= oostpoort_hiddenlink('OostpoortForm','Id','0','Search',t('Toevoegen')).' | ';
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+
 		
 	$page .= '</form>';  
 	$page .= '</div>';

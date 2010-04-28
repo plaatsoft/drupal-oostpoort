@@ -475,9 +475,9 @@ function oostpoort_visit_list_search() {
 	$query .= '  a.Adr_postcode as AdrPostcode, ';
 	$query .= '  a.Adr_Telefoon as AdrTelefoon, ';
 	$query .= '  (select concat(IF(Prs_Roepnaam="",Prs_Voornamen, Prs_Roepnaam)," ", Prs_Tussenvoegsels, " ", Prs_Achternaam) from oostpoort_persoon where Prs_Id=b.Bzk_Mdw_ID) as Naam ';
-	$query .= 'FROM oostpoort_adres a LEFT OUTER JOIN oostpoort_bezoek b ON a.Adr_ID = b.Bzk_Adr_Id and b.Bzk_GeplandDatum=0 ';
+	$query .= 'FROM oostpoort_adres a LEFT OUTER JOIN oostpoort_bezoek b ON a.Adr_ID = b.Bzk_Adr_Id ';
 	$query .= 'where ';
-	//$query .= '  a.Adr_Id not in (select Bzk_Adr_ID from oostpoort_bezoek where Bzk_AfgelegdDatum=0 and Bzk_GeannuleerdDatum=0 and Bzk_BezoekNietGewenstDatum=0) and ';
+	$query .= '  a.Adr_DeactiveerDatum=0 and '; 
 	$query .= '  a.Adr_Straat like "b%"';
   
 	$queryResult = db_query($query);

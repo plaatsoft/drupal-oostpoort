@@ -669,8 +669,13 @@ function oostpoort_view_role($role, $readonly) {
 
 function oostpoort_view_date($date) { 
 
-  list($year, $month, $day) = split('[/.-]', $date);
-  return $day.'-'.$month.'-'.$year;
+  $page = "";
+  
+  if ($date!=0) {
+		list($year, $month, $day) = split('[/.-]', $date);
+		$page = $day.'-'.$month.'-'.$year;
+  }
+  return $page;
 }
 
 

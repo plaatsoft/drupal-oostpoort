@@ -247,20 +247,26 @@ function oostpoort_visit_address_view() {
 	drupal_set_title(t('Oostpoort bezoekwerk' ) );
 		
 	$query  = 'select ';
+	$query .= ' a.Bzk_Id as BzkId, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as straat, ';
 	$query .= ' b.Adr_Plaats as AdrPlaats, ';
 	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
-	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon, ';	
+	$query .= ' b.Adr_Id as AdrId, ';
+	$query .= ' a.Bzk_Adr_Id as BzkAdrId, ';
+	$query .= ' a.Bzk_GeplandDatum as BzkGeplandDatum, ';
+	$query .= ' concat(IF(c.Prs_Roepnaam="",c.Prs_Voornamen, c.Prs_Roepnaam)," ", c.Prs_Tussenvoegsels, " ", c.Prs_Achternaam) as Naam ';
 	$query .= 'from ';
-	$query .= ' oostpoort_bezoek a, oostpoort_adres b ';
+	$query .= ' oostpoort_bezoek a, oostpoort_adres b, oostpoort_persoon c ';
 	$query .= 'where ';
+	$query .= ' a.Bzk_Mdw_ID=c.Prs_id and ';
 	$query .= ' a.Bzk_Adr_Id = b.Adr_Id and ';
 	$query .= ' a.Bzk_Id='.$BzkId;
   
 	//echo $query;  
 	$queryResult = db_query($query); 
 	$data = db_fetch_object($queryResult);
-	
+		
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Adres gegevens</legend>';
 	$page .= '<h4>'.$data->Naam.'</h4>';	
@@ -269,45 +275,29 @@ function oostpoort_visit_address_view() {
 	$page .= '<h4>'.$data->AdrTelefoon.'</h4>';	
 	$page .= '</fieldset>' ;
 	
-	// Find current planned visit entry.
-	$query  = 'select ';
-	$query .= ' a.Bzk_BezoekInfo as BzkInfo, ';
-	$query .= ' a.Bzk_GeplandDatum as BzkGeplandDatum, ';
-	$query .= ' a.Bzk_AfgelegdDatum as BzkAfgelegdDatum, ';
-	$query .= ' a.Bzk_GeannuleerdDatum as BzkGeannuleerdDatum, ';
-   $query .= ' a.Bzk_BezoekNietGewenstDatum as BzkBezoekNietGewenstDatum, ';
-	$query .= ' a.Bzk_Bzt_ID as BzkBztId, ';
-	$query .= ' a.Bzk_Adr_Id as BzkAdrId ';
-	$query .= 'from ';
-	$query .= '  oostpoort_bezoek a ';
-	$query .= 'where ';
-	$query .= ' a.Bzk_id='.$BzkId.' and ';
-	$query .= ' a.Bzk_AfgelegdDatum=0 and ';
-	$query .= ' a.Bzk_GeannuleerdDatum=0 and ';
-   $query .= ' a.Bzk_BezoekNietGewenstDatum=0'; 
-    
-   //echo $query;  
-	$queryResult = db_query($query); 
-	$data = db_fetch_object($queryResult);
-	
 	$page .= oostpoort_visit_address_part($data, false);
 		
 	// Find all other closed visit entries.
 	$query  = 'select ';
+	$query .= ' a.Bzk_Id as BzkId, ';
 	$query .= ' a.Bzk_BezoekInfo as BzkInfo, ';
 	$query .= ' a.Bzk_GeplandDatum as BzkGeplandDatum, ';
 	$query .= ' a.Bzk_AfgelegdDatum as BzkAfgelegdDatum, ';
 	$query .= ' a.Bzk_GeannuleerdDatum as BzkGeannuleerdDatum, ';
    $query .= ' a.Bzk_BezoekNietGewenstDatum as BzkBezoekNietGewenstDatum, ';
 	$query .= ' a.Bzk_Bzt_ID as BzkBztId, ';
-	$query .= ' a.Bzk_Adr_Id as BzkAdrId ';
+	$query .= ' a.Bzk_Adr_Id as BzkAdrId, ';
+	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voornamen, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam ';
 	$query .= 'from ';
-	$query .= '  oostpoort_bezoek a ';
+	$query .= '  oostpoort_bezoek a, oostpoort_persoon b ';
 	$query .= 'where ';
-	$query .= ' a.Bzk_Adr_Id='.$data->BzkAdrId.' and ';
+	$query .= ' a.Bzk_Mdw_ID=b.Prs_id and ';
+	$query .= ' a.Bzk_Adr_Id='.$data->AdrId.' and ';
 	$query .= ' (a.Bzk_AfgelegdDatum!=0 or ';
 	$query .= ' a.Bzk_GeannuleerdDatum!=0 or ';
    $query .= ' a.Bzk_BezoekNietGewenstDatum!=0) '; 
+	$query .= 'order by ';
+	$query .= ' a.Bzk_Id desc ';
     
    //echo $query;  
 	$queryResult = db_query($query); 
@@ -328,40 +318,50 @@ function oostpoort_visit_address_part($data, $readonly)
 	$page .= '<fieldset>';
 	if ($data->BzkAfgelegdDatum!=0) {
 
-		$page .= '<legend>Boek afgelegd op '.oostpoort_view_date($data->BzkGeplandDatum).'</legend>';
+		$page .= '<legend>Bezoek afgelegd op '.oostpoort_view_date($data->BzkGeplandDatum).' door '.$data->Naam.'</legend>';
 		$type = 1;
 	
 	} else if ($data->BzkBezoekNietGewenstDatum!=0) {
 	
-		$page .= '<legend>Geboekt niet gewenst op '.oostpoort_view_date($data->BzkBezoekNietGewenstDatum).'</legend>';
+		$page .= '<legend>Bezoekt niet gewenst op '.oostpoort_view_date($data->BzkBezoekNietGewenstDatum).' door '.$data->Naam.'</legend>';
 		$type = 2;
 	
 	} else if ($data->BzkGeannuleerdDatum!=0) {
 	
-		$page .= '<legend>Geboek geannuleerd op '.oostpoort_view_date($data->BzkGeannuleerdDatum).'</legend>';
+		$page .= '<legend>Bezoek geannuleerd op '.oostpoort_view_date($data->BzkGeannuleerdDatum).' door '.$data->Naam.'</legend>';
 		$type = 3;
 	
 	} else {
-   	$page .= '<legend>Geboekt op '.oostpoort_view_date($data->BzkGeplandDatum).'</legend>';
+   	$page .= '<legend>Geboekt op '.oostpoort_view_date($data->BzkGeplandDatum).' door '.$data->Naam.'</legend>';
 		$type = 4;
 	}
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Bezoek Id').': </label>';
+	$page .= $data->BzkId;
+	$page .= '</div>';
+	
 	
 	if (($type==2) or ($type==4)) {
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Bezoek niet gewenst').': </label>';
 		$page .= oostpoort_view_checkbox2("NoVisit","ONWAAR",$readonly);
 		$page .= '<div class="description">';
-		$page .= t('Als bezoek niet meer gewenst is selecteer deze optie. Gelieve reden op te nemen in notitie veld!. Er zullen dan geen bezoeken meer worden ingepland.');
+		if ($type==4) {
+			$page .= t('Als bezoek niet meer gewenst is selecteer deze optie. Gelieve reden op te nemen in notitie veld!. Er zullen dan geen bezoeken meer worden ingepland.');
+		}
 		$page .= '</div>';
 		$page .= '</div>';
 	}
 	
-	if ($type!=2) {
+	if (($type==1) or ($type==3) or ($type==4)) {
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Bezoek type').': <span class="form-required">*</span></label>';
 		$page .= oostpoort_view_type("VisitType", $data->BzkBztId, $readonly);
 		$page .= '<div class="description">';
-		$page .= t('Selecteer wat voor type bezoek is uitgevoerd.');
+		if ($type==4)  {
+			$page .= t('Selecteer wat voor type bezoek is uitgevoerd.');
+		}
 		$page .= '</div>';
 		$page .= '</div>';
 	}
@@ -370,7 +370,9 @@ function oostpoort_visit_address_part($data, $readonly)
 	$page .= '<label>'.t('Bezoek notities').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_note("BzkInfo", $data->BzkInfo, $readonly);
 	$page .= '<div class="description">';
-	$page .= t('Hier kunt u algemene niet vertrouwelijke informatie over het bezoek vastleggen.');
+	if ($type==4) {
+		$page .= t('Hier kunt u algemene niet vertrouwelijke informatie over het bezoek vastleggen.');
+	}
 	$page .= '</div>';
 	$page .= '</div>';
 	
@@ -378,6 +380,7 @@ function oostpoort_visit_address_part($data, $readonly)
 	
 		// Get Address members.
 		$query  = 'select ';
+		$query .= '  a.Prs_Id as PrsId, ';
 		$query .= '  concat(IF(a.Prs_Roepnaam="",a.Prs_Voornamen, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
 		$query .= '  a.Prs_GeslachtMV as PrsGeslacht, '; 
 		$query .= '  a.Prs_Geboortedatum as PrsGeboorteDatum, ';
@@ -389,10 +392,12 @@ function oostpoort_visit_address_part($data, $readonly)
 		$query .= 'where ';
 		$query .= '  a.Prs_Huidig_Adr_ID='.$data->BzkAdrId.' ';
 		$query .= 'order by ';
-		$query .= '  PrsGeboorteDatum';
+		$query .= '  PrsGeboorteDatum;';
   
 		$queryResult = db_query($query);
 		//echo $query;
+		//echo '<br/>';
+	   //echo '<br/>';
   
 		// Show Banner
 		$page .= '<table>';
@@ -411,29 +416,32 @@ function oostpoort_visit_address_part($data, $readonly)
 		// Show all found members
 		$page .= '<tbody>';
 		$page_tmp='';
-		while ($data = db_fetch_object($queryResult))
+		while ($persoon = db_fetch_object($queryResult))
 		{
 			if ((++$i%2)==0) {
 				$page .= '<tr class="even">';
 			} else {
 				$page .= '<tr class="odd">';
 			}
-			$page .= '<td>'.oostpoort_view_checkbox2( "Active".$i, "ONWAAR", $readonly).'</td>';
-			$page .= '<td>'.$data->Naam.'</td>';
-			$page .= '<td>'.oostpoort_visit_admin_geslacht($data->PrsGeslacht).'</td>';
-			$page .= '<td>'.oostpoort_view_date($data->PrsGeboorteDatum).'</td>';
-			$page .= '<td>'.oostpoort_view_date($data->PrsHuwelijksdatum).'</td>';
-			$page .= '<td>'.$data->PrsMobiel.'</td>';
-			$page .= '<td>'.$data->PrsEmail.'</td>';
+			$page .= '<td>'.oostpoort_view_checkbox2( "Active".$persoon->PrsId, "ONWAAR", $readonly).'</td>';
+			$page .= '<td>'.$persoon->Naam.'</td>';
+			$page .= '<td>'.oostpoort_visit_admin_geslacht($persoon->PrsGeslacht).'</td>';
+			$page .= '<td>'.oostpoort_view_date($persoon->PrsGeboorteDatum).'</td>';
+			$page .= '<td>'.oostpoort_view_date($persoon->PrsHuwelijksdatum).'</td>';
+			$page .= '<td>'.$persoon->PrsMobiel.'</td>';
+			$page .= '<td>'.$persoon->PrsEmail.'</td>';
 			$page .= '</tr>';
 		}
 		$page .= '</tbody>';
 		$page .= '</table>';
 
 		// Button bar	
-		$page .= oostpoort_hiddenlink('OostpoortForm','BzkId',$BzkId,'Ready',t('Bezoek afronden')).' | ';
-		$page .= oostpoort_hiddenlink('OostpoortForm','BzkId',$BzkId,'DeSelect',t('Bezoek annuleren')).' | ';
-		$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Cancel',t('Terug'));	
+		if ($type==4)
+		{
+			$page .= oostpoort_hiddenlink('OostpoortForm','BzkId',$data->BzkId,'Ready',t('Bezoek afronden')).' | ';
+			$page .= oostpoort_hiddenlink('OostpoortForm','BzkId',$data->BzkId,'DeSelect',t('Bezoek annuleren')).' | ';
+			$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Cancel',t('Terug'));	
+		}
 	}
 		
 	$page .= '</fieldset>' ;
@@ -473,11 +481,12 @@ function oostpoort_visit_list_search() {
 	$query .= '  concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, ';
 	$query .= '  a.Adr_Plaats as AdrPlaats, ';
 	$query .= '  a.Adr_postcode as AdrPostcode, ';
-	$query .= '  a.Adr_Telefoon as AdrTelefoon, ';
-	$query .= '  (select concat(IF(Prs_Roepnaam="",Prs_Voornamen, Prs_Roepnaam)," ", Prs_Tussenvoegsels, " ", Prs_Achternaam) from oostpoort_persoon where Prs_Id=b.Bzk_Mdw_ID) as Naam ';
-	$query .= 'FROM oostpoort_adres a LEFT OUTER JOIN oostpoort_bezoek b ON a.Adr_ID = b.Bzk_Adr_Id ';
-	$query .= 'where ';
-	$query .= '  a.Adr_DeactiveerDatum=0 and '; 
+	$query .= '  a.Adr_Telefoon as AdrTelefoon ';
+	$query .= 'FROM ';
+	$query .= '  oostpoort_adres a ';
+	$query .= 'where '; 
+	$query .= '  a.Adr_GeplandDatum=0 and ';
+	$qeury .= '  a.Adr_DeactiveerDatum=0 and ';
 	$query .= '  a.Adr_Straat like "b%"';
   
 	$queryResult = db_query($query);
@@ -507,8 +516,8 @@ function oostpoort_visit_list_search() {
 		} else {
 			$page_tmp .= '<tr class="odd">';
 	 	}
-		$page_tmp .= '<td>'.oostpoort_view_checkbox2( "Active".$i, "ONWAAR", false).'</td>';	  
-		$page_tmp .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'Select', $data->Straatnaam).'</td>';
+		$page_tmp .= '<td>'.oostpoort_view_checkbox2( "Active".$data->AdrId, "ONWAAR", false).'</td>';	  
+		$page_tmp .= '<td>'.$data->Straatnaam.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';	
 		$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';	
@@ -545,6 +554,106 @@ function oostpoort_visit_list_search() {
 // ACTIONS
 // ##################################################################################
 
+function oostpoort_visit_select()
+{
+	// Get PrsId from session scope
+   $PrsId=$_SESSION["PrsId"];
+	echo "[PrsId=".$PrsId."]";
+	
+	// Query Database
+	$query  = 'SELECT ';
+	$query .= '  a.Adr_Id as AdrId, ';
+	$query .= '  concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, ';
+	$query .= '  a.Adr_Plaats as AdrPlaats, ';
+	$query .= '  a.Adr_postcode as AdrPostcode, ';
+	$query .= '  a.Adr_Telefoon as AdrTelefoon ';
+	$query .= 'FROM ';
+	$query .= '  oostpoort_adres a ';
+	$query .= 'where '; 
+	$query .= '  a.Adr_GeplandDatum=0 and ';
+	$qeury .= '  a.Adr_DeactiveerDatum=0 and ';
+	$query .= '  a.Adr_Straat like "b%"';
+			 
+	$queryResult = db_query($query);
+	//echo $query;
+	
+	while ($data = db_fetch_object($queryResult))
+	{
+	   $i++;
+		$value=$_POST["Active".$data->AdrId];		
+		if ($value=="on") {
+			
+			$amount++;
+
+			// Check if entry all exist (Protect against reload button), if so skip insert)
+			$query  = 'select Adr_GeplandDatum as AdrGeplandDatum from oostpoort_adres where Adr_id='.$data->AdrId;
+			$queryResult = db_query($query);
+			$tmp = db_fetch_object($queryResult);
+			if ($tmp->AdrGeplandDatum==0)
+			{			
+			   // Insert new visit
+				$query = 'INSERT INTO oostpoort_bezoek (';
+				$query .= '  `Bzk_Mdw_ID`, `Bzk_Adr_ID`, `Bzk_GeplandDatum`, `Bzk_Bzt_ID`)';
+				$query .= 'VALUES ';
+				$query .= '( '.$PrsId.','.$data->AdrId.', "'.date("Y-m-d").'", 1 )';
+				
+				echo $query;
+				db_query($query);
+					
+				// Update adres entry
+				$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="'.date("Y-m-d").'" where Adr_id='.$data->AdrId;
+				
+				echo $query;
+				db_query($query);
+			}
+		}
+	}
+
+   if ($amount>0) {	
+		$page .= '<div class="messages status">';
+		$page .= t($amount.' bezoeken zijn ingepland.');
+		$page .= '</div>';
+	}
+	
+	return $page;
+}
+
+
+function oostpoort_visit_deselect()
+{	
+   // Get posted parameters
+	$BzkId=$_POST["BzkId"];
+	echo "[BzkId=".$BzkId."]";
+	
+	$BzkInfo=$_POST["BzkInfo"];
+	echo "[BzkInfo=".$BzkInfo."]";	
+	
+	// Update database
+	$query  = 'UPDATE oostpoort_bezoek SET ';
+	$query .= '  Bzk_GeannuleerdDatum="'.date("Y-m-d").'", ';
+	$query .= '  Bzk_BezoekInfo="'.$BzkInfo.'" ';
+	$query .= 'where ';
+	$query .= '  Bzk_ID='.$BzkId;
+	echo $query;
+	db_query($query); 
+	
+	$query  = 'select Bzk_Adr_Id as BzkAdrId  from oostpoort_bezoek where Bzk_id='.$BzkId;
+	$queryResult = db_query($query);
+	echo $query;
+	$data = db_fetch_object($queryResult);
+
+	// Update adres entry
+	$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="0" where Adr_id='.$data->BzkAdrId;
+	echo $query;
+	db_query($query);
+			
+	$page .= '<div class="messages status">';
+   $page .= t('Bezoek '.$BzkId.' is geannuleerd');
+	$page .= '</div>';
+	
+	return $page;
+}
+
 function oostpoort_visit_ready()
 {
    // Get posted parameters
@@ -574,83 +683,19 @@ function oostpoort_visit_ready()
 	
 	echo $query;
 	db_query($query); 
-	
+
+	$query  = 'select Bzk_Adr_Id as BzkAdrId  from oostpoort_bezoek where Bzk_id='.$BzkId;
+	$queryResult = db_query($query);
+	echo $query;
+	$data = db_fetch_object($queryResult);
+
+	// Update adres entry
+	$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="0" where Adr_id='.$data->BzkAdrId;
+	echo $query;
+	db_query($query);
+				
 	$page .= '<div class="messages status">';
    $page .= t('Bezoek '.$BzkId.' is afgerond');
-	$page .= '</div>';
-	
-	return $page;
-}
-
-function oostpoort_visit_deselect()
-{	
-   // Get posted parameters
-	$BzkId=$_POST["BzkId"];
-	echo "[BzkId=".$BzkId."]";
-	
-	$BzkInfo=$_POST["BzkInfo"];
-	echo "[BzkInfo=".$BzkInfo."]";	
-	
-	// Update database
-	$query  = 'UPDATE oostpoort_bezoek SET ';
-	$query .= '  Bzk_GeannuleerdDatum="'.date("Y-m-d").'", ';
-	$query .= '  Bzk_BezoekInfo="'.$BzkInfo.'" ';
-	$query .= 'where ';
-	$query .= '  Bzk_ID='.$BzkId;
-	
-	echo $query;
-	db_query($query); 
-	
-	$page .= '<div class="messages status">';
-   $page .= t('Bezoek '.$BzkId.' is geannuleerd');
-	$page .= '</div>';
-	
-	return $page;
-}
-
-function oostpoort_visit_select()
-{
-	// Get PrsId from session scope
-   $PrsId=$_SESSION["PrsId"];
-	echo "[PrsId=".$PrsId."]";
-	
-   // Query Database
-   $query  = 'SELECT ';
-	$query .= '  a.Adr_Id as AdrId, ';
-	$query .= '  concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, ';
-	$query .= '  a.Adr_Plaats as AdrPlaats, ';
-	$query .= '  a.Adr_postcode as AdrPostcode, ';
-	$query .= '  a.Adr_Telefoon as AdrTelefoon, ';
-	$query .= '  (select concat(IF(Prs_Roepnaam="",Prs_Voornamen, Prs_Roepnaam)," ", Prs_Tussenvoegsels, " ", Prs_Achternaam) from oostpoort_persoon where Prs_Id=b.Bzk_Mdw_ID) as Naam ';
-	$query .= 'FROM oostpoort_adres a LEFT OUTER JOIN oostpoort_bezoek b ON a.Adr_ID = b.Bzk_Adr_Id and b.Bzk_GeplandDatum=0 ';
-	$query .= 'where ';
-	//$query .= '  a.Adr_Id not in (select Bzk_Adr_ID from oostpoort_bezoek where Bzk_AfgelegdDatum=0 and Bzk_GeannuleerdDatum=0 and Bzk_BezoekNietGewenstDatum=0) and ';
-	$query .= '  a.Adr_Straat like "b%"';
-			 
-	$queryResult = db_query($query);
-	//echo $query;
-	
-	while ($data = db_fetch_object($queryResult))
-	{
-	   $i++;
-		$value=$_POST["Active".$i];		
-		if ($value=="on") {
-			
-			$amount++;
-			
-			// Does not exist, create entry
-			$query  = 'INSERT INTO oostpoort_bezoek (';
-			$query .= '  `Bzk_Mdw_ID`, `Bzk_Adr_ID`, `Bzk_GeplandDatum`, `Bzk_Bzt_ID`)';
-			$query .= 'VALUES ';
-			$query .= '( '.$PrsId.','.$data->AdrId.', "'.date("Y-m-d").'", 1 )';
-			
-			//echo $query;
-			db_query($query); 
-		}
-	}
-	
-	$page .= '<div class="messages status">';
-   $page .= t($amount.' bezoeken zijn ingepland.');
 	$page .= '</div>';
 	
 	return $page;

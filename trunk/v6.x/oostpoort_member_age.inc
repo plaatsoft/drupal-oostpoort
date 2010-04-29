@@ -34,6 +34,26 @@
 
 function oostpoort_member_age()  
 {
+	$action=$_POST['action'];
+	//echo "[action=".$action."]";
+    
+	if ($action=="MainMenu") {
+	
+		oostpoort_mainmenu();
+		$page="";
+	
+	} else {
+
+		$page = oostpoort_member_age_view();
+	}
+
+   if ($page!="") {
+		print theme("page", $page);
+	}
+}
+
+function oostpoort_member_age_view()  
+{
 	$StartDate= $_POST["StartDate"];
 	if ($StartDate==0) {
 	   $StartDate=date("Y-m-d");
@@ -61,9 +81,9 @@ function oostpoort_member_age()
 	
 	$page .= '<br/>';
 	$page .= 'Start datum: ';
-	$page .= '<input type="text" name="StartDate" value="'.$StartDate.'"/>';
+	$page .= '<input type="text" name="StartDate" size="11" maxlength="10" value="'.$StartDate.'"/>';
 	$page .= ' Eind datum: ';
-	$page .= '<input type="text" name="EndDate" value="'.$EndDate.'"/>  '; 
+	$page .= '<input type="text" name="EndDate" size="11" maxlength="10" value="'.$EndDate.'"/>  '; 
 	$page .= '<input type="submit" value="'.t('Zoek').'" />';
  
 	$query = 'select ';
@@ -90,10 +110,12 @@ function oostpoort_member_age()
    $queryResult = db_query($query);
    $page .= oostpoort_member_age_table($queryResult,1);
 
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	
 	$page .= '</div>';
 	$page .= '</form>';
 	
-	print theme("page", $page);
+	return $page;
 }
 
 function oostpoort_member_age_table($queryResult, $mode)
@@ -101,7 +123,6 @@ function oostpoort_member_age_table($queryResult, $mode)
 	$page .= '<table>';
 
    $page .= '<thead>';
-	// Show Banner
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';

@@ -34,81 +34,71 @@
 
 function oostpoort_jubilea_birthday()  
 {
-	global $user;
-
+   $AgeId= $_POST["AgeId"];
+	if ($AgeId==0) {
+	   $AgeId=50;
+	}
+	//echo "[AgeId=".$AgeId."]"; 
+	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Home</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Menu</a> > ';
-	$page .= 'Verjaardag jubilea ';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= t('Verjaardag jubilea rapport');
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
 
-	drupal_set_title(t('Oostpoort verjaardag jubilea' ) );
+	drupal_set_title(t('Verjaardag jubilea Rapport'));
 	
-	$page .= "<br/>";
-	$page .= "Select leeftijd category: ";
-	$page .= oostpoort_age($AgeId);
+	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<br/>';
+	$page .= "<br/>";
+	$page .= "Selecteer leeftijd categorie: ";
+	$page .= oostpoort_age_range("AgeId", $AgeId);
+	$page .= " jaar ";
+	$page .= '<br/>';
 
-	$x=array(50, 65, 70, 75, 80, 85, 90, 95);
-	foreach ($x as $value)
-	{
-		$page .= 'Leden die '.$value.' jaar worden dit jaar<br/>';
+	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
+	$yearStart=$year-$AgeId;
+	$yearEnd=$year-$AgeId+1;	
+	$startDate = $yearStart."-".$month."-".$day;
+	$endDate = $yearEnd."-".$month."-".$day;
 	
-		$page .= '<br/>';
-	
-		list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
-		
-		$yearStart=$year-$value;
-		$yearEnd=$year-$value+1;
-		
-		$startDate = $yearStart."-".$month."-".$day;
-		$endDate = $yearEnd."-".$month."-".$day;
 	 
-		$query = 'select ';
-		$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
-		$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voornamen, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
-		$query .= ' a.Prs_EmailAdres as PrsEmail, ';
-		$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
-		$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
-		$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
-		$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
-		$query .= ' b.Adr_Plaats as AdrPlaats, ';
-		$query .= ' b.Adr_Postcode as AdrPostcode, ';	
-		$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
-		$query .= 'from ';
-		$query .= '  oostpoort_persoon a, oostpoort_adres b ';
-		$query .= 'where ';
-		$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
-	   $query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
-		$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" ';
-		$query .= 'order by ';
-		$query .= ' a.Prs_Geboortedatum';
-	   //echo $query;
-		//echo "<br/>";
-		//echo "<br/>";
-		
-      $queryResult = db_query($query);
-      $page .= oostpoort_jubilea_table($queryResult,1);
-  }
+	$query = 'select ';
+	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
+	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
+	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+	$query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
+	$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" ';
+	$query .= 'order by ';
+	$query .= ' a.Prs_Geboortedatum';
 
-  // Query Database (100 jaar)
-  /*$page .= 'Leden die 100 jaar en ouder worden dit jaar<br/>';
-  $year = date("Y")-100;
-  $query   = 'select mid, voornamen, voegsel, achternaam, straatnaam, huisnummer, postcode, woonplaats, geboorte_datum, kerklidnr 
-from {oostpoort_members} WHERE (YEAR(geboorte_datum)<='.$year.' and YEAR(geboorte_datum)!=1900) order by geboorte_datum';
-  $queryResult = db_query($query);
-  $page .= show_data($queryResult,1);*/
+	//echo $query;	
+   $queryResult = db_query($query);
+   $page .= oostpoort_jubilea_birthday_table($queryResult,1);
 
-  $page .= '</div>';
-  print theme("page", $page);
+	$page .= '</div>';
+	$page .= '</form>';
+	
+	print theme("page", $page);
 }
 
-
-function oostpoort_jubilea_table($queryResult, $mode)
+function oostpoort_jubilea_birthday_table($queryResult, $mode)
 {
 	$page .= '<table>';
 
@@ -117,6 +107,7 @@ function oostpoort_jubilea_table($queryResult, $mode)
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
@@ -137,6 +128,7 @@ function oostpoort_jubilea_table($queryResult, $mode)
 		}
       $page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
       $page_tmp .= '<td>'.$data->Naam.'</td>';
+		$page_tmp .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
@@ -169,11 +161,11 @@ function oostpoort_jubilea_table($queryResult, $mode)
 }
 
 
-function oostpoort_age($AgeId) {
+function oostpoort_age_range($id, $AgeId) {
 
-	$page.='<select name="AgeId">';
+	$page.='<select name="'.$id.'" onChange="submit();" >';
 	
-	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100);
+	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110);
 		
 	foreach ($x as $value)
 	{
@@ -187,7 +179,6 @@ function oostpoort_age($AgeId) {
 	  
    return $page;
 }
-
 // ##################################################################################
 // THE END
 // ##################################################################################

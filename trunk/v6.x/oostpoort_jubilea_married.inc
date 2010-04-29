@@ -34,37 +34,137 @@
 
 function oostpoort_jubilea_married()  
 {
-  global $user;
+   $AgeId= $_POST["AgeId"];
+	if ($AgeId==0) {
+	   $AgeId=50;
+	}
+	//echo "[AgeId=".$AgeId."]"; 
+	
+	// Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= t('Verjaardag huwelijk rapport');
+	$page .= '</div>';
 
-  // Breadcrumb menu
-  $page  = '<div class="breadcrumb">';
-  $page .= '<a href="'.url("").'">Home</a> > ';
-  $page .= '<a href="'.url(OOSTPOORT_MENU).'">Menu</a> > ';
-  $page .= 'Huwelijk jubilea ';
-  $page .= '</div>';
+	$page .= '<div class="oostpoort">';
 
-  $page .= '<div class="oostpoort">';
+	drupal_set_title(t('Huwelijk jubilea Rapport' ) );
 
-  drupal_set_title(t('Oostpoort huwelijk jubilea' ) );
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	
+	$page .= '<br/>';
+	$page .= "Selecteer huwelijk categorie: ";
+	$page .= oostpoort_married_range("AgeId", $AgeId);
+	$page .= " jaar ";
+	$page .= '<br/>';
 
-  $page .= '<br/>';
+	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
+	$yearStart=$year-$AgeId;
+	$yearEnd=$year-$AgeId+1;	
+	$startDate = $yearStart."-".$month."-".$day;
+	$endDate = $yearEnd."-".$month."-".$day;
+	
+	$query = 'select ';
+	$query .= ' concat("Familie ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+   $query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode ';	
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+	$query .= ' a.Prs_Huwelijksdatum >= "'.$startDate.'" and ';
+	$query .= ' a.Prs_Huwelijksdatum <= "'.$endDate.'" ';
+	$query .= 'group by ';
+	$query .= '	Straat, Prs_Huwelijksdatum having ( COUNT(Prs_Huwelijksdatum)=2) '; 
+	$query .= 'order by ';
+	$query .= ' a.Prs_Huwelijksdatum';
+	
+   //echo $query;	
+   $queryResult = db_query($query);
+   $page .= oostpoort_jubilea_married_table($queryResult,1);
 
-  $x=array(12, 25, 40, 45, 50, 55, 60, 65, 70);
-  foreach ($x as $value)
-  {
-    $page .= 'Leden die '.$value.' jaar getrouwd zijn<br/>';
-    $year = date("Y")-$value;
-    $query   = 'select mid, voornamen, voegsel, achternaam, straatnaam, huisnummer, postcode, woonplaats, geboorte_datum, huwelijk_datum, kerklidnr from {oostpoort_members} WHERE YEAR(huwelijk_datum)='.$year.' GROUP BY straatnaam, huisnummer, huwelijk_datum having ( COUNT(huwelijk_datum)=2) order by huwelijk_datum';
+	$page .= '</div>';
+	$page .= '</form>';
+	
+	print theme("page", $page);
+}
 
-//select achternaam, straatnaam, huisnummer, huwelijk_datum from oostpoort_members as willem WHERE YEAR(huwelijk_datum)=1975
-//GROUP BY straatnaam, huisnummer, huwelijk_datum HAVING ( COUNT(straatnaam) = 2 )
+function oostpoort_jubilea_married_table($queryResult, $mode)
+{
+	$page .= '<table>';
 
-    $queryResult = db_query($query);
-    $page .= show_data($queryResult,2);
-  }
+   $page .= '<thead>';
+	// Show Banner
+	$page .= '<tr>';
+	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Straat').'</b></th>';
+	$page .= '<th><b>'.t('Plaats').'</b></th>';
+	$page .= '<th><b>'.t('Postcode').'</b></th>';
+   $page .= '<th><b>'.t('Huwelijk datum').'</b></th>';
+	$page .= '</tr>';
+	$page .= '</thead>';
+   $page .= '<tbody>';
+	// Show all found members
+	$page_tmp='';
+	while ($data = db_fetch_object($queryResult))
+	{
+		if ((++$i%2)==0) {
+			$page_tmp .= '<tr class="even">';
+		} else {
+			$page_tmp .= '<tr class="odd">';
+		}
+      $page_tmp .= '<td>'.$data->Naam.'</td>';
+		$page_tmp .= '<td>'.$data->Straat.'</td>';
+		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
+		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
+		$page_tmp .= '<td>'.oostpoort_view_date($data->PrsHuwelijksdatum).'</td>';
+		$page_tmp .= '</tr>';
+	}
 
-  $page .= '</div>';
-  print theme("page", $page);
+	if ( $page_tmp!='') 
+	{
+		// Show Content
+		$page .= $page_tmp;
+	}
+	else 
+	{
+		// No content found
+		$page .= '<tr><td>';
+		$page .= t('Geen informatie gevonden');
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td></tr>';
+	}
+	$page .= '</tbody>';
+	$page .= '</table>';
+
+	return $page;
+}
+
+
+function oostpoort_married_range($id, $AgeId) {
+
+	$page.='<select name="'.$id.'" onChange="submit();" >';
+	
+	$x=array(12, 25, 40, 45, 50, 55, 60, 65, 70);
+		
+	foreach ($x as $value)
+	{
+		$page.='<option value="'.$value.'" ';
+		if ($value==$AgeId) {
+			$page.='selected="selected" ';
+		}
+		$page.='>'.$value.'</option>';
+	}
+	$page.='</select>';
+	  
+   return $page;
 }
 
 // ##################################################################################

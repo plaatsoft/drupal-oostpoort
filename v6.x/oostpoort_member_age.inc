@@ -29,129 +29,135 @@
 */
 
 // ##################################################################################
-// MEMBER LIST AGE
+// MEMBER AGE OVERVIEW
 // ##################################################################################
 
-/**
- * Render a page showing the selected address for editing
- * @return HTML
- */
 function oostpoort_member_age()  
 {
-  global $user;
+	$StartDate= $_POST["StartDate"];
+	if ($StartDate==0) {
+	   $StartDate=date("Y-m-d");
+	}
+	//echo "[StartDate=".$StartDate."]"; 
+	
+	$EndDate= $_POST["EndDate"];
+	if ($EndDate==0) {
+	   $EndDate=date("Y-m-d");
+	}
+	//echo "[EndDate=".$EndDate."]"; 
 
-  $age=$_POST['age'];
-  if (strlen($age)==0) $age=0;
+	// Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= t('Leeftijdscategorie Rapport');
+	$page .= '</div>';
 
-  // Breadcrumb menu
-  $page  = '<div class="breadcrumb">';
-  $page .= '<a href="'.url("").'">Home</a> > ';
-  $page .= '<a href="'.url(OOSTPOORT_MENU).'">Menu</a> > ';
-  $page .= 'Members > Age';
-  $page .= '</div>';
+	$page .= '<div class="oostpoort">';
 
-  $page .= '<div class="oostpoort">';
+	drupal_set_title(t('Leeftijdscategorie Rapport' ));
+	
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	
+	$page .= '<br/>';
+	$page .= 'Start datum: ';
+	$page .= '<input type="text" name="StartDate" value="'.$StartDate.'"/>';
+	$page .= ' Eind datum: ';
+	$page .= '<input type="text" name="EndDate" value="'.$EndDate.'"/>  '; 
+	$page .= '<input type="submit" value="'.t('Zoek').'" />';
+ 
+	$query = 'select ';
+	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
+	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+	$query .= ' a.Prs_Geboortedatum >= "'.$StartDate.'" and ';
+	$query .= ' a.Prs_Geboortedatum <= "'.$EndDate.'" ';
+	$query .= 'order by ';
+	$query .= ' a.Prs_Geboortedatum';
 
-  drupal_set_title(t('Oostpoort ledenlijst gefilterd op leeftijd' ) );
+	//echo $query;	
+   $queryResult = db_query($query);
+   $page .= oostpoort_member_age_table($queryResult,1);
 
-  $page .= '<br/>';
+	$page .= '</div>';
+	$page .= '</form>';
+	
+	print theme("page", $page);
+}
 
-  $page .= '<form action="'.url(OOSTPOORT_MEMBER_AGE).'" method="POST">';
-  $page .= 'Leeftijd is <input id="text" name="age" size="3" maxlength="3" type="text" value="'.$age.'"> jaar ';
-  $page .= '<input type="submit" value="'.t('Zoeken').'" />';
-  $page .= '</form>';
+function oostpoort_member_age_table($queryResult, $mode)
+{
+	$page .= '<table>';
 
-  // Query Database
-  $query   = 'select mid, voornamen, voegsel, achternaam, straatnaam, huisnummer, postcode, woonplaats, geboorte_datum, kerklidnr  from {oostpoort_members} where leeftijd='.$age.' ';
-  $query  .= 'order by achternaam';
-  $queryResult = db_query($query);
+   $page .= '<thead>';
+	// Show Banner
+	$page .= '<tr>';
+	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
+	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	$page .= '<th><b>'.t('Geboorte datum').'</b></th>';
+	$page .= '<th><b>'.t('Mobiel').'</b></th>';
+	$page .= '<th><b>'.t('Email').'</b></th>';
+	$page .= '<th><b>'.t('Straat').'</b></th>';
+	$page .= '<th><b>'.t('Plaats').'</b></th>';
+	$page .= '<th><b>'.t('Postcode').'</b></th>';
+	$page .= '<th><b>'.t('Telefoon').'</b></th>';
+	$page .= '</tr>';
+	$page .= '</thead>';
+   $page .= '<tbody>';
+	// Show all found members
+	$page_tmp='';
+	while ($data = db_fetch_object($queryResult))
+	{
+		if ((++$i%2)==0) {
+			$page_tmp .= '<tr class="even">';
+		} else {
+			$page_tmp .= '<tr class="odd">';
+		}
+      $page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
+      $page_tmp .= '<td>'.$data->Naam.'</td>';
+		$page_tmp .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
+		$page_tmp .= '<td>'.oostpoort_view_date($data->PrsGeboortedatum).'</td>';
+		$page_tmp .= '<td>'.$data->PrsMobiel.'</td>';
+		$page_tmp .= '<td>'.$data->PrsEmail.'</td>';
+		$page_tmp .= '<td>'.$data->Straat.'</td>';
+		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
+		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
+		$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';
+		$page_tmp .= '</tr>';
+	}
 
-  $page .= '<table width=100% border=1 cellpadding=3 cellspacing=3>';
+	if ( $page_tmp!='') 
+	{
+		// Show Content
+		$page .= $page_tmp;
+	}
+	else 
+	{
+		// No content found
+		$page .= '<tr><td>';
+		$page .= t('Geen informatie gevonden');
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td><td>';
+		$page .= '</td></tr>';
+	}
+	$page .= '</tbody>';
+	$page .= '</table>';
 
-  // Show Banner
-  $page .= '<tr><td>';
-  if (user_access('access administration pages')) 
-  {
-     $page .= '<b>'.t('Id').'</b>';
-     $page .= '</td><td>';
-  }
-  $page .= '<b>'.t('Foto').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Naam').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Straat').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Plaats').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Postcode').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Geboorte datum').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Telefoon').'</b>';
-  $page .= '</td><td>';
-  $page .= '<b>'.t('Email').'</b>';
-  $page .= '</td></tr>';
-
-  // Show all found members
-  $page_tmp='';
-  while ($data = db_fetch_object($queryResult))
-  {
-     $page_tmp .= '<tr><td width=50>';
-     if (user_access('access administration pages')) 
-     {
-        $page_tmp .= $data->kerklidnr;
-        $page_tmp .= '</td><td>';
-     }
-
-    $email=oostpoort_get_item2($data->kerklidnr,1);
-    $telephone=oostpoort_get_item2($data->kerklidnr,2);
-    $image=oostpoort_get_item2($data->kerklidnr,8);
-
-    if (strlen($image)>0)
-    {
-      $page_tmp .= '<a href="'.url(OOSTPOORT_MEMBER_VIEW.'/'.$data->mid).'">';
-      $filename=url(OOSTPOORT_THUMBNAILS_DIR.'/'.$image);
-      $filename=str_replace(array("?q="), "", $filename);
-      $page_tmp .= '<img src="'.$filename.'" width=25 height=30/></a>';
-    }
-    $page_tmp .= '</td><td>';
-    $page_tmp .= l($data->voornamen.' '.$data->voegsel.' '.$data->achternaam, OOSTPOORT_MEMBER_VIEW.'/'.$data->mid);
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->straatnaam.' '.$data->huisnummer;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->woonplaats;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $data->postcode;
-    $page_tmp .= '</td><td>';
-    list($year, $month, $day) = split('[/.-]', $data->geboorte_datum);
-    $page_tmp .= $day.'-'.$month.'-'.$year;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= $telephone;
-    $page_tmp .= '</td><td>';
-    $page_tmp .= l($email,'mailto:'.$email);
-    $page_tmp .= '</td></tr>';
-  }
-
-  if ( $page_tmp!='') 
-  {
-     // Show Content
-     $page .= $page_tmp;
-  }
-  else 
-  {
-    // No content found
-    $page .= '<tr><td>';
-    $page .= t('Geen informatie gevonden');
-    $page .= '</td><td>';
-    $page .= '</td><td>';
-    $page .= '</td><td>';
-    $page .= '</td><td>';
-    $page .= '</td></tr>';
-  }
-  $page .= '</table>';
-
-  $page .= '</div>';
-  print theme("page", $page);
+	return $page;
 }
 
 // ##################################################################################

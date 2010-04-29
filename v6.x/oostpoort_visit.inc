@@ -113,7 +113,7 @@ function oostpoort_visit_list_view() {
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= 'Visit > List';
+	$page .= t('Bezoekwerk');
 	$page .= '</div>';
 
    // Get posted parameters

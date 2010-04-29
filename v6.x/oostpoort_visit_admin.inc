@@ -92,11 +92,11 @@ function oostpoort_visit_admin_list_view()
 {
 	$page .= '<div class="oostpoort">';
 
-   // Breadcrumb menu
+	// Create Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= 'Visit > Admin > List';
+	$page .= t('Bezoekwerk Admin');
 	$page .= '</div>';
     
 	drupal_set_title(t('Oostpoort bezoekwerk administratie' ) );
@@ -157,7 +157,7 @@ function oostpoort_visit_admin_list_view()
 		} else {
 			$page .= '<td><b>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</b></td>';		
 		}
-		$page .= '<td>'.oostpoort_visit_admin_geslacht($data->geslacht).'</td>';
+		$page .= '<td>'.oostpoort_visit_geslacht($data->geslacht).'</td>';
 		$page .= '<td>'.$data->RolOmschrijving.'</td>';
 		$page .= '<td>Blok '.$data->BlkNummer.'</td>';
 		$page .= '<td>'.oostpoort_view_owner($data->MdwUid,true).'</td>';    
@@ -385,7 +385,7 @@ function oostpoort_visit_admin_member_search()
 			$page .= '<td>'.$i.'</td>';	  
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Add', $data->Naam).'</td>';
 			$page .= '<td>'.$data->PrsId.'</td>';	  	  
-			$page .= '<td>'.oostpoort_visit_admin_geslacht($data->PrsGeslacht).'</td>'; 
+			$page .= '<td>'.oostpoort_admin_geslacht($data->PrsGeslacht).'</td>'; 
 			$page .= '<td>'.oostpoort_view_date($data->PrsGeboortedatum).'</td>'; 
 			$page .= '</tr>';
 		}
@@ -553,7 +553,7 @@ function oostpoort_hiddenlink($form,$key,$value,$action,$label) {
    return '<a href="#" onClick="hiddenInput(\''.$form.'\', \''.$key.'\', \''.$value.'\',\''.$action.'\');">'.$label.'</a>';
 }
  
-function oostpoort_visit_admin_geslacht($label) {
+function oostpoort_visit_geslacht($label) {
    if ( $label=='M') {
 		return t('Man');
    } else {

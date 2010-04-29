@@ -34,6 +34,26 @@
 
 function oostpoort_jubilea_married()  
 {
+	$action=$_POST['action'];
+	//echo "[action=".$action."]";
+    
+	if ($action=="MainMenu") {
+	
+		oostpoort_mainmenu();
+		$page="";
+	
+	} else {
+
+		$page = oostpoort_jubilea_married_view();
+	}
+
+   if ($page!="") {
+		print theme("page", $page);
+	}
+}
+
+function oostpoort_jubilea_married_view()  
+{
    $AgeId= $_POST["AgeId"];
 	if ($AgeId==0) {
 	   $AgeId=50;
@@ -88,9 +108,11 @@ function oostpoort_jubilea_married()
    $page .= oostpoort_jubilea_married_table($queryResult,1);
 
 	$page .= '</div>';
-	$page .= '</form>';
 	
-	print theme("page", $page);
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+		
+	$page .= '</form>';
+	return $page;
 }
 
 function oostpoort_jubilea_married_table($queryResult, $mode)

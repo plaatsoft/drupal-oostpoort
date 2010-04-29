@@ -59,7 +59,7 @@ function oostpoort_mainmenu( )
   $page .= '<dl class="admin-list">';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_FAMILY_LIST).'/A">Bekijk leden gegevens</a>';
+  $page .= '<a href="'.url(OOSTPOORT_FAMILY_LIST).'">Bekijk leden gegevens</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Dit rapport heeft informatie over de actuele Oostpoort leden.';

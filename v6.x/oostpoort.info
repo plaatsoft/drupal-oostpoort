@@ -4,4 +4,4 @@ package = "Other"
 version = "6.x-0.3"
 project = "oostpoort"
 core = 6.x
-dependencies[] = date
+//dependencies[] = date

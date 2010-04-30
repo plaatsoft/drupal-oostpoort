@@ -39,7 +39,7 @@ function oostpoort_mainmenu( )
   // Breadcrumb menu
   $page  = '<div class="breadcrumb">';
   $page .= '<a href="'.url("").'">Start</a> > ';
-  $page .= 'Oostpoort';
+  $page .= t('Oostpoort');
   $page .= '</div>';
 
   $page .= '<div class="oostpoort">';
@@ -59,7 +59,7 @@ function oostpoort_mainmenu( )
   $page .= '<dl class="admin-list">';
 
   $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_FAMILY_LIST).'">Bekijk leden gegevens</a>';
+  $page .= '<a href="'.url(OOSTPOORT_FAMILY).'">Bekijk leden gegevens</a>';
   $page .= '</dt>';
   $page .= '<dd>';
   $page .= 'Dit rapport heeft informatie over de actuele Oostpoort leden.';
@@ -69,7 +69,7 @@ function oostpoort_mainmenu( )
   $page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
   $page .= '</dt>';
   $page .= '<dd>';
-  $page .= 'Dit rapport geeft de leden per leeftijdscategorie weer.';
+  $page .= 'Dit rapport geeft de leden weer tussen twee geboortedatums.';
   $page .= '</dd>';
 
   $page .= '<dt>';

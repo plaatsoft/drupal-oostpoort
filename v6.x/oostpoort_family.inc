@@ -29,7 +29,7 @@
 */
 
 // ##################################################################################
-// FAMILY LIST VIEW
+// State Machine
 // ##################################################################################
 
 function oostpoort_family()  
@@ -71,6 +71,10 @@ function oostpoort_family()
 	print theme("page", $page);
 }
 	
+// ##################################################################################
+// Views
+// ##################################################################################
+
 /*
  * Function shows all family in a list form
  */
@@ -178,6 +182,9 @@ function oostpoort_family_list() {
 		$page .= '<td>';
 		$page .= '</tr>';
 	}
+	
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
+	
 	$page .= '</tbody>';
 	$page .= '</table>';
 	$page .= '</div>';
@@ -263,7 +270,7 @@ function oostpoort_family_view() {
 	$page .= '<th><b>'.t('Foto').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Geslacht').'</b></th>';
-	$page .= '<th><b>'.t('Geboren').'</b></th>';
+	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	$page .= '<th><b>'.t('Mobiel').'</b></th>';
 	$page .= '<th><b>'.t('Email').'</b></th>';	
 	$page .= '</tr>';
@@ -282,7 +289,7 @@ function oostpoort_family_view() {
 		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
 		$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam)."</td>";
 		$page .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
-		$page .= '<td>'.oostpoort_view_date($data->PrsGeboorteDatum).'</td>';
+		$page .= '<td class="active">'.oostpoort_view_date($data->PrsGeboorteDatum).'</td>';
 		$page .= '<td>'.$data->PrsMobiel.'</td>';
 		$page .= '<td>'.$data->PrsEmail.'</td>';
 		$page .= '</tr>';
@@ -376,12 +383,12 @@ function oostpoort_member_view()
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Geboorte Datum').':</label>';
+	$page .= '<label>'.t('Geboorte datum').':</label>';
 	$page .= oostpoort_view_date($data->PrsGeboorteDatum);
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Huwelijks Datum').':</label>';
+	$page .= '<label>'.t('Huwelijksdatum').':</label>';
 	$page .= oostpoort_view_date($data->PrsHuwelijksDatum);
 	$page .= '</div>';
 	
@@ -543,12 +550,14 @@ function oostpoort_sortbar($sort)
 
 
 function oostpoort_load_picture($Group,$AdrId,$height,$width, $align) {
-
-	$filename=$BASE_DIR.url(OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$AdrId).'.jpg';
-	//echo "[".$filename."]";
 	
-	//if (file_exists($filename)) {
-		$filename=str_replace(array("?q="), "", $filename);
+	// Construct a valid drupal path for the named file
+	$file=OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$AdrId.'.jpg';
+   $target = file_create_path($file);
+
+   // Check to see if the file exists
+   if (file_exists($target)) {	
+		$filename=str_replace(array("?q="), "", url($file));
 		$page.='<img align="'.$align.'" ';
 		if ($width!=0) {
 			$page.='width="'.$width.'" ';
@@ -557,8 +566,7 @@ function oostpoort_load_picture($Group,$AdrId,$height,$width, $align) {
 			$page.='height="'.$height.'" ';
 		}
 		$page.='src="'.$filename.'" />';
-	//}
-	
+	} 
 	return $page;
 }
 		

@@ -69,11 +69,6 @@ function oostpoort_visit_admin()
      $page .= oostpoort_visit_admin_delete();
      $page .= oostpoort_visit_admin_list_view();
 	  
-	} else if ($action=="MainMenu") {
-	
-		oostpoort_mainmenu();
-		$page="";
-	  
 	} else {
   
 	  $page .= oostpoort_visit_admin_list_view();
@@ -131,13 +126,13 @@ function oostpoort_visit_admin_list_view()
 	$page .= '<thead>';
 	$page .= '<tr>';
 	//$page .= '<th><b>'.t('Rij').'</b></th>';
-	$page .= '<th><b>'.t('Id').'</b></th>';
+	$page .= '<th><b>'.t('Foto').'</b></th>';
 	$page .= '<th><b>'.t('Medewerker').'</b></th>';
-	$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Rol').'</b></th>';
 	$page .= '<th><b>'.t('Blok').'</b></th>';
-	$page .= '<th><b>'.t('Login Naam').'</b></th>';   
-	$page .= '<th><b>'.t('Aantal bezoeken').'</b></th>';   
+	$page .= '<th><b>'.t('Login').'</b></th>';   
+	$page .= '<th><b>'.t('Aantal').'</b></th>';   
 	$page .= '</tr>';
 	$page .= '</thead>';
 
@@ -149,15 +144,15 @@ function oostpoort_visit_admin_list_view()
 			$page .= '<tr class="even">';
 		} else {
 			$page .= '<tr class="odd">';
-		}
-		//$page .= '<td>'.$i.'</td>';	  
-	   $page .= '<td>'.$data->PrsId.'</td>'; 
+		} 
+		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
+
 		if ($data->MdwActief=="ONWAAR") {
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</td>';
 		} else {
 			$page .= '<td><b>'.oostpoort_hiddenlink('OostpoortForm', 'Id', $data->PrsId, 'Edit', $data->Naam).'</b></td>';		
 		}
-		$page .= '<td>'.oostpoort_visit_geslacht($data->geslacht).'</td>';
+		//$page .= '<td>'.oostpoort_visit_geslacht($data->geslacht).'</td>';
 		$page .= '<td>'.$data->RolOmschrijving.'</td>';
 		$page .= '<td>Blok '.$data->BlkNummer.'</td>';
 		$page .= '<td>'.oostpoort_view_owner($data->MdwUid,true).'</td>';    
@@ -169,9 +164,8 @@ function oostpoort_visit_admin_list_view()
     
 	// Button bar
  	$page .= oostpoort_hiddenlink('OostpoortForm','Id','0','Search',t('Toevoegen')).' | ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 
-		
 	$page .= '</form>';  
 	$page .= '</div>';
   
@@ -206,6 +200,9 @@ function oostpoort_visit_admin_member_view()
 	$query .= ' b.Prs_Roepnaam as PrsRoepnaam, ';
 	$query .= ' b.Prs_EmailAdres as PrsEmail, ';
 	$query .= ' b.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' b.Prs_Geboortedatum as PrsGeboorteDatum, ';
+	$query .= ' b.Prs_Huwelijksdatum as PrsHuwelijksDatum, ';
+	$query .= ' b.Prs_GeslachtMV as PrsGeslacht, '; 
 	$query .= ' concat(c.Adr_Straat, " " ,c.Adr_Huisnr) as straat, ';
 	$query .= ' c.Adr_Plaats as AdrPlaats, ';
 	$query .= ' c.Adr_Postcode as AdrPostcode, ';	
@@ -228,9 +225,26 @@ function oostpoort_visit_admin_member_view()
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Medewerker</legend>';
+	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right");
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
-	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';		
+	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';	
+
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Geslacht').':</label>';
+	$page .= oostpoort_visit_geslacht($data->PrsGeslacht);
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Geboorte Datum').':</label>';
+	$page .= oostpoort_view_date($data->PrsGeboorteDatum);
+	$page .= '</div>';
+
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Huwelijks Datum').':</label>';
+	$page .= oostpoort_view_date($data->PrsHuwelijksDatum);
+	$page .= '</div>';
+	
 	$page .= '</fieldset>' ;
 	
 	$page .= '<fieldset>' ;
@@ -239,49 +253,65 @@ function oostpoort_visit_admin_member_view()
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Eigenaar').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_owner($data->MdwUid, false);
-	$page .= '<div class="description">Selecteer hier de login naam van de medewerker.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Selecteer hier de login naam van de medewerker. Zo lang een bezoek medewerker niet gekoppeld is aan een login account kan hij geen bezoeken in plannen.');
+	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Roepnaam').': <span class="form-required">*</span></label>';
 	$page .= '<input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'">';
-	$page .= '<div class="description">Roepnaam van medewerker.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Roepnaam van medewerker.');
+	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Telefoon').':</label>';
 	$page .= '<input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->AdrTelefoon.'">';
-	$page .= '<div class="description">Telefoon nummer van medewerker.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Telefoon nummer van medewerker.');
+	$page .= '</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Mobiel').':</label>';
 	$page .= '<input id="text" name="Mobile" size="20" maxlength="20" type="text" value="'.$data->PrsMobiel.'">';
-	$page .= '<div class="description">Mobiele nummer van medewerker.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Mobiele nummer van medewerker.');
+	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Email').': <span class="form-required">*</span></label>';
 	$page .= '<input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'">';
-	$page .= '<div class="description">Email adres van medewerker.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Email adres van medewerker.');
+	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Blok').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_block($data->MdwBlkID, false, true);
-	$page .= '<div class="description">Selecteer blok waar medewerker actief is.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Selecteer blok waar medewerker actief is.');
+	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Actief').':</label>';
 	$page .= oostpoort_view_checkbox($data->MdwActief, false);	  
-	$page .= '<div class="description">Actief of niet actief.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Actief of niet actief.');
+	$page .= '</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Rol Omschrijving').': <span class="form-required">*</span></label>';
 	$page .= oostpoort_view_role($data->MdwRolID, false);
-	$page .= '<div class="description">Selecteer welk rol deze medewerker heeft.</div>';
+	$page .= '<div class="description">';
+	$page .= t('Selecteer welk rol deze medewerker heeft.');
+	$page .= '</div>';
 	$page .= '</div>';
     	 
 	$page .= oostpoort_hiddenlink('OostpoortForm','Id',$data->PrsId,'Save',t('Opslaan'));

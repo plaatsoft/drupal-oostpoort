@@ -82,11 +82,6 @@ function oostpoort_visit()
 			$page .= oostpoort_visit_address_view();
 		}
 	
-	} else if ($action=="MainMenu") {
-	
-		oostpoort_mainmenu();
-		$page="";
-	
 	} else {
 
 		$page = oostpoort_visit_list_view();
@@ -162,7 +157,7 @@ function oostpoort_visit_list_view() {
 	$page .= '<div class="description">'.t('Select hier de bezoekmedewerker daarna worden alle ingeplande bezoeken getoond.').'</div>';
 	$page .= '</div>';
  	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Bezoeken toevoegen')).' | ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	$page .= '</fieldset>' ;
 	
  	// Query Database

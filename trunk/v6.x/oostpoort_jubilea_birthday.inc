@@ -37,15 +37,7 @@ function oostpoort_jubilea_birthday()
 	$action=$_POST['action'];
 	//echo "[action=".$action."]";
     
-	if ($action=="MainMenu") {
-	
-		oostpoort_mainmenu();
-		$page="";
-	
-	} else {
-
-		$page = oostpoort_jubilea_birthday_view();
-	}
+	$page = oostpoort_jubilea_birthday_view();
 
    if ($page!="") {
 		print theme("page", $page);
@@ -83,7 +75,7 @@ function oostpoort_jubilea_birthday_view()
 	$page .= '<div class="description">'.t('Selecteer een jubilea leeftijd, daarna worden alle jubilarisen getoond.').'</div>';
 	$page .= '</div>';
 	
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</fieldset>' ;
 
@@ -135,15 +127,15 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
    $page .= '<thead>';
 	// Show Banner
 	$page .= '<tr>';
-	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
+	//$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
-	$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
-	$page .= '<th><b>'.t('Geboorte datum').'</b></th>';
-   $page .= '<th><b>'.t('Huwelijk datum').'</b></th>';
-	$page .= '<th><b>'.t('Telefoon').'</b></th>';
+	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
+   //$page .= '<th><b>'.t('Huwelijk datum').'</b></th>';
+	//$page .= '<th><b>'.t('Telefoon').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
    $page .= '<tbody>';
@@ -156,34 +148,28 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-      $page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
+      //$page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
       $page_tmp .= '<td>'.$data->Naam.'</td>';
-		$page_tmp .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
+		//$page_tmp .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
-		$page_tmp .= '<td>'.oostpoort_view_date($data->PrsGeboortedatum).'</td>';
-		$page_tmp .= '<td>'.oostpoort_view_date($data->PrsHuwelijksdatum).'</td>';
-		$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';
+		$page_tmp .= '<td class="active">'.oostpoort_view_date($data->PrsGeboortedatum).'</td>';
+		//$page_tmp .= '<td>'.oostpoort_view_date($data->PrsHuwelijksdatum).'</td>';
+		//$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';
 		$page_tmp .= '</tr>';
 	}
 
-	if ( $page_tmp!='') 
-	{
-		// Show Content
+	if ( $page_tmp!='') {
+	
 		$page .= $page_tmp;
+		
+	} else  {
+		$page .= '<tr>';
+		$page .= '<td>'.t('Geen informatie gevonden').'</td>';
+		$page .= '</tr>';
 	}
-	else 
-	{
-		// No content found
-		$page .= '<tr><td>';
-		$page .= t('Geen informatie gevonden');
-		$page .= '</td><td>';
-		$page .= '</td><td>';
-		$page .= '</td><td>';
-		$page .= '</td><td>';
-		$page .= '</td></tr>';
-	}
+	
 	$page .= '</tbody>';
 	$page .= '</table>';
 

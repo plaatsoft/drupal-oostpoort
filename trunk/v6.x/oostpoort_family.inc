@@ -43,11 +43,11 @@ function oostpoort_family()
 	        	  
 	if (($action=="FamilyView") or ($action=="AddFamilyPicture")) {
 	
-     $page .= oostpoort_family_view();
+     $page = oostpoort_family_view();
 	  
 	} else if ($action=="MemberView") {
 	
-     $page .= oostpoort_member_view();
+     $page = oostpoort_member_view();
 	  
 	} else if ($action=="Save") {
 	
@@ -108,17 +108,29 @@ function oostpoort_family_list() {
 	
 	drupal_set_title(t('Oostpoort Familie overzicht'));
 
-	$page .= '<br/>';
-
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
-	$page .= '<input id="text" name="Search" size="40" maxlength="40" type="text" value="'.$search.'" ';
-	$page .= '<input type="submit" value="'.t('Zoeken').'" />';
-
-	$page .= '<br/>';
+	$page .= '<fieldset>' ;
+	$page .= '<legend>'.t('Parameters').'</legend>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Achternaam').' :</label>';
+	$page .= '<input id="text" name="Search" size="40" maxlength="40" type="text" value="'.$Search.'" ';
+	$page .= '<div class="description">';
+	$page .= t('Voer een achternaam in om direct een family te zoeken.');
+	$page .= '</div>';
+	$page .= '</div>';
 	
 	$page .= oostpoort_sortbar($Sort);
+
+	$page .= '<br/>';
+	$page .= '<br/>';
 	  
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoek')). ' | ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
+	
+	$page .= '</fieldset>';
+	
   	$query = 'select ';
 	$query .= ' distinct b.Adr_id as AdrId, ';
 	$query .= ' concat(a.Prs_Tussenvoegsels, " ", substring_index(a.Prs_Achternaam,"-",1)) as Naam, ';
@@ -130,10 +142,10 @@ function oostpoort_family_list() {
 	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
 	$query .= 'where ';
 	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
-	if (strlen($search)==0) {
+	if (strlen($Search)==0) {
 		$query  .= 'a.Prs_Achternaam LIKE "'.$Sort.'%" ';
 	} else { 
-		$query  .= 'a.Prs_Achternaam LIKE "'.$search.'%" ';
+		$query  .= 'a.Prs_Achternaam LIKE "'.$Search.'%" ';
    }
 	$query .= 'order by ';
 	$query .= ' a.Prs_Achternaam';
@@ -175,19 +187,13 @@ function oostpoort_family_list() {
 	} else  {
 		$page .= '<tr>';
 		$page .= '<td>'.t('Geen informatie gevonden').'</td>';
-		$page .= '<td></td>';
-		$page .= '<td></td>';
-		$page .= '<td></td>';
-		$page .= '<td></td>';
-		$page .= '<td>';
 		$page .= '</tr>';
 	}
-	
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
-	
 	$page .= '</tbody>';
 	$page .= '</table>';
 	$page .= '</div>';
+	
+	$page .= '</form>';
 	
    return $page;
 }
@@ -541,6 +547,7 @@ function oostpoort_sortbar($sort)
 	$sort_bar=array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q","R","S","T","U","V","W","X","Y","Z");
 	for ($i=0; $i<26; $i++)
 	{
+		if ($i==0) $page .= '|';
 		if ($sort==$sort_bar[$i]) $page .= '<B>';
 		$page .= oostpoort_hiddenlink('OostpoortForm', 'Sort', $sort_bar[$i], '', $sort_bar[$i]).'|';
 		if ($sort==$sort_bar[$i]) $page .= '</B>';

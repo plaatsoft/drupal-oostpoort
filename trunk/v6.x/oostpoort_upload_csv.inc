@@ -170,7 +170,7 @@ function oostpoort_upload_csv() {
     $page .= '<div id="mission">';
     $page .= t('Warning: Only csv formatted files are supported.');
     $page .= '<br/>';
-    $page .= t('File size must not exceed').ini_get('upload_max_filesize').'B';
+    $page .= t('File size must not exceed').' '.ini_get('upload_max_filesize').'B';
     $page .= '<br/></div>';
     $page .= '<br/>';
 

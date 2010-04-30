@@ -639,7 +639,6 @@ function oostpoort_view_block($block, $readonly, $omschrijving) {
    return $page;
 }
 
-
 function oostpoort_view_role($role, $readonly) {
 
    if ( ! $readonly ) {
@@ -665,7 +664,6 @@ function oostpoort_view_role($role, $readonly) {
    }
    return $page;
 }
-
 
 function oostpoort_view_date($date) { 
 

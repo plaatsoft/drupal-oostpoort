@@ -37,13 +37,13 @@ define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
 define('OOSTPOORT_MENU',            'oostpoort');
 
 define('OOSTPOORT_FAMILY',     		'oostpoort/family');
-define('OOSTPOORT_MEMBER',     		'oostpoort/member');
 
 define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
 define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
 define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
 
-define('OOSTPOORT_UPLOAD',          'oostpoort/upload');
+define('OOSTPOORT_UPLOAD_CSV',      'oostpoort/upload/csv');
+define('OOSTPOORT_UPLOAD_PICTURE',  'oostpoort/upload/picture');
 
 define('OOSTPOORT_VISIT',           'oostpoort/visit');
 define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');

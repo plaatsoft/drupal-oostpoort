@@ -35,12 +35,25 @@
 function oostpoort_family()  
 {
 	$action=$_POST['action'];
-	echo "[Action=".$action."]";
-        	  
-	if ($action=="List") {
-  
-     $page .= oostpoort_family_list();
+	if ($action=="") {
+		$action=$_SESSION['action'];
+	}
+	echo "[action=".$action."]";
+	$_SESSION['action']=$action;
+	        	  
+	if (($action=="FamilyView") or ($action=="AddFamilyPicture")) {
 	
+     $page .= oostpoort_family_view();
+	  
+	} else if (($action=="MemberView") or ($action=="AddMemberPicture")) {
+	
+     $page .= oostpoort_member_view();
+	  
+	} else if ($action=="Save") {
+	
+	  $page  = oostpoort_member_save();
+     $page .= oostpoort_family_view();
+	  
 	} else  {
 	
 	  $page .= oostpoort_family_list();
@@ -63,8 +76,12 @@ function oostpoort_family_list() {
 	// Get sort value 
 	$Sort=$_POST['Sort'];
 	if ($Sort=="") {
-	   $Sort="A";
+		$Sort=$_SESSION['Sort'];
+		if ($Sort=="") {
+			$Sort="A";
+		}
 	}
+	$_SESSION['Sort']=$Sort;
 	echo "[Sort=".$Sort."]";
 		
 	// Breadcrumb menu
@@ -91,7 +108,7 @@ function oostpoort_family_list() {
 	  
   	$query = 'select ';
 	$query .= ' distinct b.Adr_id as AdrId, ';
-	//$query .= ' concat(a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= ' concat(a.Prs_Tussenvoegsels, " ", substring_index(a.Prs_Achternaam,"-",1)) as Naam, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
 	$query .= ' b.Adr_Plaats as AdrPlaats, ';
 	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
@@ -111,10 +128,11 @@ function oostpoort_family_list() {
   
 	$queryResult = db_query($query);
 
+	$page .= '<div class="clear-block">';
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<td><b>'.t('Naam').'</b></th>';
+	$page .= '<th class="active"><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
@@ -130,7 +148,7 @@ function oostpoort_family_list() {
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-		$page_tmp .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, '', $data->Naam)."</td>";
+		$page_tmp .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'FamilyView', $data->Naam)."</td>";
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';
@@ -152,22 +170,455 @@ function oostpoort_family_list() {
 	}
 	$page .= '</tbody>';
 	$page .= '</table>';
-
+	$page .= '</div>';
+	
    return $page;
 }
 
+/*
+ * Function shows all family in a view form
+ */
+function oostpoort_family_view() {
 
+    // Get Post and/or Session variables
+	$AdrId=$_POST['AdrId'];
+   if ($AdrId=="") {
+		$AdrId=$_SESSION['AdrId'];
+	}
+	$_SESSION['AdrId']=$AdrId;
+	echo "[AdrId=".$AdrId."]";
+	
+	$action=$_POST['action'];
+	echo "[Action=".$action."]";
+				
+	// Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= t('Adressen Lijst');
+	$page .= '</div>';
+
+	$page .= '<div class="oostpoort">';
+	
+	drupal_set_title(t('Oostpoort Familie overzicht'));
+
+	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
+			
+	$page .= oostpoort_save_picture("Adr",$AdrId);
+					
+	$query  = 'select ';
+	$query .= ' concat(a.Adr_Straat, " " ,a.Adr_Huisnr) as straat, ';
+	$query .= ' a.Adr_Plaats as AdrPlaats, ';
+	$query .= ' a.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' a.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= ' oostpoort_adres a ';
+	$query .= 'where ';
+	$query .= ' a.Adr_Id='.$AdrId;
+  
+	//echo $query;  
+	$queryResult = db_query($query); 
+	$data = db_fetch_object($queryResult);
+		
+	$page .= '<fieldset>' ;
+	$page .= '<legend></legend>';
+
+	$page .= oostpoort_load_picture("Adr",$AdrId,0);
+	
+	$page .= '<h4>'.$data->straat.'</h4>';	
+	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';		
+	$page .= '<h4>'.$data->AdrTelefoon.'</h4>';	
+		
+	$query  = 'select ';
+	$query .= '  a.Prs_Id as PrsId, ';
+	$query .= '  concat(a.Prs_Voorletters," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= '  a.Prs_GeslachtMV as PrsGeslacht, '; 
+	$query .= '  a.Prs_GeboorteDatum as PrsGeboorteDatum, ';
+	$query .= '  a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= '  a.Prs_EmailAdres as PrsEmail ';  
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a ';
+	$query .= 'where ';
+	$query .= '  a.Prs_Huidig_Adr_ID='.$AdrId.' ';
+	$query .= 'order by ';
+	$query .= '  a.Prs_GeboorteDatum';
+			
+	$queryResult = db_query($query);
+	//echo $query;
+  
+	// Show Banner
+	$page .= '<table>';
+	$page .= '<thead>';
+	$page .= '<tr>';
+	$page .= '<th><b>'.t('Foto').'</b></th>';
+	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	$page .= '<th><b>'.t('Geboren').'</b></th>';
+	$page .= '<th><b>'.t('Mobiel').'</b></th>';
+	$page .= '<th><b>'.t('Email').'</b></th>';	
+	$page .= '</tr>';
+	$page .= '</thead>';
+
+	// Show all found members
+	$page .= '<tbody>';
+	$page_tmp='';
+	while ($data = db_fetch_object($queryResult))
+	{
+		if ((++$i%2)==0) {
+			$page .= '<tr class="even">';
+		} else {
+			$page .= '<tr class="odd">';
+		}
+		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 1).'</td>';
+		$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam)."</td>";
+		$page .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
+		$page .= '<td>'.oostpoort_view_date($data->PrsGeboorteDatum).'</td>';
+		$page .= '<td>'.$data->PrsMobiel.'</td>';
+		$page .= '<td>'.$data->PrsEmail.'</td>';
+		$page .= '</tr>';
+	}
+	$page .= '</fieldset>';
+	
+	$page .= '</tbody>';
+	$page .= '</table>';
+
+   if ($action=="AddFamilyPicture") { 
+	 
+		$page .= '<div class="form-item">';
+		$page .= '<label>'.t('Foto bestand').':</label>';
+		$page .= '<input name="uploadedfile" type="file" onChange="submit();" />';
+		$page .= '<div class="description">Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan '.ini_get('upload_max_filesize').'B</div>';
+		$page .= '</div>';
+
+	} else {
+	
+		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'AddFamilyPicture',t('Foto')).' | ';
+	}
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
+	
+   return $page;
+}	
+
+
+function oostpoort_member_view()
+{   
+    // Get Post and/or Session variables
+	$PrsId=$_POST['PrsId'];
+   if ($PrsId=="") {
+		$PrsId=$_SESSION['PrsId'];
+	}
+	$_SESSION['PrsId']=$PrsId;
+	echo "[PrsId=".$PrsId."]";
+
+	$action=$_POST['action'];
+	echo "[Action=".$action."]";
+	
+	// Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
+	$page .= t('Adressen Lijst');
+	$page .= '</div>';
+
+	$page .= '<div class="oostpoort">';
+	
+	drupal_set_title(t('Oostpoort Familie overzicht'));
+
+	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
+			
+	$page .= oostpoort_save_picture("Prs",$PrsId);
+		
+	// Query
+	$query  = 'select ';
+	$query .= ' concat(a.Prs_Voornamen," ",a.Prs_Tussenvoegsels," ",a.Prs_Achternaam) as Naam, ';
+	$query .= ' a.Prs_GeslachtMV as Geslacht, '; 
+	$query .= ' a.Prs_Roepnaam as PrsRoepnaam, ';
+	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' a.Prs_Geboortedatum as PrsGeboorteDatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon, ';
+	$query .= ' b.Adr_Id as AdrId ';
+	$query .= 'from ';
+	$query .= ' oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_ID and '; 
+	$query .= ' a.Prs_ID = '.$PrsId;
+	
+	$queryResult = db_query($query);
+	$data = db_fetch_object($queryResult);
+		
+	$page .= '<div class="oostpoort">';
+	
+	$page .= '<fieldset>' ;
+	$page .= '<legend>Persoon</legend>';
+	$page .= oostpoort_load_picture("Prs",$PrsId,0);
+	$page .= '<h4>'.$data->Naam.'</h4>';	
+	$page .= '<h4>'.$data->straat.'</h4>';	
+	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';		
+	$page .= '</fieldset>' ;
+	
+	$page .= '<fieldset>' ;
+	$page .= '<legend>Extra Gegevens</legend>';
+		
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Roepnaam').':</label>';
+	$page .= '<input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'">';
+	$page .= '<div class="description">Roepnaam van persoon.</div>';
+	$page .= '</div>';
+
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Telefoon').':</label>';
+	$page .= '<input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->AdrTelefoon.'">';
+	$page .= '<div class="description">Telefoon nummer van persoon.</div>';
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Mobiel').':</label>';
+	$page .= '<input id="text" name="Mobile" size="20" maxlength="20" type="text" value="'.$data->PrsMobiel.'">';
+	$page .= '<div class="description">Mobiele nummer van persoon.</div>';
+	$page .= '</div>';
+
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Email').':</label>';
+	$page .= '<input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'">';
+	$page .= '<div class="description">Email adres van persoon.</div>';
+	$page .= '</div>';
+	    	
+	if ($action=="AddMemberPicture") { 
+		$page .= '<div class="form-item">';
+		$page .= '<label>'.t('Foto bestand').':</label>';
+		$page .= '<input name="uploadedfile" type="file" onChange="submit();" />';
+		$page .= '<div class="description">Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan '.ini_get('upload_max_filesize').'B</div>';
+		$page .= '</div>';
+	} 
+
+	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';
+	if ($action!="AddMemberPicture") { 
+		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'AddMemberPicture',t('Foto')).' | ';
+	}
+	$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
+  
+   $page .= '</fieldset>' ;  
+	$page .= '</form>';  
+	$page .= '</div>';
+	return $page;
+}	
+		
+// ##################################################################################
+// Actions
+// ##################################################################################
+
+function oostpoort_member_save() {
+	
+	// Get Posted parameters
+	$PrsId=$_POST["PrsId"];
+   echo "[PrsId=".$PrsId."]";
+	
+	$page .= '<div class="messages status">';
+   $page .= t('Wijzingen voor persoon '.$PrsId.' zijn opgeslagen.');
+	$page .= '</div>';
+		
+	$firstName=$_POST["FirstName"];
+   echo "[firstName=".$firstName."]";
+
+	$email=$_POST["Email"];
+   echo "[email=".$email."]";
+
+	$phone=$_POST["Phone"];
+   echo "[phone=".$phone."]";
+	
+	$mobile=$_POST["Mobile"];
+   echo "[mobile=".$mobile."]";	
+	   	
+	$query  = 'UPDATE oostpoort_persoon SET ';
+	$query .= '  Prs_Roepnaam="'.$firstName.'", ';
+	$query .= '  Prs_EmailAdres="'.$email.'", ';
+	$query .= '  Prs_TelefoonMobiel="'.$mobile.'" ';
+	$query .= 'where ';
+	$query .= '  Prs_ID='.$PrsId;
+	
+	echo $query;
+	db_query($query); 
+	
+	$query  = 'select ';
+	$query .= '  Prs_Huidig_Adr_ID as AdrId ';
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon ';
+	$query .= 'where ';
+	$query .= '  Prs_ID='.$PrsId;
+	
+	echo $query;
+	$queryResult = db_query($query);
+	$data = db_fetch_object($queryResult);
+				
+	$query  = 'UPDATE oostpoort_adres SET ';
+	$query .= '  Adr_Telefoon="'.$phone.'" ';
+	$query .= 'where ';
+	$query .= '  Adr_ID='.$data->AdrId;
+	
+	echo $query;
+	db_query($query);  
+	
+	return $page;	
+}
+
+// ##################################################################################
+// Utils
+// ##################################################################################
+
+				
 function oostpoort_sortbar($sort)
 {
 	$sort_bar=array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q","R","S","T","U","V","W","X","Y","Z");
-	if ($sort=='') $page .= '<B>';
-	$page .= oostpoort_hiddenlink('OostpoortForm', 'Sort', '', '', t('ALLES')).'|';
-	if ($sort=='') $page .= '</B>';
 	for ($i=0; $i<26; $i++)
 	{
 		if ($sort==$sort_bar[$i]) $page .= '<B>';
 		$page .= oostpoort_hiddenlink('OostpoortForm', 'Sort', $sort_bar[$i], '', $sort_bar[$i]).'|';
 		if ($sort==$sort_bar[$i]) $page .= '</B>';
+	}
+	return $page;
+}
+
+
+function oostpoort_load_picture($Group,$AdrId,$column) {
+
+	$filename=$BASE_DIR.url(OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$AdrId).'.jpg';
+	//echo "[".$filename."]";
+	
+	//if (file_exists($filename)) {
+		$filename=str_replace(array("?q="), "", $filename);
+				
+		if ($column==1) {
+			$page.='<img align="left" width="25" height="30" src="'.$filename.'" />';
+		} else {
+			$page.='<img align="right" src="'.$filename.'" />';
+		}
+	//}
+	
+	return $page;
+}
+		
+function oostpoort_save_picture($Group,$AdrId)
+{
+	// Fetch Image upload in a HTTP request
+	if ($_FILES['uploadedfile']['name']!='') 
+	{
+		if ( (strstr($_FILES['uploadedfile']['name'],'.jpg')) || (strstr( $_FILES['uploadedfile']['name'],'.JPG')) )
+		{
+			$error='0';
+			if(!is_dir(OOSTPOORT_IMAGE_DIR)) {
+				if( !mkdir(OOSTPOORT_IMAGE_DIR) ) {
+					$page .= '<div class="error status">';
+					$page .= t('Creating image directory failed!');
+					$page .= '</div>';
+					$error='1';
+				}
+			}
+			$filename= $Group.$AdrId.'.jpg';
+
+			// Check dimensions of image
+			$dimensions = getimagesize($_FILES['uploadedfile']['tmp_name']);
+			$width  = $dimensions[0];
+			$height = $dimensions[1];
+			$resize = 0;
+
+			// Limit picture 
+			if ($width>$height) {
+			
+				if ($width>0) {
+					$ratio = 800 / $width;
+				}
+				
+				if ($ratio < 1) {
+					$width=800;
+					$height=$height*$ratio;
+					$resize = 1;
+				}
+			} else  {
+				if ($width>0) {
+					$ratio = 600 / $width;
+				}
+				if ($ratio < 1) {
+					$width=600;
+					$height=$height*$ratio;
+					$resize = 1;
+				}
+			}
+
+			// Resize uploaded picture
+			if ( $resize == 1 ) {
+				if (!image_scale($_FILES['uploadedfile']['tmp_name'], file_create_path(OOSTPOORT_IMAGE_DIR.'/'.$filename), $width, $height)) {
+					$page .= '<div class="error status">';
+					$page .= t('Foto bestand te groot!');
+					$page .= '</div>';
+					$error='1';
+				}
+			} else {
+				// Not resize needed, move file to storage place
+				copy($_FILES['uploadedfile']['tmp_name'],OOSTPOORT_IMAGE_DIR.'/'.$filename);
+			}
+
+			if ($error==0)	{
+				// Create thumbnails directory store
+				if(!is_dir(OOSTPOORT_THUMBNAILS_DIR)) {
+					if( !mkdir(OOSTPOORT_THUMBNAILS_DIR) )	{
+						$page .= '<div class="error status">';
+						$page .= t('Creating image directory failed!');
+						$page .= '</div>';
+						$error='1';
+					}
+				}
+
+				$resize = 0;
+
+				// Limit picture size on screen
+				if ($width>$height) {
+					if ($width>0) $ratio  = 160 / $width;
+					if ($ratio < 1) {
+						$width=160;
+						$height=$height*$ratio;
+						$resize = 1;
+					}
+				} else {
+					if ($width>0) $ratio  = 120 / $width;
+					if ($ratio < 1) {
+						$width=120;
+						$height=$height*$ratio;
+						$resize = 1;
+					}
+				}
+
+				// Create thumbnail picture
+				// Resize uploaded picture
+				if ( $resize == 1 ) {
+					if (!image_scale(OOSTPOORT_IMAGE_DIR.'/'.$filename, file_create_path(OOSTPOORT_THUMBNAILS_DIR.'/'.$filename), $width, $height)) {
+						$page .= '<div class="error status">';
+						$page .= t('Foto bestand is te groot ');
+						$page .= '</div>';
+			
+						$error='1';
+					}
+				} else {
+					// Not resize needed, move file to storage place
+					copy(OOSTPOORT_IMAGE_DIR.'/'.$filename, OOSTPOORT_THUMBNAILS_DIR.'/'.$filename);
+				}
+
+				if ($error=='0') {
+					$page .= '<div class="messages status">';
+					$page .= t('Foto is opgeslagen.');
+					$page .= '</div>';
+				}
+			}
+		} else {
+			$page .= '<div class="error status">';
+			$page .= t('Alleen JPG foto formaat wordt ondersteund.');
+			$page .= '</div>';
+		
+			$_FILES['uploadedfile']['name']='';
+		}
 	}
 	return $page;
 }

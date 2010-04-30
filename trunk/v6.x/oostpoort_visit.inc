@@ -34,14 +34,8 @@
 
 function oostpoort_visit()  
 {
-	if(isset($_SESSION['views']))
-		$_SESSION['views'] = $_SESSION['views']+ 1;
-	else
-		$_SESSION['views'] = 1;
-	echo "views = ". $_SESSION['views']; 
-
 	$action=$_POST['action'];
-	echo "[action=".$action."]";
+	//echo "[action=".$action."]";
     
 	if ($action=="Edit") {
 	
@@ -124,7 +118,7 @@ function oostpoort_visit_list_view() {
 			$PrsId=0;
 		}
 	}	
-	echo "[PrsId=".$PrsId."]";
+	//echo "[PrsId=".$PrsId."]";
 	
 	// Set Session scope variables
 	$_SESSION["PrsId"]=$PrsId;
@@ -150,8 +144,11 @@ function oostpoort_visit_list_view() {
 	//echo $query;  
 	$queryResult = db_query($query); 
   
-   $page .= '<br/>';
-	$page .= '<b>Bezoekmedewerker </b>';  
+	$page .= '<fieldset>' ;
+	$page .= '<legend>'.t('Parameters').'</legend>';
+	
+   $page .= '<div class="form-item">';
+	$page .= '<label>'.t('Bezoekmedewerker:').' '.oostpoort_manitory().'</label>';  
 	$page .= '<select name="PrsId" onChange="submit();">';   
 	while ($data = db_fetch_object($queryResult))
 	{
@@ -161,14 +158,14 @@ function oostpoort_visit_list_view() {
 		if ($data->Actief=='ONWAAR') $page .= ' (Niet Actief)';
 		$page .= '</option>';
 	}
-	$page .='</select> '; 
-	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'List',t('Zoeken'));
-  
-   $page .= '<br/>';
-	$page .= '<br/>';
-   $page .= t('Dit zijn alle ingeboekte bezoeken voor de geselecteerde bezoekmedewerker.');
-  
-	// Query Database
+	$page .='</select>'; 
+	$page .= '<div class="description">'.t('Select hier de bezoekmedewerker daarna worden alle ingeplande bezoeken getoond.').'</div>';
+	$page .= '</div>';
+ 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Bezoeken toevoegen')).' | ';
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	$page .= '</fieldset>' ;
+	
+ 	// Query Database
 	$query  = 'select ';
 	$query .= '   concat (c.Adr_Straat," ", c.Adr_Huisnr) as Straatnaam, ';
 	$query .= '   c.Adr_Plaats as plaats, ';
@@ -236,10 +233,6 @@ function oostpoort_visit_list_view() {
 	}
 	$page .= '</tbody>';
 	$page .= '</table>';
-
-  	// Button bar
- 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Bezoeken toevoegen')).' | ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
 	
 	$page .= '</form>';
 	$page .= '</div>';
@@ -462,7 +455,7 @@ function oostpoort_visit_address_part($data, $readonly)
 			}
 			$page .= '<td>'.oostpoort_view_checkbox2( "Active".$persoon->PrsId, "ONWAAR", $readonly).'</td>';
 			$page .= '<td>'.$persoon->Naam.'</td>';
-			$page .= '<td>'.oostpoort_visit_admin_geslacht($persoon->PrsGeslacht).'</td>';
+			$page .= '<td>'.oostpoort_visit_geslacht($persoon->PrsGeslacht).'</td>';
 			$page .= '<td>'.oostpoort_view_date($persoon->PrsGeboorteDatum).'</td>';
 			$page .= '<td>'.oostpoort_view_date($persoon->PrsHuwelijksdatum).'</td>';
 			$page .= '<td>'.$persoon->PrsMobiel.'</td>';

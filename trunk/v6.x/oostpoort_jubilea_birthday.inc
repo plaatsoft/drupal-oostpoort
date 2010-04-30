@@ -59,6 +59,8 @@ function oostpoort_jubilea_birthday_view()
 	   $AgeId=50;
 	}
 	//echo "[AgeId=".$AgeId."]"; 
+
+	drupal_set_title(t('Verjaardag jubilea Rapport'));
 	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
@@ -68,17 +70,22 @@ function oostpoort_jubilea_birthday_view()
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
-
-	drupal_set_title(t('Verjaardag jubilea Rapport'));
 	
 	$page .= '<form name="OostpoortForm" method="POST" >';
+		
+	$page .= '<fieldset>' ;
+	$page .= '<legend>'.t('Parameters').'</legend>';
 	
-	$page .= '<br/>';
-	$page .= "<br/>";
-	$page .= "Selecteer leeftijd categorie: ";
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Leeftijd:').' '.oostpoort_manitory().'</label>';
 	$page .= oostpoort_age_range("AgeId", $AgeId);
-	$page .= " jaar ";
-	$page .= '<br/>';
+	$page .= ' '.t('jaar');
+	$page .= '<div class="description">'.t('Selecteer een jubilea leeftijd, daarna worden alle jubilarisen getoond.').'</div>';
+	$page .= '</div>';
+	
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	
+	$page .= '</fieldset>' ;
 
 	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
 	$yearStart=$year-$AgeId;
@@ -103,8 +110,11 @@ function oostpoort_jubilea_birthday_view()
 	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
 	$query .= 'where ';
 	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
-	$query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
-	$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" ';
+	if ($AgeId!=100) {
+		$query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
+	}
+	$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" and ';
+	$query .= ' a.Prs_Kerklidnummer != 0 ';
 	$query .= 'order by ';
 	$query .= ' a.Prs_Geboortedatum';
 
@@ -112,10 +122,7 @@ function oostpoort_jubilea_birthday_view()
    $queryResult = db_query($query);
    $page .= oostpoort_jubilea_birthday_table($queryResult,1);
 
-	$page .= '</div>';
-	
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
-		
+	$page .= '</div>';		
 	$page .= '</form>';
 	
 	return $page;
@@ -188,7 +195,7 @@ function oostpoort_age_range($id, $AgeId) {
 
 	$page.='<select name="'.$id.'" onChange="submit();" >';
 	
-	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110);
+	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100);
 		
 	foreach ($x as $value)
 	{
@@ -202,6 +209,11 @@ function oostpoort_age_range($id, $AgeId) {
 	  
    return $page;
 }
+
+function oostpoort_manitory() {
+	return '<span class="form-required"> *</span>';
+}
+
 // ##################################################################################
 // THE END
 // ##################################################################################

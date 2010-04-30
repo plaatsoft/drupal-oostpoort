@@ -36,27 +36,17 @@ define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
 // Oostpoort URLs
 define('OOSTPOORT_MENU',            'oostpoort');
 
-define('OOSTPOORT_FAMILY_LIST',     'oostpoort/family/list');
-define('OOSTPOORT_FAMILY_VIEW',     'oostpoort/family/view');
-define('OOSTPOORT_FAMILY_MAP',      'oostpoort/family/map');
-define('OOSTPOORT_FAMILY_BLOCK',    'oostpoort/family/block');
+define('OOSTPOORT_FAMILY',     		'oostpoort/family');
+define('OOSTPOORT_MEMBER',     		'oostpoort/member');
 
 define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
 define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
-
 define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
-define('OOSTPOORT_MEMBER_VIEW',     'oostpoort/member/view');
-
-define('OOSTPOORT_PICTURE_VIEW',    'oostpoort/picture/view');
-define('OOSTPOORT_PICTURE_EDIT',    'oostpoort/picture/edit');
 
 define('OOSTPOORT_UPLOAD',          'oostpoort/upload');
 
-define('OOSTPOORT_VISIT',           'oostpoort/visit/list');
-define('OOSTPOORT_VISIT_DETAIL',    'oostpoort/visit/detail');
+define('OOSTPOORT_VISIT',           'oostpoort/visit');
 define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');
-
-
 
 
 // ##################################################################################

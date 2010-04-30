@@ -58,26 +58,34 @@ function oostpoort_jubilea_married_view()
 	if ($AgeId==0) {
 	   $AgeId=50;
 	}
-	//echo "[AgeId=".$AgeId."]"; 
-	
+	//echo "[AgeId=".$AgeId."]"; 	
+
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Verjaardag huwelijk rapport');
+	$page .= t('Huwelijk Jubilea Rapport');
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
 
 	drupal_set_title(t('Huwelijk jubilea Rapport' ) );
-
+	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
-	$page .= '<br/>';
-	$page .= "Selecteer huwelijk categorie: ";
-	$page .= oostpoort_married_range("AgeId", $AgeId);
-	$page .= " jaar ";
-	$page .= '<br/>';
+	$page .= '<fieldset>' ;
+	$page .= '<legend>'.t('Parameters').'</legend>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Huwelijk:').' '.oostpoort_manitory().'</label>';
+	$page .= oostpoort_married_range("AgeId", $AgeId).' '.t('jaar');
+	$page .= '<div class="description">'.t('Selecteer een huwelijk lusterum, daarna worden alle jubilarisen getoond.').'</div>';
+	$page .= '</div>';
+	
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	
+	$page .= '</fieldset>' ;
+
 
 	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
 	$yearStart=$year-$AgeId;
@@ -108,10 +116,8 @@ function oostpoort_jubilea_married_view()
    $page .= oostpoort_jubilea_married_table($queryResult,1);
 
 	$page .= '</div>';
-	
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
-		
 	$page .= '</form>';
+	
 	return $page;
 }
 

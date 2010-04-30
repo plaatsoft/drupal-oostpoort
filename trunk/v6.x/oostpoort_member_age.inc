@@ -79,12 +79,25 @@ function oostpoort_member_age_view()
 	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
-	$page .= '<br/>';
-	$page .= 'Start datum: ';
+	$page .= '<fieldset>' ;
+	$page .= '<legend>'.t('Parameters').'</legend>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Start datum:').' '.oostpoort_manitory().'</label>';
 	$page .= '<input type="text" name="StartDate" size="11" maxlength="10" value="'.$StartDate.'"/>';
-	$page .= ' Eind datum: ';
+	$page .= '<div class="description">'.t('Voer een geboorte datum in.').'</div>';
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Eind datum:').' '.oostpoort_manitory().'</label>';
 	$page .= '<input type="text" name="EndDate" size="11" maxlength="10" value="'.$EndDate.'"/>  '; 
-	$page .= '<input type="submit" value="'.t('Zoek').'" />';
+	$page .= '<div class="description">'.t('Voer een geboorte datum in.').'</div>';
+	$page .= '</div>';
+	
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoek')). ' | ';
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
+	
+	$page .= '</fieldset>';
  
 	$query = 'select ';
 	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
@@ -110,8 +123,6 @@ function oostpoort_member_age_view()
    $queryResult = db_query($query);
    $page .= oostpoort_member_age_table($queryResult,1);
 
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','MainMenu',t('Terug'));
-	
 	$page .= '</div>';
 	$page .= '</form>';
 	

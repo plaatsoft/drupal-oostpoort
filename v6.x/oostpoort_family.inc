@@ -301,7 +301,7 @@ function oostpoort_family_view() {
 	 
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Foto bestand').':</label>';
-		$page .= '<input name="uploadedfile" type="file" onChange="submit();" />';
+		$page .= '<input name="uploadedfile" type="file" size="100" onChange="submit();" />';
 		$page .= '<div class="description">Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan '.ini_get('upload_max_filesize').'B</div>';
 		$page .= '</div>';
 
@@ -450,7 +450,7 @@ function oostpoort_member_view()
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Foto bestand').':</label>';
-	$page .= '<input name="uploadedfile" type="file" />';
+	$page .= '<input name="uploadedfile" size="100" type="file" />';
 	$page .= '<div class="description">';
 	$page .= t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B';
 	$page .= '</div>';

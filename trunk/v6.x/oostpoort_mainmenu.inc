@@ -34,92 +34,110 @@
 
 function oostpoort_mainmenu( ) 
 {
-  global $user;
-
-  // Clear session scope
-  $_SESSION['Action']="";
-  $_SESSION['Sort']="";
-  $_SESSION['PrsId']="";
-  $_SESSION['AdrId']="";
+	// Clear session scope
+	$_SESSION['Action']="";
+	$_SESSION['Sort']="";
+	$_SESSION['PrsId']="";
+	$_SESSION['AdrId']="";
   
-  // Breadcrumb menu
-  $page  = '<div class="breadcrumb">';
-  $page .= '<a href="'.url("").'">Start</a> > ';
-  $page .= t('Oostpoort');
-  $page .= '</div>';
+	// Breadcrumb menu
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= t('Oostpoort');
+	$page .= '</div>';
 
-  $page .= '<div class="oostpoort">';
+	$page .= '<div class="oostpoort">';
 
-  drupal_set_title(t('Oostpoort Menu'));
+	drupal_set_title(t('Oostpoort Menu'));
 
-  $page .= '<br/>';
+	$page .= '<br/>';
 
-  $page .= '<div class="admin-panel">';
-  $page .= '<H3>';
-  $page .= 'Keuze menu';
-  $page .= '</H3>';
-  $page .= '<div class="body">';
-  $page .= '<p class="description">';
-  $page .= 'Alle getoonde informatie (die niet aangepast kan worden) is afkomstig van het kerkelijk bureau. Mocht er iets niet kloppen neem dan contact op met het Goudse Hervormde kerkelijke bureau. Adres: Willem de Zwijgersingel 1, 2805 BP Gouda Telefoon:0182-513360 Email:kerkelijkbureau@hervormdgouda.nl';
-  $page .= '</p>';
-  $page .= '<dl class="admin-list">';
+	$page .= '<div class="admin-panel">';
+	$page .= '<H3>';
+	$page .= t('Keuze menu');
+	$page .= '</H3>';
+	$page .= '<div class="body">';
 
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_FAMILY).'">Bekijk leden gegevens</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Dit rapport heeft informatie over de actuele Oostpoort leden.';
-  $page .= '</dd>';
+	$page .= '<dl class="admin-list">';
   
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen.';
-  $page .= '</dd>';
-
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea rapport</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Dit rapport geeft alle verjaarsjubilea weer.';
-  $page .= '</dd>';
-
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea rapport</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Dit rapport geeft alle huwelijksjubilea weer.';
-  $page .= '</dd>';
+	$page .= '<br/>';
   
-  $page .= '<br/>';
-
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Bezoekmedewerkers kunnen hier bezoeken plannen en verwerken. (Bezoekwerk rechten nodig)';
-  $page .= '</dd>';
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_FAMILY).'">Bekijk leden gegevens</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Adresgegevens van alle leden.');
+	$page .= '</dd>';
   
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Op deze pagina kunnen bezoekmedewerkers worden beheerder. (Admin rechten nodig)';
-  $page .= '</dd>';
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen.');
+	$page .= '</dd>';
+
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea rapport</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Dit rapport geeft alle verjaarsjubilea weer.');
+	$page .= '</dd>';
+
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea rapport</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Dit rapport geeft alle huwelijksjubilea weer.');
+	$page .= '</dd>';
   
-  $page .= '<dt>';
-  $page .= '<a href="'.url(OOSTPOORT_UPLOAD_CSV).'">Nieuw ledenbestand laden</a>';
-  $page .= '</dt>';
-  $page .= '<dd>';
-  $page .= 'Op deze pagina kunnen nieuwe leden bestanden worden ingeladen. (Admin rechten nodig)';
-  $page .= '</dd>';
+	$page .= '<br/>';
 
-  $page .= '</dl>';
-  $page .= '</div>';
-  $page .= '</div>';
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Bezoekmedewerkers kunnen hier bezoeken plannen en verwerken. (Bezoekwerk rechten nodig)');
+	$page .= '</dd>';
+  
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Op deze pagina kunnen bezoekmedewerkers worden beheerder. (Admin rechten nodig)');
+	$page .= '</dd>';
+  
+	$page .= '<dt>';
+	$page .= '<a href="'.url(OOSTPOORT_UPLOAD_CSV).'">Nieuw ledenbestand laden</a>';
+	$page .= '</dt>';
+	$page .= '<dd>';
+	$page .= t('Op deze pagina kunnen nieuwe leden bestanden worden ingeladen. (Admin rechten nodig)');
+	$page .= '</dd>';
 
-  print theme("page", $page);
+	$page .= '</dl>';
+  
+	$page .= '<br/>';
+	$page .= '<br/>';
+	
+	$page .= t('Alle getoonde informatie die niet aangepast kan worden is afkomstig van het ');
+	$page .= t('kerkelijk bureau. Mocht er iets niet kloppen neem dan contact op met het Goudse ');
+	$page .= t('Hervormde kerkelijke bureau.');
+	$page .= '<br/>';
+	$page .= '<br/>';
+	$page .= '<b>'.t('Hervormd Kerkelijkbureau Gouda').'</b>';
+	$page .= '<br/>';
+	$page .= t('Willem de Zwijgersingel 1');
+	$page .= '<br/>';
+	$page .= t('2805 BP').'&nbsp;&nbsp;'.t('Gouda'); 
+	$page .= '<br/>';
+	$page .= t('0182-513360');
+	$page .= '<br/>';
+	$page .= oostpoort_view_email( t('kerkelijkbureau@hervormdgouda.nl') );
+
+	$page .= '</div>';  
+	$page .= '</div>';
+	$page .= '</div>';
+
+	print theme("page", $page);
 }
 
 // ##################################################################################

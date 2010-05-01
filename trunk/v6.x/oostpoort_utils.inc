@@ -36,8 +36,7 @@
  * debug_param
  * Print on screen POSTED parameters
  */
-function oostpoort_debug_param($id, $param)
-{
+function oostpoort_debug_param($id, $param) {
 	//echo '['.$id.'='.$param.']';
 }
 
@@ -45,9 +44,12 @@ function oostpoort_debug_param($id, $param)
  * debug_param
  * Print on screen SQL commands
  */
-function oostpoort_debug_sql($sql)
-{
-	//echo '[Query='.$sql.']';
+function oostpoort_debug_sql($sql) {
+	echo '[Query='.$sql.']';
+}
+
+function oostpoort_view_email($email) {
+	return '<a href="mailto:'.$email.'">'.$email.'</a>';
 }
 
 /**

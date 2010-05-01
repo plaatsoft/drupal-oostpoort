@@ -241,7 +241,8 @@ function oostpoort_family_view() {
 	$page .= oostpoort_load_picture("Adr",$AdrId, 0, 0,"right");
 	
 	$page .= '<h4>'.$data->straat.'</h4>';	
-	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';		
+	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
+	$page .= '<h4>'.t('Nederland').'</h4>';		
 	$page .= '<h4>'.$data->AdrTelefoon.'</h4>';	
 		
 	$query  = 'select ';
@@ -266,7 +267,7 @@ function oostpoort_family_view() {
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Foto').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
-	$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	$page .= '<th><b>'.t('Mobiel').'</b></th>';
 	$page .= '<th><b>'.t('Email').'</b></th>';	
@@ -285,10 +286,10 @@ function oostpoort_family_view() {
 		}
 		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
 		$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam)."</td>";
-		$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>';
+		//$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>';
 		$page .= '<td class="active">'.oostpoort_view_date($data->PrsGeboorteDatum).'</td>';
 		$page .= '<td>'.$data->PrsMobiel.'</td>';
-		$page .= '<td>'.$data->PrsEmail.'</td>';
+		$page .= '<td>'.oostpoort_view_email($data->PrsEmail).'</td>';
 		$page .= '</tr>';
 	}
 	$page .= '</fieldset>';
@@ -372,11 +373,12 @@ function oostpoort_member_view()
 	$page .= '<div class="oostpoort">';
 	
 	$page .= '<fieldset>' ;
-	$page .= '<legend>Persoon</legend>';
+	$page .= '<legend>'.t('Kerkelijke bureau gegevens').'</legend>';
 	$page .= oostpoort_load_picture("Prs",$PrsId,0,0,"right");
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
-	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';	
+	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
+	$page .= '<h4>'.t('Nederland').'</h4>';	
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Geslacht').':</label>';
@@ -396,7 +398,7 @@ function oostpoort_member_view()
 	$page .= '</fieldset>' ;
 	
 	$page .= '<fieldset>' ;
-	$page .= '<legend>Extra Gegevens</legend>';
+	$page .= '<legend>Extra gegevens</legend>';
 		
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Roepnaam').':</label>';

@@ -136,6 +136,7 @@ function oostpoort_process_csv($filename) {
 		$theData=str_replace("ü", "u", $theData); 
 		$theData=str_replace("ö", "o", $theData); 
 		$theData=str_replace("é", "e", $theData); 
+		$theData=str_replace("ë", "e", $theData);
 		
 		list( 
 			$Status,

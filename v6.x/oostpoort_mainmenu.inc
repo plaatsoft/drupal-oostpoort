@@ -29,13 +29,19 @@
 */
 
 // ##################################################################################
-// MODULE MAIN MENU
+// Views
 // ##################################################################################
 
 function oostpoort_mainmenu( ) 
 {
   global $user;
 
+  // Clear session scope
+  $_SESSION['Action']="";
+  $_SESSION['Sort']="";
+  $_SESSION['PrsId']="";
+  $_SESSION['AdrId']="";
+  
   // Breadcrumb menu
   $page  = '<div class="breadcrumb">';
   $page .= '<a href="'.url("").'">Start</a> > ';

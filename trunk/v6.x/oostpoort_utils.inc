@@ -45,7 +45,7 @@ function oostpoort_debug_param($id, $param) {
  * Print on screen SQL commands
  */
 function oostpoort_debug_sql($sql) {
-	echo '[Query='.$sql.']';
+	//echo '[Query='.$sql.']';
 }
 
 function oostpoort_view_email($email) {

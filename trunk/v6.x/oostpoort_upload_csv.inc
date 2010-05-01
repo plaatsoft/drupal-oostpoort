@@ -109,7 +109,14 @@ function oostpoort_process_csv($filename) {
 
 	$line_counter=0;
 	$csv_file_error=0;
+	
+	$address_error_counter=0;
 	$address_insert_counter=0;
+	$address_unchanged_counter=0;
+	
+	$member_error_counter=0;
+	$member_insert_counter=0;
+	$member_update_counter=0;
 
 	//$page .= "Filename=".$filename;
 	
@@ -118,12 +125,18 @@ function oostpoort_process_csv($filename) {
 	// Header line, skip it!
 	$theData = fgets($fh);
 	$line_counter++;
-
+	
 	// Process Data
 	$theData = fgets($fh);
-	$line_counter++;
 	while ($theData!='')
 	{	
+	   // Remove some unwanted character and other tokens
+		$theData=str_replace("Jonkvrouw ", "", $theData); 
+		$theData=str_replace("ï", "i", $theData); 
+		$theData=str_replace("ü", "u", $theData); 
+		$theData=str_replace("ö", "o", $theData); 
+		$theData=str_replace("é", "e", $theData); 
+		
 		list( 
 			$Status,
 			$Selectiewijk,
@@ -158,46 +171,89 @@ function oostpoort_process_csv($filename) {
 			$KerkBlad,
 			$KerkLidNr) = split(";", $theData, 23);
 	 
-		if (oostpoort_update_adress($Straatnaam, $Huisnr.$HuisLetter, $Postcode, $Woonplaats)) {
+		if (($Huisnr.$HuisLetter!="") && ($Postcode!="")) {
+	 
+			// Find address
+			$AdrId = oostpoort_find_address($Postcode,$Huisnr.$HuisLetter);			
+			if ($AdrId=="") {
 			
-			$address_insert_counter++;
+				// Address not found, insert it!
+				$AdrId = oostpoort_insert_adress($Straatnaam, $Huisnr.$HuisLetter, $Postcode, $Woonplaats);
+				$address_insert_counter++;
+				
+			} else {
+			
+				$address_unchanged_counter++;
+			}
+		} else {
+		
+			$AdrId="";
+			$address_error_counter++;
 		}
 		
-		if (oostpoort_update_member($Voornamen, $VoorvoegselNaam, $Aanschrijfnaam, $Geslacht,
-											$GeboorteDatum, $HuwelijkDatum, $KerkLidNr)) {
+		// If validate address available update/insert member data.
+		if ($AdrId!="") {
+			$PrsId = oostpoort_find_member($KerkLidNr, $Aanschrijfnaam);
+			if ($PrsId == "") {
+		
+				// Member not found, insert it
+				$PrsId=oostpoort_insert_member($Voornamen, $Aanschrijfnaam, $Geslacht, $Burgelijkstaat,
+							$GeboorteDatum, $HuwelijkDatum, $KerkLidNr, $AdrId);
 			
-			$member_insert_counter++;
+				$member_insert_counter++;
+		
+			} else {
+		
+				// Member found, update it!
+				$member_update_counter++;
+			}
+			
+		} else {
+		
+			$member_error_counter++;
 		}
-					
+		
 		$line_counter++;
 		$theData = fgets($fh);
 	}
 	fclose($fh);
 
-	if ($error==0)
-	{
-		$page .= '<div class="messages status">';
-		$page .= '<ul>';
-		$page .= '<li>';
-		$page .= t('Ledenbestand is correct verwerkt.');
-		$page .= '</li>';
-		$page .= '<li>';
-		$page .= ($line_counter-1).' '.t('leden verwerkt.');
-		$page .= '</li>';
-		$page .= '<li>';
-		$page .= $address_insert_counter.' '.t('adressen toegevoegd.');
-		$page .= '</li>';
-		$page .= '</ul>';
-		$page .= '</div>';
-	}
+	$page .= '<div class="messages status">';
+	$page .= '<ul>';
+	$page .= '<li>';
+	$page .= t('Ledenbestand is verwerkt.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= ($line_counter-1).' '.t('leden geanalyseerd.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $address_unchanged_counter.' '.t('adressen ongewijzigd.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $address_insert_counter.' '.t('adressen toegevoegd.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $address_error_counter.' '.t('addressen niet verwerkt (data incorrect).');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $member_insert_counter.' '.t('personen toegevoegd.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $member_update_counter.' '.t('personen bijgewerkt.');
+	$page .= '</li>';
+	$page .= '<li>';
+	$page .= $member_error_counter.' '.t('personen niet verwerkt (data incorrect).');
+	$page .= '</li>';
+	$page .= '</ul>';
+	$page .= '</div>';
 
 	return $page;
 }
 
-function oostpoort_update_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
-	
+function oostpoort_find_address($Postcode,$HuisNr)
+{
 	if (($HuisNr!="") && ($Postcode!="")) {
-	
+
 		$sql  = 'select ';
 		$sql .= '  Adr_ID as AdrId ';
 		$sql .= 'from ';
@@ -206,43 +262,71 @@ function oostpoort_update_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
 		$sql .= '  Adr_Postcode="'.$Postcode.'" and ';
 		$sql .= '  Adr_Huisnr="'.$HuisNr.'"';
  
-		//oostpoort_debug_sql($sql);
+		oostpoort_debug_sql($sql);
 		$queryResult = db_query($sql);     
 		$data = db_fetch_object($queryResult);
 	
-		if ($data->AdrId=="") {
-	
-			$sql  = 'INSERT INTO oostpoort_adres ( ';
-			$sql .= '`Adr_Straat`, ';
-			$sql .= '`Adr_Huisnr`, ';
-			$sql .= '`Adr_Plaats`, ';
-			$sql .= '`Adr_Postcode` ';
-			$sql .= ') VALUES (';
-			$sql .= '"'.$Straatnaam.'", ';
-			$sql .= '"'.$HuisNr.'", ';
-			$sql .= '"'.$Woonplaats.'", ';
-			$sql .= '"'.$Postcode.'") ';
-		
-			//oostpoort_debug_sql($sql);
-			db_query($sql); 	
-			
-			return true;
-		}
+		$AdrId=$data->AdrId;
 	}
-	return false;
+	oostpoort_debug_param('AdrId',$AdrId);
+	return $AdrId;
+}
+	
+function oostpoort_insert_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
+	
+	$sql  = 'INSERT INTO oostpoort_adres ( ';
+	$sql .= '`Adr_Straat`, ';
+	$sql .= '`Adr_Huisnr`, ';
+	$sql .= '`Adr_Plaats`, ';
+	$sql .= '`Adr_Postcode` ';
+	$sql .= ') VALUES (';
+	$sql .= '"'.$Straatnaam.'", ';
+	$sql .= '"'.$HuisNr.'", ';
+	$sql .= '"'.$Woonplaats.'", ';
+	$sql .= '"'.$Postcode.'") ';
+		
+	oostpoort_debug_sql($sql);
+	db_query($sql); 	
+	
+	return oostpoort_find_address($Postcode,$HuisNr);
+}
+	
+function oostpoort_split_name($origName)
+{
+	// Get Initials
+	list( $Voorletters ) = split(' ', $origName);
+	$name['Initials']=$Voorletters;
+	
+	// Get Middle name
+	$offset=1;
+	$tmp=substr($origName, strlen($Voorletters)+$offset);
+		
+	if (preg_match("/^van der/", $tmp, $matches)) {
+		$VoorvoegselNaam="van der";
+	} else if (preg_match("/^van den/", $tmp)) {
+		$VoorvoegselNaam="van den";
+	} else if (preg_match("/^van de/", $tmp, $matches)) {
+		$VoorvoegselNaam="van de";
+	} else if (preg_match("/^van/", $tmp, $matches)) {
+		$VoorvoegselNaam="van";
+	} else if (preg_match("/^de/", $tmp, $matches)) {
+		$VoorvoegselNaam="de";
+	}
+	$name['MiddleName']=$VoorvoegselNaam;
+	if ($name['MiddleName']!="") $offset+=1;		
+	
+	// Get Last name
+	$Achternaam=substr($origName, strlen($Voorletters)+strlen($VoorvoegselNaam)+$offset);
+	$name['LastName']=$Achternaam;
+	
+	return $name;
 }
 
+function oostpoort_find_member($KerkLidNr,$Name) {
 
-function oostpoort_update_member(
-			$Voornamen,
-			$VoorvoegselNaam,
-			$Aanschrijfnaam,
-			$Geslacht,
-			$GeboorteDatum,
-			$HuwelijkDatum,
-			$KerkLidNr)  {
-			
-	if ($KerkLidNr!="")
+	$name = oostpoort_split_name($Name);
+
+	if ($KerkLidNr!=0) {
 	
 		$sql  = 'select ';
 		$sql .= '  Prs_ID as PrsId ';
@@ -250,49 +334,101 @@ function oostpoort_update_member(
 		$sql .= '  oostpoort_persoon ';
 		$sql .= 'where ';
 		$sql .= '  Prs_Kerklidnummer="'.$KerkLidNr.'"';
- 
-		//oostpoort_debug_sql($sql);
-		$queryResult = db_query($sql);     
-		$data = db_fetch_object($queryResult);
 		
-		list( $Voorletters ) = split(" ", $Aanschrijfnaam, 1);
-		
-		$tmp=substr($Aanschrijfnaam, strlen($Voorletters));
-				
-		if ($data->PrsId=="") {
+	} else {
 	
-			$sql  = 'INSERT INTO oostpoort_adres ( ';
-			$sql .= '`Prs_Kerklidnummer`, ';
-			$sql .= '`Prs_Voorletters`, ';
-			$sql .= '`Prs_Tussenvoegsels`, ';
-			$sql .= '`Prs_Voornamen`, ';
-			$sql .= '`Prs_Achternaam`, ';
-			$sql .= '`Prs_GeslachtMV`, ';
-			$sql .= '`Prs_Gem_ID`, ';
-			$sql .= '`Prs_Bst_ID`, ';
-			$sql .= '`Prs_Huidig_Adr_ID`, ';
-			$sql .= '`Prs_Geboortedatum`, ';
-			$sql .= '`Prs_Huwelijksdatum` ';
-			$sql .= ') VALUES (';
-			$sql .= '"'.$KerkLidNr.'", ';
-			$sql .= '"'.$Voorletters.'", ';
-			$sql .= '"'.$VoorvoegselNaam.'", ';
-			$sql .= '"'.$Postcode.'") ';		
-			if ($Geslacht=='Man') $sql .= '"M", '; else $sql .= '"V", ';
+		$sql  = 'select ';
+		$sql .= '  Prs_ID as PrsId ';
+		$sql .= 'from ';
+		$sql .= '  oostpoort_persoon ';
+		$sql .= 'where ';
+		$sql .= '  Prs_Voorletters="'.$name['Initials'].'" and ';
+		$sql .= '  Prs_Tussenvoegsels="'.$name['MiddleName'].'" and ';
+		$sql .= '  Prs_Achternaam="'.$name['LastName'].'"';	
 	}
-}
-
-function oostpoort_member_state($type) {
 	
-	$sql = 'select ';
-	$sql = ' Bst_ID as BstId ';
-	$sql = 'where ';
-	$sql = ' Bst_Code=="'.$type.'"';
-  
-	//oostpoort_debug_sql($sql);
+	oostpoort_debug_sql($sql);
 	$queryResult = db_query($sql);     
 	$data = db_fetch_object($queryResult);
 	
+	$PrsId = $data->PrsId;
+	oostpoort_debug_param('PrsId',$PrsId);
+	
+	return $PrsId;
+}
+
+function oostpoort_insert_member(
+			$Voornamen,
+			$Aanschrijfnaam,
+			$Geslacht,
+			$Burgelijkstaat,
+			$GeboorteDatum,
+			$HuwelijkDatum,
+			$KerkLidNr,
+			$AdrId)  {
+	
+	$name = oostpoort_split_name($Aanschrijfnaam);
+	
+	$sql  = 'INSERT INTO oostpoort_persoon ( ';
+	$sql .= '`Prs_Kerklidnummer`, ';
+	$sql .= '`Prs_Voorletters`, ';
+	$sql .= '`Prs_Tussenvoegsels`, ';
+	$sql .= '`Prs_Voornamen`, ';
+	$sql .= '`Prs_Achternaam`, ';
+	$sql .= '`Prs_GeslachtMV`, ';
+	$sql .= '`Prs_Gem_ID`, ';
+	$sql .= '`Prs_Bst_ID`, ';
+	$sql .= '`Prs_Huidig_Adr_ID`, ';
+	$sql .= '`Prs_Geboortedatum`, ';
+	$sql .= '`Prs_Huwelijksdatum` ';
+	$sql .= ') VALUES (';
+	$sql .= '"'.$KerkLidNr.'", ';
+	$sql .= '"'.$name['Initials'].'", ';
+	$sql .= '"'.$name['MiddleName'].'", ';
+	$sql .= '"'.$Voornamen.'", ';		
+	$sql .= '"'.$name['LastName'].'", ';
+	if ($Geslacht=='Man') {
+		$sql .= '"M", '; 
+	} else {
+		$sql .= '"V", ';
+	}
+	$sql .= '0, ';
+	$sql .= oostpoort_member_state($Burgelijkstaat).', ';
+	$sql .= $AdrId.', ';
+	$sql .= '"'.oostpoort_date_reverse($GeboorteDatum).'", ';
+	$sql .= '"'.oostpoort_date_reverse($HuwelijkDatum).'") ';
+	
+	oostpoort_debug_sql($sql);
+	db_query($sql); 
+}
+
+function oostpoort_date_reverse($date) { 
+
+  $page = "";
+  
+  if ($date!="") {
+		list($day, $month, $year) = split('[/.-]', $date);
+		$page = $year.'-'.$month.'-'.$day;
+  }
+  return $page;
+}
+
+function oostpoort_member_state($TypeOrig) {
+	
+	$Type = ucfirst($TypeOrig);
+	
+	$sql  = 'select ';
+	$sql .= ' Bst_ID as BstId ';
+	$sql .= 'from  ';
+   $sql .= '  oostpoort_burgelijkestaat ';
+	$sql .= 'where ';
+	$sql .= ' Bst_Code like "'.$Type.'"';
+  
+	oostpoort_debug_sql($sql);
+	$queryResult = db_query($sql);     
+	$data = db_fetch_object($queryResult);
+		
+	oostpoort_debug_param('BstId',$data->BstId);
 	return $data->BstId;
 }
 

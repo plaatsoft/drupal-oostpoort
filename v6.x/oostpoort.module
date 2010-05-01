@@ -28,6 +28,14 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+/*
+ * Todo:
+ *  - CSV upload
+ *  - Google map intergration
+ *  - Birthday email notification 
+ *  - Access security for visitors members
+ */
+
 // ##################################################################################
 // Defines
 // ##################################################################################

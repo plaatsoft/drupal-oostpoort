@@ -57,7 +57,7 @@ function oostpoort_jubilea_married()
 	$page .= '<legend>'.t('Filteren').'</legend>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Huwelijk:').' '.oostpoort_manitory().'</label>';
+	$page .= '<label>'.t('Huwelijk:').' '.oostpoort_view_manitory().'</label>';
 	$page .= oostpoort_married_range("AgeId", $AgeId).' '.t('jaar');
 	$page .= '<div class="description">'.t('Selecteer een huwelijk lusterum, daarna worden alle jubilarisen getoond.').'</div>';
 	$page .= '</div>';

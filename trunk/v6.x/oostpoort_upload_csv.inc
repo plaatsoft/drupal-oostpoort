@@ -137,6 +137,7 @@ function oostpoort_process_csv($filename) {
 		$theData=str_replace("ö", "o", $theData); 
 		$theData=str_replace("é", "e", $theData); 
 		$theData=str_replace("ë", "e", $theData);
+		$theData=str_replace("ç", "c", $theData);
 		
 		list( 
 			$Status,
@@ -206,6 +207,8 @@ function oostpoort_process_csv($filename) {
 			} else {
 		
 				// Member found, update it!
+				oostpoort_update_member($Voornamen,$PrsId);
+		
 				$member_update_counter++;
 			}
 			
@@ -292,6 +295,21 @@ function oostpoort_insert_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
 	return oostpoort_find_address($Postcode,$HuisNr);
 }
 	
+function oostpoort_update_member($voornamen,$PrsId) {
+
+	$sql  = 'UPDATE ';
+	$sql .= '  oostpoort_persoon ';
+	$sql .= 'SET ';
+	$sql .= '  Prs_Voornamen="'.$voornamen.'", ';
+	$sql .= '  Prs_ImportWijzigingdatum="'.date("Y-m-d").'" ';
+	$sql .= 'where ';
+	$sql .= '  Prs_id='.$PrsId;
+			
+	oostpoort_debug_sql($sql);
+	db_query($sql); 	
+}
+	
+	
 function oostpoort_split_name($origName)
 {
 	// Get Initials
@@ -302,15 +320,23 @@ function oostpoort_split_name($origName)
 	$offset=1;
 	$tmp=substr($origName, strlen($Voorletters)+$offset);
 		
-	if (preg_match("/^van der/", $tmp, $matches)) {
+	if (preg_match("/^van der/", $tmp)) {
 		$VoorvoegselNaam="van der";
 	} else if (preg_match("/^van den/", $tmp)) {
 		$VoorvoegselNaam="van den";
-	} else if (preg_match("/^van de/", $tmp, $matches)) {
+	} else if (preg_match("/^van de/", $tmp)) {
 		$VoorvoegselNaam="van de";
-	} else if (preg_match("/^van/", $tmp, $matches)) {
-		$VoorvoegselNaam="van";
-	} else if (preg_match("/^de/", $tmp, $matches)) {
+	} else if (preg_match("/^van 't/", $tmp)) {
+		$VoorvoegselNaam="van 't";	
+	} else if (preg_match("/^van/", $tmp)) {
+		$VoorvoegselNaam="van";	
+	} else if (preg_match("/^ten/", $tmp)) {
+		$VoorvoegselNaam="ten";						
+	} else if (preg_match("/^in 't/", $tmp)) {
+		$VoorvoegselNaam="in 't";
+	} else if (preg_match("/^den/", $tmp)) {
+		$VoorvoegselNaam="den";
+	} else if (preg_match("/^de/", $tmp)) {
 		$VoorvoegselNaam="de";
 	}
 	$name['MiddleName']=$VoorvoegselNaam;
@@ -372,6 +398,7 @@ function oostpoort_insert_member(
 	
 	$sql  = 'INSERT INTO oostpoort_persoon ( ';
 	$sql .= '`Prs_Kerklidnummer`, ';
+	$sql .= '`Prs_KringlidJN`, ';
 	$sql .= '`Prs_Voorletters`, ';
 	$sql .= '`Prs_Tussenvoegsels`, ';
 	$sql .= '`Prs_Voornamen`, ';
@@ -380,10 +407,12 @@ function oostpoort_insert_member(
 	$sql .= '`Prs_Gem_ID`, ';
 	$sql .= '`Prs_Bst_ID`, ';
 	$sql .= '`Prs_Huidig_Adr_ID`, ';
+	$sql .= '`Prs_ImportNieuwdatum`, ';
 	$sql .= '`Prs_Geboortedatum`, ';
 	$sql .= '`Prs_Huwelijksdatum` ';
 	$sql .= ') VALUES (';
 	$sql .= '"'.$KerkLidNr.'", ';
+	$sql .= '"ONWAAR", ';
 	$sql .= '"'.$name['Initials'].'", ';
 	$sql .= '"'.$name['MiddleName'].'", ';
 	$sql .= '"'.$Voornamen.'", ';		
@@ -396,6 +425,7 @@ function oostpoort_insert_member(
 	$sql .= '0, ';
 	$sql .= oostpoort_member_state($Burgelijkstaat).', ';
 	$sql .= $AdrId.', ';
+	$sql .= '"'.date("Y-m-d").'", ';
 	$sql .= '"'.oostpoort_date_reverse($GeboorteDatum).'", ';
 	$sql .= '"'.oostpoort_date_reverse($HuwelijkDatum).'") ';
 	

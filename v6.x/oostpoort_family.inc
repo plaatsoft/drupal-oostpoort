@@ -147,7 +147,7 @@ function oostpoort_family_list() {
 	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Foto').'</b></th>';
-	$page .= '<th class="active"><b>'.t('Naam').'</b></th>';
+	$page .= '<th class="active"><b>'.t('Achternaam').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';

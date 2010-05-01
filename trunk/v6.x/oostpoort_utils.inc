@@ -38,7 +38,7 @@
  */
 function oostpoort_debug_param($id, $param)
 {
-	echo '['.$id.'='.$param.']';
+	//echo '['.$id.'='.$param.']';
 }
 
 /**
@@ -47,7 +47,7 @@ function oostpoort_debug_param($id, $param)
  */
 function oostpoort_debug_sql($sql)
 {
-	echo '[Query='.$sql.']';
+	//echo '[Query='.$sql.']';
 }
 
 /**
@@ -241,7 +241,7 @@ function oostpoort_view_visiters($id, $value) {
 	$queryResult = db_query($query); 
   
    $page .= '<div class="form-item">';
-	$page .= '<label>'.t('Bezoekmedewerker').': '.oostpoort_manitory().'</label>';  
+	$page .= '<label>'.t('Bezoekmedewerker').': '.oostpoort_view_manitory().'</label>';  
 	$page .= '<select name="'.$id.'" onChange="submit();">';   
 	while ($data = db_fetch_object($queryResult))
 	{

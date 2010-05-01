@@ -162,7 +162,7 @@ function oostpoort_visit_list_view() {
 	$page .= '<thead>';
 	$page .= '<tr>';
 	//$page .= '<th><b>'.t('Rij').'</b></th>';
-	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Achternaam').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
@@ -537,7 +537,7 @@ function oostpoort_visit_list_search() {
 	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('').'</b></th>';
-	$page .= '<th><b>'.t('Naam').'</b></th>';
+	$page .= '<th><b>'.t('Achternaam').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Straat').'</b></th>';
 	//$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';

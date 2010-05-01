@@ -29,28 +29,16 @@
 */
 
 // ##################################################################################
-// JUBILEA OVERVIEW
+// Views
 // ##################################################################################
 
 function oostpoort_jubilea_birthday()  
-{
-	$action=$_POST['action'];
-	//echo "[action=".$action."]";
-    
-	$page = oostpoort_jubilea_birthday_view();
-
-   if ($page!="") {
-		print theme("page", $page);
-	}
-}
-
-function oostpoort_jubilea_birthday_view()  
 {
    $AgeId= $_POST["AgeId"];
 	if ($AgeId==0) {
 	   $AgeId=50;
 	}
-	//echo "[AgeId=".$AgeId."]"; 
+	oostpoort_debug_param("AgeId", $AgeId);
 
 	drupal_set_title(t('Verjaardag jubilea Rapport'));
 	
@@ -66,16 +54,14 @@ function oostpoort_jubilea_birthday_view()
 	$page .= '<form name="OostpoortForm" method="POST" >';
 		
 	$page .= '<fieldset>' ;
-	$page .= '<legend>'.t('Parameters').'</legend>';
+	$page .= '<legend>'.t('Filteren').'</legend>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Leeftijd:').' '.oostpoort_manitory().'</label>';
+	$page .= '<label>'.t('Leeftijd:').' '.oostpoort_view_manitory().'</label>';
 	$page .= oostpoort_age_range("AgeId", $AgeId);
 	$page .= ' '.t('jaar');
 	$page .= '<div class="description">'.t('Selecteer een jubilea leeftijd, daarna worden alle jubilarisen getoond.').'</div>';
 	$page .= '</div>';
-	
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</fieldset>' ;
 
@@ -110,14 +96,16 @@ function oostpoort_jubilea_birthday_view()
 	$query .= 'order by ';
 	$query .= ' a.Prs_Geboortedatum';
 
-	//echo $query;	
+	oostpoort_debug_sql($query);
    $queryResult = db_query($query);
    $page .= oostpoort_jubilea_birthday_table($queryResult,1);
 
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
+	
 	$page .= '</div>';		
 	$page .= '</form>';
 	
-	return $page;
+	print theme("page", $page);
 }
 
 function oostpoort_jubilea_birthday_table($queryResult, $mode)
@@ -150,7 +138,7 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
 		}
       //$page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
       $page_tmp .= '<td>'.$data->Naam.'</td>';
-		//$page_tmp .= '<td>'.oostpoort_visit_geslacht($data->PrsGeslacht).'</td>';
+		//$page_tmp .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>';
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
@@ -194,10 +182,6 @@ function oostpoort_age_range($id, $AgeId) {
 	$page.='</select>';
 	  
    return $page;
-}
-
-function oostpoort_manitory() {
-	return '<span class="form-required"> *</span>';
 }
 
 // ##################################################################################

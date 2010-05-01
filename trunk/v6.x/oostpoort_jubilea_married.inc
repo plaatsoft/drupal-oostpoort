@@ -29,28 +29,16 @@
 */
 
 // ##################################################################################
-// JUBILEA OVERVIEW
+// Views
 // ##################################################################################
 
 function oostpoort_jubilea_married()  
-{
-	$action=$_POST['action'];
-	//echo "[action=".$action."]";
-    
-	$page = oostpoort_jubilea_married_view();
-
-   if ($page!="") {
-		print theme("page", $page);
-	}
-}
-
-function oostpoort_jubilea_married_view()  
 {
    $AgeId= $_POST["AgeId"];
 	if ($AgeId==0) {
 	   $AgeId=12;
 	}
-	//echo "[AgeId=".$AgeId."]"; 	
+	oostpoort_debug_param("AgeId", $AgeId);
 
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
@@ -66,15 +54,13 @@ function oostpoort_jubilea_married_view()
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<fieldset>' ;
-	$page .= '<legend>'.t('Parameters').'</legend>';
+	$page .= '<legend>'.t('Filteren').'</legend>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Huwelijk:').' '.oostpoort_manitory().'</label>';
 	$page .= oostpoort_married_range("AgeId", $AgeId).' '.t('jaar');
 	$page .= '<div class="description">'.t('Selecteer een huwelijk lusterum, daarna worden alle jubilarisen getoond.').'</div>';
 	$page .= '</div>';
-	
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</fieldset>' ;
 
@@ -103,14 +89,16 @@ function oostpoort_jubilea_married_view()
 	$query .= 'order by ';
 	$query .= ' a.Prs_Huwelijksdatum';
 	
-   //echo $query;	
+   oostpoort_debug_sql($query);
    $queryResult = db_query($query);
    $page .= oostpoort_jubilea_married_table($queryResult,1);
 
+	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
+	
 	$page .= '</div>';
 	$page .= '</form>';
 	
-	return $page;
+	print theme("page", $page);
 }
 
 function oostpoort_jubilea_married_table($queryResult, $mode)

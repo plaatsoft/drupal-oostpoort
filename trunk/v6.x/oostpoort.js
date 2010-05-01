@@ -10,8 +10,8 @@ function hiddenInput(formname, name, value, action)
 	
 	var newInput2 = document.createElement('input');
 	newInput2.setAttribute('type','hidden');
-	newInput2.setAttribute('id','action');
-	newInput2.setAttribute('name','action');
+	newInput2.setAttribute('id','Action');
+	newInput2.setAttribute('name','Action');
 	newInput2.setAttribute('value',action);
 	form.appendChild(newInput2);		
 	

@@ -28,6 +28,31 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// ##################################################################################
+// Defines
+// ##################################################################################
+
+// Oostpoort Files store
+define('OOSTPOORT_IMAGE_DIR',       'files/oostpoort');
+define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
+
+// Oostpoort URLs
+define('OOSTPOORT_MENU',            'oostpoort');
+
+define('OOSTPOORT_FAMILY',     		'oostpoort/family');
+define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
+define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
+define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
+
+define('OOSTPOORT_UPLOAD_CSV',      'oostpoort/upload/csv');
+
+define('OOSTPOORT_VISIT',           'oostpoort/visit');
+define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');
+
+// ##################################################################################
+// Load all php modules
+// ##################################################################################
+
 // PHP module files
 module_load_include('inc', 'oostpoort', 'oostpoort_general');
 module_load_include('inc', 'oostpoort', 'oostpoort_utils'); 
@@ -51,6 +76,10 @@ drupal_add_js(drupal_get_path('module', 'oostpoort'). '/oostpoort.js');
 // Add CSS files
 drupal_add_css(drupal_get_path('module', 'oostpoort') .'/oostpoort.css');
 
+// ##################################################################################
+// Drupal hooks
+// ##################################################################################
+
 /**
  * help hook()
  * @return help texts
@@ -65,7 +94,6 @@ function oostpoort_help($path, $arg) {
   }
   return $output;
 }
-
 
 /**
   * Valid permisions for this module

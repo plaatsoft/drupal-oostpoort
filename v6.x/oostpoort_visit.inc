@@ -34,6 +34,8 @@
 
 function oostpoort_visit()  
 {
+	echo var_dump($_POST);
+ 
 	$Action=$_POST['Action'];
 	if ($Action=="") {
 		$Action=$_SESSION['Action'];
@@ -326,7 +328,7 @@ function oostpoort_visit_address_part($data, $readonly)
 	if (($type==2) or ($type==4)) {
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Bezoek niet gewenst').': </label>';
-		$page .= oostpoort_view_checkbox2("NoVisit","ONWAAR",$readonly);
+		$page .= oostpoort_view_checkbox("NoVisit","ONWAAR",$readonly);
 		$page .= '<div class="description">';
 		if ($type==4) {
 			$page .= t('Als bezoek niet meer gewenst is selecteer deze optie. Er zullen dan geen bezoeken meer worden ingepland.');
@@ -423,7 +425,7 @@ function oostpoort_visit_address_part($data, $readonly)
 			} else {
 				$page .= '<tr class="odd">';
 			}
-			$page .= '<td>'.oostpoort_view_checkbox2( "Active".$persoon->PrsId, "ONWAAR", $readonly).'</td>';
+			$page .= '<td>'.oostpoort_view_checkbox( "Active-".$persoon->PrsId, "ONWAAR", $readonly).'</td>';
 			$page .= '<td>'.$persoon->Naam.'</td>';
 			$page .= '<td>'.oostpoort_view_geslacht($persoon->PrsGeslacht).'</td>';
 			$page .= '<td class="active">'.oostpoort_view_date($persoon->PrsGeboorteDatum).'</td>';
@@ -558,7 +560,7 @@ function oostpoort_visit_list_search() {
 			$page_tmp .= '<tr class="odd">';
 	 	}
 		if (($data->AdrGeplandDatum==0) and ($data->AdrDeactiveerDatum==0)) {
-			$page_tmp .= '<td>'.oostpoort_view_checkbox2( "Active".$data->AdrId, "ONWAAR", false).'</td>';	  
+			$page_tmp .= '<td>'.oostpoort_view_checkbox( "Active-".$data->AdrId, "ONWAAR", false).'</td>';	  
 		} else {
 			$page_tmp .= '<td></td>';
 		}
@@ -583,7 +585,7 @@ function oostpoort_visit_list_search() {
 	$page .= '</table>';
 
   	// Button bar
- 	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Select',t('Opslaan')).' | ';
+ 	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Select',t('Selecteren')).' | ';
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Cancel',t('Terug'));
 	
 	$page .= '</form>';
@@ -602,50 +604,31 @@ function oostpoort_visit_select()
    $PrsId=$_SESSION["PrsId"];
 	oostpoort_debug_param("PrsId", $PrsId);
 	
-	// Query Database
-	$query  = 'SELECT ';
-	$query .= '  a.Adr_Id as AdrId, ';
-	$query .= '  concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, ';
-	$query .= '  a.Adr_Plaats as AdrPlaats, ';
-	$query .= '  a.Adr_postcode as AdrPostcode, ';
-	$query .= '  a.Adr_Telefoon as AdrTelefoon ';
-	$query .= 'FROM ';
-	$query .= '  oostpoort_adres a ';
-	$query .= 'where '; 
-	$query .= '  a.Adr_GeplandDatum=0 and ';
-	$qeury .= '  a.Adr_DeactiveerDatum=0 and ';
-	$query .= '  a.Adr_Straat like "b%" ';
-	$query .= 'order by ';
-	$query .= '  Straatnaam '; 
-			 
-	oostpoort_debug_sql($query);
-	$queryResult = db_query($query);	
-	while ($data = db_fetch_object($queryResult))
-	{
-	   $i++;
-		$value=$_POST["Active".$data->AdrId];		
-		oostpoort_debug_param("Active".$data->AdrId, $value);
-		if ($value=="on") {
+	foreach( $_POST as $var => $value) {
 			
+		list($active, $AdrId)=split("-",$var);
+		if (($active=="Active") && ($value=="on"))
+		{
+			oostpoort_debug_param("AdrId", $AdrId);
 			$amount++;
 
 			// Check if entry all exist (Protect against reload button), if so skip insert)
-			$query  = 'select Adr_GeplandDatum as AdrGeplandDatum from oostpoort_adres where Adr_id='.$data->AdrId;
+			$query  = 'select Adr_GeplandDatum as AdrGeplandDatum from oostpoort_adres where Adr_id='.$AdrId;
 			$queryResultTmp = db_query($query);
 			$tmp = db_fetch_object($queryResultTmp);
 			if ($tmp->AdrGeplandDatum==0)
 			{			
-			   // Insert new visit
+				// Insert new visit
 				$query = 'INSERT INTO oostpoort_bezoek (';
 				$query .= '  `Bzk_Mdw_ID`, `Bzk_Adr_ID`, `Bzk_GeplandDatum`, `Bzk_Bzt_ID`)';
 				$query .= 'VALUES ';
-				$query .= '( '.$PrsId.','.$data->AdrId.', "'.date("Y-m-d").'", 1 )';
+				$query .= '( '.$PrsId.','.$AdrId.', "'.date("Y-m-d").'", 1 )';
 				
 				oostpoort_debug_sql($query);
 				db_query($query);
 					
 				// Update adres entry
-				$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="'.date("Y-m-d").'" where Adr_id='.$data->AdrId;
+				$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="'.date("Y-m-d").'" where Adr_id='.$AdrId;
 				
 				oostpoort_debug_sql($query);
 				db_query($query);

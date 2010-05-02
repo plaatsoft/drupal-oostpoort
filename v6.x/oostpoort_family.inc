@@ -434,7 +434,7 @@ function oostpoort_member_view()
 	    	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Kring lid').':</label>';
-	$page .= oostpoort_view_checkbox($data->PrsKringLid, false);	  
+	$page .= oostpoort_view_checkbox("Active", $data->PrsKringLid, false);	  
 	$page .= '<div class="description">';
 	$page .= t('Actief op een bijbelkring, Alfa groep en/of groeigroep.');
 	$page .= '</div>';

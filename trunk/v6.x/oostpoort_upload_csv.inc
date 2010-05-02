@@ -434,17 +434,6 @@ function oostpoort_insert_member(
 	db_query($sql); 
 }
 
-function oostpoort_date_reverse($date) { 
-
-  $page = "";
-  
-  if ($date!="") {
-		list($day, $month, $year) = split('[/.-]', $date);
-		$page = $year.'-'.$month.'-'.$day;
-  }
-  return $page;
-}
-
 function oostpoort_member_state($TypeOrig) {
 	
 	$Type = ucfirst($TypeOrig);

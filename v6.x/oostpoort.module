@@ -73,9 +73,23 @@ module_load_include('inc', 'oostpoort', 'oostpoort_upload_csv');
 
 // ADD Java Scripts files
 drupal_add_js(drupal_get_path('module', 'oostpoort'). '/oostpoort.js');
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/ui.datepicker.js');
+
+drupal_add_js('
+	$(function() {
+		$("#datepicker").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: "dd-mm-yy",
+			appendText: " (dd-mm-yyyy)",
+			dayNamesMin: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
+			monthNames: ["Januari","February","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"]			
+		});
+	});','inline');
 
 // Add CSS files
 drupal_add_css(drupal_get_path('module', 'oostpoort') .'/oostpoort.css');
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/datepicker.css');
 
 // ##################################################################################
 // Drupal hooks

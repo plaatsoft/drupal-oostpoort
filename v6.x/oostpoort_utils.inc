@@ -37,7 +37,7 @@
  * Print on screen POSTED parameters
  */
 function oostpoort_debug_param($id, $param) {
-	//echo '['.$id.'='.$param.']';
+	echo '['.$id.'='.$param.']';
 }
 
 /**
@@ -207,6 +207,18 @@ function oostpoort_view_date($date) {
   return $page;
 }
 
+function oostpoort_date_reverse($date) { 
+
+  $page = "";
+  
+  if ($date!="") {
+		list($day, $month, $year) = split('[/.-]', $date);
+		$page = $year.'-'.$month.'-'.$day;
+  }
+  return $page;
+}
+
+
 /**
  * View Visitors dropdown
  */
@@ -274,7 +286,7 @@ function oostpoort_view_type($id, $value, $readonly) {
 		while ($data = db_fetch_object($queryResult)) {
 		
 			$page.='<option value="'.$data->Bzt_ID.'" ';
-			if ($data->Bzt_ID==value) $page.='selected="selected" ';
+			if ($data->Bzt_ID==$value) $page.='selected="selected" ';
 			$page.='>'.$data->Bzt_Omschrijving.'</option>';
 		}
 		$page.='</select> ';

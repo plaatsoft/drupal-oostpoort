@@ -78,26 +78,9 @@ function oostpoort_view_geslacht($label) {
 }
 
 /**
- * View Checkbox type 1
+ * View Checkbox type
  */
-function oostpoort_view_checkbox( $value, $readonly) {
-
-   if (! $readonly) {
-	
-		if ( $value=='WAAR') {
-			return '<input type="checkbox" name="Active" checked="true" />';
-		} else {
-			return '<input type="checkbox" name="Active" />';
-		}
-	} else {
-		return $value;
-	}
-}
-
-/**
- * View Checkbox type 2
- */
-function oostpoort_view_checkbox2( $id, $value, $readonly ) {
+function oostpoort_view_checkbox( $id, $value, $readonly ) {
 
 	if ( ! $readonly ) {
 		if ($value=="WAAR") {

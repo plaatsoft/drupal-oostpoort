@@ -130,7 +130,7 @@ function oostpoort_process_csv($filename) {
 	$theData = fgets($fh);
 	while ($theData!='')
 	{	
-	   // Remove some unwanted character and other tokens
+	   // Remove some unwanted characters and other tokens
 		$theData=str_replace("Jonkvrouw ", "", $theData); 
 		$theData=str_replace("ï", "i", $theData); 
 		$theData=str_replace("ü", "u", $theData); 

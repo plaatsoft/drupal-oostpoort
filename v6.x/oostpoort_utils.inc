@@ -232,8 +232,12 @@ function oostpoort_view_visiters($id, $value) {
 	{
 		$page .= '<option value="'.$data->PrsId.'" ';
 		if ($data->PrsId==$value) $page.='selected="selected" ';
-		$page .= '>'.$data->Naam.' ['.$data->PrsId.']';
-		if ($data->Actief=='ONWAAR') $page .= ' '.t('Niet Actief');
+		$page .= '>';
+		if ($data->Actief=='ONWAAR') {
+			$page .=$data->Naam.' ('.t('Niet Actief').')';
+		} else {
+			$page .='<b>'.$data->Naam.'</b>';
+		}
 		$page .= '</option>';
 	}
 	$page .='</select>'; 
@@ -499,24 +503,25 @@ function oostpoort_check_number($str) {
  * Function check user access
  * @returns true if access is allowed else false 
  */
-function oostpoort_check_access($uid, $account) {
-
-
-  if ( ( (  ($account->uid==$uid) || 
-            ($uid==0) ||  
-            (variable_get('addressbook_wiki_edit_mode',0)==1)
-         ) 
-         && user_access('add address', $account)
-        ) 
-        || user_access('access administration pages', $account) 
-     ) 
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+function oostpoort_check_access() {
+	
+	global $user;
+    
+	if ( !isset($_SESSION['MdwId']) )  { 
+  
+		$sql .= 'select Mdw_ID from oostpoort_medewerker where Mdw_UID='.$user->uid;  
+		oostpoort_debug_sql($sql);
+		$queryResult = db_query($sql);
+		$data = db_fetch_object($queryResult);
+	
+		$_SESSION['MdwId']=$data->Mdw_ID;
+	}
+	
+	if ($_SESSION['MdwId']!="") {	
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**

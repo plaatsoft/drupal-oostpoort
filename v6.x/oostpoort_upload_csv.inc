@@ -207,7 +207,7 @@ function oostpoort_process_csv($filename) {
 			} else {
 		
 				// Member found, update it!
-				oostpoort_update_member($Voornamen,$PrsId);
+				oostpoort_update_member($Voornamen,$PrsId,$AdrId);
 		
 				$member_update_counter++;
 			}
@@ -295,12 +295,13 @@ function oostpoort_insert_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
 	return oostpoort_find_address($Postcode,$HuisNr);
 }
 	
-function oostpoort_update_member($voornamen,$PrsId) {
+function oostpoort_update_member($voornamen,$PrsId,$AdrId) {
 
 	$sql  = 'UPDATE ';
 	$sql .= '  oostpoort_persoon ';
 	$sql .= 'SET ';
 	$sql .= '  Prs_Voornamen="'.$voornamen.'", ';
+	$sql .= '  Prs_Huidig_Adr_ID='.$AdrId.', ';
 	$sql .= '  Prs_ImportWijzigingdatum="'.date("Y-m-d").'" ';
 	$sql .= 'where ';
 	$sql .= '  Prs_id='.$PrsId;

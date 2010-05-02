@@ -34,6 +34,8 @@
 
 function oostpoort_mainmenu( ) 
 {
+   //global user;
+	
 	// Clear session scope
 	$_SESSION['Action']="";
 	$_SESSION['Sort']="";
@@ -92,26 +94,33 @@ function oostpoort_mainmenu( )
   
 	$page .= '<br/>';
 
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Bezoekmedewerkers kunnen hier bezoeken plannen en verwerken. (Bezoekwerk rechten nodig)');
-	$page .= '</dd>';
+   // Only visit members can access this page.
+	if (oostpoort_check_access()) {
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Bezoekmedewerkers kunnen hier bezoeken plannen en verwerken.');
+		$page .= '</dd>';
+	}
+	
+	//only administrators can access these pages.
+  if (user_access('access administration pages')) {
+   
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Op deze pagina kunnen bezoekmedewerkers worden beheerder.');
+		$page .= '</dd>';
   
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Op deze pagina kunnen bezoekmedewerkers worden beheerder. (Admin rechten nodig)');
-	$page .= '</dd>';
-  
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_UPLOAD_CSV).'">Nieuw ledenbestand laden</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Op deze pagina kunnen nieuwe leden bestanden worden ingeladen. (Admin rechten nodig)');
-	$page .= '</dd>';
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_UPLOAD_CSV).'">Nieuw ledenbestand laden</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Op deze pagina kunnen nieuwe leden bestanden worden ingeladen.');
+		$page .= '</dd>';
+	}
 
 	$page .= '</dl>';
   

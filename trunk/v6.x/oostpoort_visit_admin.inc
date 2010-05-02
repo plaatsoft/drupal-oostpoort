@@ -92,6 +92,9 @@ function oostpoort_visit_admin_list()
 {
 	$page .= '<div class="oostpoort">';
 
+   // Remove access rights for this module it will be updated if you enter the main menu again.
+	unset($_SESSION['MdwId']);
+
 	// Create Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
@@ -183,7 +186,7 @@ function oostpoort_visit_admin_member()
    
 	// Get posted parameters		
 	$PrsId=$_POST["PrsId"];
-   oostpoort_debug_param("[PrsId=".$PrsId."]");
+   oostpoort_debug_param("PrsId",$PrsId);
     
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
@@ -306,7 +309,7 @@ function oostpoort_visit_admin_member()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Actief').':</label>';
-	$page .= oostpoort_view_checkbox($data->MdwActief, false);	  
+	$page .= oostpoort_view_checkbox("Active", $data->MdwActief, false);	  
 	$page .= '<div class="description">';
 	$page .= t('Actief of niet actief.');
 	$page .= '</div>';
@@ -341,7 +344,7 @@ function oostpoort_visit_admin_search()
 {
    // Get posted parameters
    $Search=$_POST['Search'];
-   oostpoort_debug_param("[Search=".$Search."]");
+   oostpoort_debug_param("Search",$Search);
  
 	$page .= '<div class="oostpoort">';
 		
@@ -391,7 +394,6 @@ function oostpoort_visit_admin_search()
 		$query .= ' b.Prs_Achternaam';
 		
 		oostpoort_debug_sql($query);
-		debug_sql($query);
 		$queryResult = db_query($query);
   		
 		// Show Banner

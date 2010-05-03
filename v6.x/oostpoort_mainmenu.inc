@@ -58,38 +58,38 @@ function oostpoort_mainmenu( )
 	$page .= '<H3>';
 	$page .= t('Keuze menu');
 	$page .= '</H3>';
+	$page .= '<br/>';
+	
 	$page .= '<div class="body">';
 
 	$page .= '<dl class="admin-list">';
-  
-	$page .= '<br/>';
-  
+    
 	$page .= '<dt>';
 	$page .= '<a href="'.url(OOSTPOORT_FAMILY).'">Bekijk leden gegevens</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
-	$page .= t('Adresgegevens van alle leden.');
+	$page .= t('bekijk adres gegevens en andere relevate informatie over leden. *');
 	$page .= '</dd>';
   
 	$page .= '<dt>';
 	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
-	$page .= t('Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen.');
+	$page .= t('Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen. *');
 	$page .= '</dd>';
 
 	$page .= '<dt>';
 	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea rapport</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
-	$page .= t('Dit rapport geeft alle verjaarsjubilea weer.');
+	$page .= t('Dit rapport geeft alle verjaarsjubilea weer. *');
 	$page .= '</dd>';
 
 	$page .= '<dt>';
 	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea rapport</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
-	$page .= t('Dit rapport geeft alle huwelijksjubilea weer.');
+	$page .= t('Dit rapport geeft alle huwelijksjubilea weer. *');
 	$page .= '</dd>';
   
 	$page .= '<br/>';
@@ -122,11 +122,11 @@ function oostpoort_mainmenu( )
 		$page .= '</dd>';
 	}
 
-	$page .= '</dl>';
-  
 	$page .= '<br/>';
-	$page .= '<br/>';
-	
+
+	$page .= '<fieldset>' ;	
+	$page .= '<legend>'.t('Opmerkingen *').'</legend>';
+	$page .= '<dd>';
 	$page .= t('Alle getoonde informatie die niet aangepast kan worden is afkomstig van het ');
 	$page .= t('kerkelijk bureau. Mocht er iets niet kloppen neem dan contact op met het Goudse ');
 	$page .= t('Hervormde kerkelijke bureau.');
@@ -141,7 +141,11 @@ function oostpoort_mainmenu( )
 	$page .= t('0182-513360');
 	$page .= '<br/>';
 	$page .= oostpoort_view_email( t('kerkelijkbureau@hervormdgouda.nl') );
-
+	$page .= '</dd>';
+	$page .= '</fieldset>' ;
+	
+	$page .= '</dl>';
+  
 	$page .= '</div>';  
 	$page .= '</div>';
 	$page .= '</div>';

@@ -34,7 +34,7 @@
 
 function oostpoort_visit()  
 {
-	echo var_dump($_POST);
+	//echo var_dump($_POST);
 
    // Check access for this page.
 	if (!oostpoort_check_access()) {
@@ -313,8 +313,8 @@ function oostpoort_visit_address_view() {
 
 function oostpoort_visit_address_part($data, $readonly)
 {	
-	$BezoekDatum=$_POST["BezoekDatum"];
-	oostpoort_debug_param("BezoekDatum", $BezoekDatum);
+	$VisiteDate=$_POST["VisiteDate"];
+	oostpoort_debug_param("VisiteDate", $VisiteDate);
 	
 	$BzkInfo=$_POST["BzkInfo"];
 	if ($BzkInfo=="") {
@@ -331,7 +331,7 @@ function oostpoort_visit_address_part($data, $readonly)
 	$page .= '<fieldset>';
 	if ($data->BzkAfgelegdDatum!=0) {
 
-		$page .= '<legend>Bezoek afgelegd op '.oostpoort_view_date($data->BzkGeplandDatum).' door '.$data->Naam.'</legend>';
+		$page .= '<legend>Bezoek afgelegd op '.oostpoort_view_date($data->BzkAfgelegdDatum).' door '.$data->Naam.'</legend>';
 		$type = 1;
 	
 	} else if ($data->BzkBezoekNietGewenstDatum!=0) {
@@ -357,7 +357,7 @@ function oostpoort_visit_address_part($data, $readonly)
 	if ($type==4)  {	
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Bezoek Datum').': <span class="form-required">*</span></label>';
-		$page .= '<input type="text" name="BezoekDatum" id="datepicker" size="11" maxlength="10" value="'.$BezoekDatum.'" >';
+		$page .= '<input type="text" name="VisiteDate" id="datepicker" size="11" maxlength="10" value="'.$VisiteDate.'" >';
 		$page .= '<div class="description">';
 		$page .= t('Datum wanneer bezoek is uitgevoerd of geannuleerd.');
 		$page .= '</div>';
@@ -389,7 +389,7 @@ function oostpoort_visit_address_part($data, $readonly)
 		if (($type==2) or ($type==4)) {
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Bezoek niet gewenst').': </label>';
-		$page .= oostpoort_view_checkbox("NoVisit","ONWAAR",$readonly);
+		$page .= oostpoort_view_checkbox("NoVisit",$_POST["NoVisit"],$readonly);
 		$page .= '<div class="description">';
 		if ($type==4) {
 			$page .= t('Als bezoek niet meer gewenst is selecteer deze optie. Er zullen dan geen bezoeken meer worden ingepland.');
@@ -464,7 +464,8 @@ function oostpoort_visit_address_part($data, $readonly)
 			} else {
 				$page .= '<tr class="odd">';
 			}
-			$page .= '<td>'.oostpoort_view_checkbox( "Active-".$persoon->PrsId, "ONWAAR", $readonly).'</td>';
+			
+			$page .= '<td>'.oostpoort_view_checkbox( "Active-".$persoon->PrsId, $_POST["Active-".$persoon->PrsId], $readonly).'</td>';
 			$page .= '<td>'.$persoon->Naam.'</td>';
 			$page .= '<td>'.oostpoort_view_geslacht($persoon->PrsGeslacht).'</td>';
 			$page .= '<td class="active">'.oostpoort_view_date($persoon->PrsGeboorteDatum).'</td>';
@@ -699,12 +700,26 @@ function oostpoort_visit_select()
 
 function oostpoort_visit_deselect()
 {	
-   // Get posted parameters
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
 	$BzkId=$_POST["BzkId"];
 	oostpoort_debug_param("BzkId", $BzkId);
 	
 	$BzkInfo=$_POST["BzkInfo"];
 	oostpoort_debug_param("BzkInfo", $BzkInfo);
+	
+	$CancelDate=$_POST["VisiteDate"];
+	if ($CancelDate=="") {
+		$CancelDate=date("d-m-Y");
+	} 
+	
+	oostpoort_debug_param("VisiteDate", $VisiteDate);
+	
+	// *****************************
+	// Input Validation
+	// *****************************
 	
 	if ($BzkInfo=="") {
 		$page .= '<div class="messages error">';
@@ -715,10 +730,13 @@ function oostpoort_visit_deselect()
 		$message["error"]=1;
 		return $message;
 	}
+
+	// *****************************
+	// Data ok, update database
+	// *****************************
 	
-	// Update database
 	$query  = 'UPDATE oostpoort_bezoek SET ';
-	$query .= '  Bzk_GeannuleerdDatum="'.date("Y-m-d").'", ';
+	$query .= '  Bzk_GeannuleerdDatum="'.oostpoort_date_reverse($CancelDate).'", ';
 	$query .= '  Bzk_BezoekInfo="'.$BzkInfo.'" ';
 	$query .= 'where ';
 	$query .= '  Bzk_ID='.$BzkId;
@@ -732,7 +750,7 @@ function oostpoort_visit_deselect()
 	$data = db_fetch_object($queryResult);
 
 	// Update adres entry
-	$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="0" where Adr_id='.$data->BzkAdrId;
+	$query = 'UPDATE oostpoort_adres SET Adr_GeplandDatum="" where Adr_id='.$data->BzkAdrId;
 	oostpoort_debug_sql($query);
 	db_query($query);
 			
@@ -748,7 +766,10 @@ function oostpoort_visit_deselect()
 
 function oostpoort_visit_ready()
 {
-   // Get posted parameters
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+   
 	$BzkId=$_POST["BzkId"];
 	oostpoort_debug_param("BzkId", $BzkId);
 	
@@ -757,12 +778,21 @@ function oostpoort_visit_ready()
 
    $VisitType=$_POST["VisitType"];
 	oostpoort_debug_param("VisitType", $VisitType);
+
+	$BzkInfo=$_POST["BzkInfo"];
+	oostpoort_debug_param("BzkInfo", $BzkInfo);
+	
+	$VisiteDate=$_POST["VisiteDate"];
+	oostpoort_debug_param("VisiteDate", $VisiteDate);
+	
+	// *****************************
+	// Input Validation
+	// *****************************
 	
 	$page = '<div class="messages error">';
 	$page .= '<ul>';
 	
-	$BzkInfo=$_POST["BzkInfo"];
-	oostpoort_debug_param("BzkInfo", $BzkInfo);
+	// Validate Note
 	if ($BzkInfo=="")
 	{
 		$page .= '<li>';
@@ -771,9 +801,8 @@ function oostpoort_visit_ready()
 		$message["error"]=1;
 	}
 
-	$BezoekDatum=$_POST["BezoekDatum"];
-	oostpoort_debug_param("BezoekDatum", $BezoekDatum);
-	if ($BezoekDatum=="")
+    // Validate VisiteDate
+	if ($VisiteDate=="")
 	{
 		$page .= '<li>';
 		$page .= t('Bezoek datum is verplicht');
@@ -781,22 +810,41 @@ function oostpoort_visit_ready()
 		$message["error"]=1;
 	}
 	
+	// Validate Member selection
+	$amount=0;
+	foreach( $_POST as $var => $value) {
+			
+		list($active, $PrsId)=split("-",$var);
+		if (($active=="Active") && ($value=="on")) {
+			$amount++;
+		}
+	}
+	if ($amount=="")
+	{
+		$page .= '<li>';
+		$page .= t('Geen personen geselecteerd');
+		$page .= '</li>';
+		$message["error"]=1;
+	}
+		
 	$page .= '</ul>';
 	$page .= '</div>';
 		
-	if ($message["error"]==1)
-	{
+	if ($message["error"]==1) {
 		$message["page"]=$page;
 		$message["error"]=1;
 		return $message;
 	}
-			
-	// Update database
+
+	// *****************************
+	// Data ok, update database
+	// *****************************
+	
 	$query  = 'UPDATE oostpoort_bezoek SET ';
 	if ($NoVisit=="on") {
-	   $query .= '  Bzk_BezoekNietGewenstDatum="'.oostpoort_date_reverse($BezoekDatum).'", ';	
+	   $query .= '  Bzk_BezoekNietGewenstDatum="'.oostpoort_date_reverse($VisiteDate).'", ';	
 	} else {
-		$query .= '  Bzk_AfgelegdDatum="'.oostpoort_date_reverse($BezoekDatum).'", ';
+		$query .= '  Bzk_AfgelegdDatum="'.oostpoort_date_reverse($VisiteDate).'", ';
 	}
 	$query .= '  Bzk_Bzt_ID="'.$VisitType.'", ';
 	$query .= '  Bzk_BezoekInfo="'.$BzkInfo.'" ';
@@ -813,7 +861,7 @@ function oostpoort_visit_ready()
 
 	// Update adres entry
 	if ($NoVisit=="on") {
-		$query = 'UPDATE oostpoort_adres SET Adr_DeactiveerDatum="'.oostpoort_date_reverse($BezoekDatum).'" where Adr_id='.$data->BzkAdrId.'; ';
+		$query = 'UPDATE oostpoort_adres SET Adr_DeactiveerDatum="'.oostpoort_date_reverse($VisiteDate).'" where Adr_id='.$data->BzkAdrId.'; ';
 		oostpoort_debug_sql($query);
 		db_query($query);
 	}

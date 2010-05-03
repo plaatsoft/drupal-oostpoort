@@ -37,7 +37,7 @@
  * Print on screen POSTED parameters
  */
 function oostpoort_debug_param($id, $param) {
-	echo '['.$id.'='.$param.']';
+	//echo '['.$id.'='.$param.']';
 }
 
 /**
@@ -83,7 +83,7 @@ function oostpoort_view_geslacht($label) {
 function oostpoort_view_checkbox( $id, $value, $readonly ) {
 
 	if ( ! $readonly ) {
-		if ($value=="WAAR") {
+		if (($value=="WAAR") or ($value=="on")) {
 			$page = '<input type="checkbox" name="'.$id.'" checked="true" />';
 		} else {
 			$page = '<input type="checkbox" name="'.$id.'" />';

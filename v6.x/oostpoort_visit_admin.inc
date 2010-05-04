@@ -39,12 +39,13 @@
  */
 function oostpoort_visit_admin()  
 {
+	//echo var_dump($_POST);
+	
 	$Action=$_POST['Action'];
 	if ($Action=="") {
 		$Action=$_SESSION['Action'];
 	}
-	oostpoort_debug_param("Action",$Action);
-	
+	oostpoort_debug_param("Action",$Action);	
 	$_SESSION['Action']=$Action;
 		  	  
 	if ($Action=="Edit") {

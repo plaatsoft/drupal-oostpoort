@@ -219,9 +219,8 @@ function oostpoort_family_view() {
 	drupal_set_title(t('Familie overzicht'));
 
 	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
-			
 	$page .= oostpoort_save_picture("Adr",$AdrId);
-					
+						
 	$query  = 'select ';
 	$query .= ' concat(a.Adr_Straat, " " ,a.Adr_Huisnr) as straat, ';
 	$query .= ' a.Adr_Plaats as AdrPlaats, ';
@@ -297,18 +296,16 @@ function oostpoort_family_view() {
 	$page .= '</tbody>';
 	$page .= '</table>';
 
-   if ($Action=="AddFamilyPicture") { 
-	 
+	if ($Action=="AddFamilyPicture") { 
 		$page .= '<div class="form-item">';
 		$page .= '<label>'.t('Foto bestand').':</label>';
 		$page .= '<input name="uploadedfile" type="file" size="100" onChange="submit();" />';
 		$page .= '<div class="description">Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan '.ini_get('upload_max_filesize').'B</div>';
 		$page .= '</div>';
-
 	} else {
-	
-		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'AddFamilyPicture',t('Foto')).' | ';
+			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'AddFamilyPicture',t('Foto')).' | ';
 	}
+	
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
 	
    return $page;

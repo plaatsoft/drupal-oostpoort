@@ -39,9 +39,10 @@ function oostpoort_mainmenu( )
 	// Clear session scope
 	$_SESSION['Action']="";
 	$_SESSION['Sort']="";
+	$_SESSION['Search']="";
 	$_SESSION['PrsId']="";
 	$_SESSION['AdrId']="";
-  
+	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';

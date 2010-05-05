@@ -427,8 +427,8 @@ function oostpoort_insert_member(
 	$sql .= oostpoort_member_state($Burgelijkstaat).', ';
 	$sql .= $AdrId.', ';
 	$sql .= '"'.date("Y-m-d").'", ';
-	$sql .= '"'.oostpoort_date_reverse($GeboorteDatum).'", ';
-	$sql .= '"'.oostpoort_date_reverse($HuwelijkDatum).'") ';
+	$sql .= '"'.oostpoort_convert_date_reverse($GeboorteDatum).'", ';
+	$sql .= '"'.oostpoort_convert_date_reverse($HuwelijkDatum).'") ';
 	
 	oostpoort_debug_sql($sql);
 	db_query($sql); 

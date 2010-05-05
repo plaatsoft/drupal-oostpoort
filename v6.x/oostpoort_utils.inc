@@ -45,7 +45,7 @@ function oostpoort_debug_param($id, $param) {
  * Print on screen SQL commands
  */
 function oostpoort_debug_sql($sql) {
-	echo '[Query='.$sql.']';
+	//echo '[Query='.$sql.']';
 }
 
 function oostpoort_view_email($email) {
@@ -196,7 +196,7 @@ function oostpoort_view_role($role, $readonly) {
 /**
  * View Date type
  */
-function oostpoort_view_date($date) { 
+function oostpoort_convert_date($date) { 
 
   $page = "";
   
@@ -207,7 +207,7 @@ function oostpoort_view_date($date) {
   return $page;
 }
 
-function oostpoort_date_reverse($date) { 
+function oostpoort_convert_date_reverse($date) { 
 
   $page = "";
   
@@ -261,6 +261,18 @@ function oostpoort_view_visiters($id, $value) {
 	return $page;
 }
 
+/**
+ * View Date type
+ */
+function oostpoort_view_date($id, $value, $readonly) {
+	
+ 	if ( ! $readonly)
+ 	{
+ 		return '<input type="text" name="'.$id.'" id="datepicker" size="11" maxlength="10" value="'.$value.'" >';	
+ 	} else {
+ 		return $value;
+ 	}
+}
 /**
  * View Note type
  */

@@ -147,7 +147,7 @@ function oostpoort_member_age_table($queryResult, $mode)
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
 		//$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';
-		$page_tmp .= '<td class="active">'.oostpoort_view_date($data->PrsGeboortedatum).'</td>';
+		$page_tmp .= '<td class="active">'.oostpoort_convert_date($data->PrsGeboortedatum).'</td>';
 		$page_tmp .= '</tr>';
 	}
 

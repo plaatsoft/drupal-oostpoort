@@ -247,12 +247,12 @@ function oostpoort_visit_admin_member()
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Geboorte Datum').':</label>';
-	$page .= oostpoort_view_date($data->PrsGeboorteDatum);
+	$page .= oostpoort_convert_date($data->PrsGeboorteDatum);
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Huwelijks Datum').':</label>';
-	$page .= oostpoort_view_date($data->PrsHuwelijksDatum);
+	$page .= oostpoort_convert_date($data->PrsHuwelijksDatum);
 	$page .= '</div>';
 	
 	$page .= '</fieldset>' ;
@@ -426,7 +426,7 @@ function oostpoort_visit_admin_search()
 			$page .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Add', $data->Naam).'</td>';
 			//$page .= '<td>'.$data->PrsId.'</td>';	  	  
 			$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>'; 
-			$page .= '<td>'.oostpoort_view_date($data->PrsGeboortedatum).'</td>'; 
+			$page .= '<td>'.oostpoort_convert_date($data->PrsGeboortedatum).'</td>'; 
 			$page .= '</tr>';
 		}
 		$page .= '</tbody>';

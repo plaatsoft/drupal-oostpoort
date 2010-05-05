@@ -34,6 +34,13 @@ Release Notes
 - Bugfix: Now member AdrId is also update during CSV upload.
 - Added security access for the visit part.
 
+04-04-2010 (Week 19)
+- Added Date picker.
+- Added Access security for all user type's. 
+- Show more information about family in visit address select page.
+- Return to old datamodel. 
+- Retested everything.
+ 
 To do List
 ----------
 - Add Block info to each person
@@ -48,4 +55,3 @@ Nice to have
 - Add more information to database: Married location, etc.....
 - Google map intergration.
 - Birthday email notification. 
-- Access security for visitors members.

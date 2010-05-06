@@ -89,7 +89,11 @@ function oostpoort_view_checkbox( $id, $value, $readonly ) {
 			$page = '<input type="checkbox" name="'.$id.'" />';
 		}
 	} else {
-		$page="X";
+		if (($value=="WAAR") or ($value=="on")) {
+			$page = '<input type="checkbox" checked="true" disabled="true" />';
+		} else {
+			$page = '<input type="checkbox" disabled="true" />';
+		}
 	}
 	return $page;
 }
@@ -233,12 +237,10 @@ function oostpoort_view_visiters($id, $value) {
 	$query .= 'where ';
 	$query .= ' a.Mdw_Prs_id=b.Prs_id ';
 	$query .= 'order by ';
-	$query .= ' Naam';
+	$query .= ' b.Prs_Achternaam';
   
 	$queryResult = db_query($query); 
   
-   $page .= '<div class="form-item">';
-	$page .= '<label>'.t('Bezoekmedewerker').': '.oostpoort_view_manitory().'</label>';  
 	$page .= '<select name="'.$id.'" onChange="submit();">';   
 	while ($data = db_fetch_object($queryResult))
 	{
@@ -252,12 +254,7 @@ function oostpoort_view_visiters($id, $value) {
 		}
 		$page .= '</option>';
 	}
-	$page .='</select>'; 
-	$page .= '<div class="description">';
-	$page .= t('Select hier de bezoekmedewerker daarna worden alle ingeplande bezoeken getoond.');
-	$page .= '</div>';
-	$page .= '</div>';
-
+	$page .= '</select>';
 	return $page;
 }
 
@@ -279,9 +276,9 @@ function oostpoort_view_date($id, $value, $readonly) {
 function oostpoort_view_note($id, $value, $readonly) {
 
    if ( ! $readonly ) {
-		return '<textarea name="'.$id.'" cols=100 rows=4>'.$value.'</textarea>';
+		return '<textarea name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';
 	} else {
-	   return '<textarea name="'.$id.'" cols=100 rows=4 DISABLED>'.$value.'</textarea>';
+	   return '<textarea name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
 	}
 }
 
@@ -314,7 +311,7 @@ function oostpoort_view_type($id, $value, $readonly) {
    return $page;
 }
 
-function oostpoort_sortbar($Sort)
+function oostpoort_sortbar($Sort,$Action)
 {
 	$sort_bar=array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q","R","S","T","U","V","W","X","Y","Z");
 	for ($i=0; $i<26; $i++)
@@ -323,7 +320,7 @@ function oostpoort_sortbar($Sort)
 		if ($Sort==$sort_bar[$i]) { 
 			$page .= '<B>'.$Sort.'</B>|';
 		} else {		
-			$page .= oostpoort_hiddenlink('OostpoortForm', 'Sort', $sort_bar[$i], '', $sort_bar[$i]).'|';
+			$page .= oostpoort_hiddenlink('OostpoortForm', 'Sort', $sort_bar[$i], $Action, $sort_bar[$i]).'|';
 		}
 	}
 	return $page;
@@ -548,64 +545,28 @@ function oostpoort_check_access() {
 	}
 }
 
-/**
- * View birthday field
- * @ birthday_day
- * @ birthday_month
- * @ birthday_year
- * @ return HTML
- */
-function oostpoort_view_birthday($birthday_day,$birthday_month,$birthday_year,$readonly,$title) {
-
-   global $user;
-
-   $page.='<tr><td valign="top" width=15%>';
-   $page.=t($title);
-   $page.='</td><td>';
-
-   if ( $readonly == '0' ) {
-     $page.='<select name="birthday_day">';
-     for ($i=1; $i<32; $i++)
-     {
-        $page.='<option value="'.$i.'" ';
-        if ($birthday_day==$i) $page.='selected="selected" ';
-        $page.='>'.$i.'</option>';
-     }
-     $page.='</select> ';
-
-     $month=array("",t('January'),t('February'),t('March'),t('April'),t('May'),
-       t('June'),t('July'),t('August'),t('September'),t('October'),t('November'),t('December'));
-
-     $page.='<select name=".$title.">';
-     for ($i=1; $i<13; $i++)
-     {
-        $page.='<option value="'.$i.'" ';
-        if ($birthday_month==$i) $page.='selected="selected" ';
-        $page.='>'.$month[$i].'</option>';
-     }
-     $page.='</select> ';
-
-     if ( $readonly == '0' )
-     {
-       $current_year=date('Y');
-       $page.='<select name="birthday_year">';
-       for ($i=1900; $i<=$current_year; $i++) {
-         $page.='<option value="'.$i.'" ';
-         if ($birthday_year==$i) $page.='selected="selected" ';
-         $page.='>'.$i.'</option>';
-       }
-       $page.='</select> ';
-     }
-   }
-   else 
-   {
-     $birtday .= $birthday_day.'-'.$birthday_month.'-'.$birthday_year;
-     $page .= '<input id="text" name="'.$title.'" size="11" type="text" value="'.$birtday.'" READONLY />';
-   }
-
-   $page.='</td></tr>';
-   return $page;
+function oostpoort_show_array($array) {
+    foreach ($array as $value) {
+        if (is_array($value)) {
+            show_array($value);
+        } else {
+            echo $value . "<br>";
+        }
+    }
 }
+
+function oostpoort_keep_selection() {
+		
+	foreach( $_POST as $var => $value) {
+			
+		list($active, $PrsId)=split("-",$var);
+		if (($active=="Active") && ($value=="on")) {	
+			$page .= '<input type="hidden" value="'.$value.'" name="'.$var.'" />';
+		}
+	}
+	return $page;
+}
+
 
 // ##################################################################################
 // THE END

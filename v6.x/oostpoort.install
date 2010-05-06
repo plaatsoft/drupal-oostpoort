@@ -9,264 +9,195 @@ function oostpoort_install() {
     case 'mysqli':
 
       db_query("
-	CREATE TABLE `oostpoort_members` (
-		  `MID` int(11) NOT NULL auto_increment COMMENT 'Member ID',
-		  `STATUS` varchar(10) default NULL,
-		  `WIJKNAAM` varchar(20) default NULL,
-		  `SECTIE` varchar(20) default NULL,
-		  `GESLACHT` varchar(10) default NULL,
-		  `AANSCHRIJF_NAAM` varchar(50) default NULL,
-		  `VOEGSEL` varchar(20) default NULL,
-		  `VOORNAMEN` varchar(100) default NULL,
-		  `ACHTERNAAM` varchar(50) default NULL,
-		  `STRAATNAAM` varchar(100) default NULL,
-		  `HUISNUMMER` varchar(10) default NULL,
-		  `POSTCODE` varchar(10) default NULL,
-		  `WOONPLAATS` varchar(50) default NULL,
-		  `LEEFTIJD` int(11),
-		  `GEBOORTE_DATUM` date default null,
-		  `GEBOORTE_PLAATS` varchar(50) default NULL,
-		  `BURGELIJKESTAAT` varchar(50) default NULL,
-		  `KERKELIJKESTAAT` varchar(50) default NULL,
-		  `HUWELIJK_DATUM` date default null,
-		  `HUWELIJK_PLAATS` varchar(50) default NULL,
-		  `DOOP_DATUM` date default null, 
-		  `DOOP_PLAATS` varchar(20) default NULL,
-		  `KERKELIJKE_GEZINDTE` varchar(50) default NULL,
-		  `BELIJDENIS_DATUM` date default null,
-		  `BELIJDENIS_PLAATS` varchar(50) default NULL,
-		  `HERKOMST_DATUM` date default null,
-		  `HERKOMST_PLAATS` varchar(50) default NULL,
-		  `MUTATIE_DATUM` date default null,
-		  `KERKELIJK_RELATIE` varchar(50) default NULL,
-		  `VOORKEUR_WIJK` varchar(50) default NULL,
-		  `KERKBLAD` varchar(50) default NULL,
-		  `KERKLIDNR` int(11),
-		  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		  PRIMARY KEY  (`MID`)
-		) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+	CREATE TABLE IF NOT EXISTS `oostpoort_adres` (
+  `Adr_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Adr_Straat` varchar(50) NOT NULL,
+  `Adr_Huisnr` varchar(10) NOT NULL,
+  `Adr_Plaats` varchar(30) NOT NULL,
+  `Adr_Telefoon` varchar(15) NOT NULL,
+  `Adr_Postcode` varchar(7) NOT NULL,
+  `Adr_Laatste_Wijziging` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Adr_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
       ");
-
-      db_query("
-		CREATE TABLE `oostpoort_items` (
-		  `IID` int(11) NOT NULL auto_increment COMMENT 'Item ID',
-		  `KERKLIDNR` int(11) default NULL,
-		  `TYPE` int(11) default NULL,
-		  `VALUE` varchar(2000) default NULL,
-		  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		  PRIMARY KEY  (`IID`)
-		) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+     
+       db_query("	
+       CREATE TABLE IF NOT EXISTS `oostpoort_bezoek` (
+  `Bzk_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Bzk_Mdw_ID` decimal(4,0) NOT NULL,
+  `Bzk_Adr_ID` decimal(4,0) NOT NULL,
+  `Bzk_BezoekInfo` varchar(1024) NOT NULL,
+  `Bzk_Bzt_ID` decimal(1,0) NOT NULL,
+  `Bzk_GeplandDatum` date NOT NULL,
+  `Bzk_AfgelegdDatum` date NOT NULL,
+  `Bzk_GeannuleerdDatum` date NOT NULL,
+  `Bzk_BezoekNietGewenstDatum` date NOT NULL,
+  `Bzk_Laatste_Wijziging` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Bzk_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
       ");
-
-      db_query("
-		CREATE TABLE `oostpoort_sections` (
-		  `SID` int(11) NOT NULL auto_increment COMMENT 'Section ID',
-		  `NAME` varchar(20) default NULL,
-		  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		  PRIMARY KEY  (`SID`)
-		) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      
+       db_query("	
+       CREATE TABLE IF NOT EXISTS `oostpoort_bezoekpersoon` (
+  `Bzp_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Bzp_Bzk_ID` decimal(4,0) NOT NULL,
+  `Bzp_Prs_ID` decimal(4,0) NOT NULL,
+  PRIMARY KEY (`Bzp_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
       ");
-
-      db_query("
-		CREATE TABLE `oostpoort_visitors` (
-		  `ID` int(11) NOT NULL auto_increment COMMENT 'ID',
-		  `KERKLIDNR` int(11) default NULL,
-		  `LAST_UPDATED` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		  PRIMARY KEY  (`ID`)
-		) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      
+      db_query("	
+      CREATE TABLE IF NOT EXISTS `oostpoort_bezoektype` (
+  `Bzt_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Bzt_Omschrijving` varchar(50) NOT NULL,
+  PRIMARY KEY (`Bzt_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
       ");
-
-      db_query("
-		CREATE TABLE `oostpoort_visits` (
-		  `ID` int(11) NOT NULL auto_increment COMMENT 'Member ID',
-		  `KERKLIDNR1` int(11) default NULL,
-		  `KERKLIDNR2` int(11) default NULL,
-		  `PLANNED` timestamp NOT NULL,
-		  `ACTUAL` timestamp NOT NULL,
-		  `NOTE` varchar(2000) default NULL,
-		  PRIMARY KEY  (`ID`)
-		) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+      
+       db_query("	
+       INSERT INTO `oostpoort_bezoektype` (`Bzt_ID`, `Bzt_Omschrijving`) VALUES
+(1, 'Bezoek ihkv bezoekplan'),
+(2, 'Nieuw-ingekomenen bezoek'),
+(3, 'Tot-uw-dienst actie'),
+(4, 'Administratief bezoek'),
+(5, 'Gericht pastoraal bezoek');
       ");
-
-      drupal_set_message(t("oostpoort database tables created."));
-      break;
+      
+       db_query("	
+       CREATE TABLE IF NOT EXISTS `oostpoort_blok` (
+  `Blk_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Blk_Nummer` decimal(1,0) NOT NULL,
+  `Blk_Omschrijving` varchar(50) NOT NULL,
+  PRIMARY KEY (`Blk_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+      ");
+      
+       db_query("	
+       INSERT INTO `oostpoort_blok` (`Blk_ID`, `Blk_Nummer`, `Blk_Omschrijving`) VALUES
+(11, '1', 'Vreewijk en Oosterwei 2806'),
+(12, '2', 'Molenbuurt 2807'),
+(13, '4', 'Polder- en Vrijheidsbuurt 2807'),
+(14, '5', 'Overige straten anders dan 2806/2807'),
+(15, '3', 'Oud-Goverwelle, Muziek/Componistenbuurt 2807'),
+(0, '0', 'Alle blokken');
+      ");
+      
+       db_query("	
+       CREATE TABLE IF NOT EXISTS `oostpoort_burgelijkestaat` (
+  `Bst_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Bst_Code` varchar(10) NOT NULL,
+  `Bst_Omschrijving` varchar(10) NOT NULL,
+  PRIMARY KEY (`Bst_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+      ");
+      
+       db_query("
+       INSERT INTO `oostpoort_burgelijkestaat` (`Bst_ID`, `Bst_Code`, `Bst_Omschrijving`) VALUES
+(11, 'Gehuwd', 'Gehuwd'),
+(12, 'Gescheiden', 'Gescheiden'),
+(13, 'Ongehuwd', 'Ongehuwd'),
+(14, 'Weduwe', 'Weduwe'),
+(15, 'Weduwnaar', 'Weduwnaar');	
+      ");
+      
+db_query("	
+  CREATE TABLE IF NOT EXISTS `oostpoort_gemeente` (
+  `Gem_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Gem_Code` decimal(2,0) NOT NULL,
+  `Gem_Omschrijving` varchar(20) NOT NULL,
+  PRIMARY KEY (`Gem_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
+");
+            
+db_query("	
+INSERT INTO `oostpoort_gemeente` (`Gem_ID`, `Gem_Code`, `Gem_Omschrijving`) VALUES
+(1, '1', 'Wijk 1'),
+(2, '2', 'Wijk 2'),
+(3, '3', 'Wijk 3'),
+(4, '4', 'Wijk 4'),
+(5, '5', 'Wijk 5'),
+(6, '6', 'Wijk 6'),
+(7, '99', 'Niet meelevend'),
+(8, '0', 'Onbekend'),
+(9, '10', 'Wijk 1 en 5'),
+(10, '20', 'Elders');
+");
+         
+db_query("	
+CREATE TABLE IF NOT EXISTS `oostpoort_medewerker` (
+  `Mdw_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Mdw_Prs_ID` decimal(4,0) NOT NULL,
+  `Mdw_Rol_ID` decimal(1,0) NOT NULL,
+  `Mdw_ActiefJN` char(6) NOT NULL DEFAULT '',
+  `Mdw_Blk_ID` decimal(2,0) NOT NULL,
+  `Mdw_UID` int(11) NOT NULL,
+  `Mdw_Laatste_Wijziging` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Mdw_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10001 ;
+");
+       
+db_query("
+CREATE TABLE IF NOT EXISTS `oostpoort_persoon` (
+  `Prs_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Prs_Kerklidnummer` decimal(8,0) NOT NULL,
+  `Prs_Voorletters` varchar(10) NOT NULL,
+  `Prs_Tussenvoegsels` varchar(10) NOT NULL,
+  `Prs_Voornamen` varchar(40) NOT NULL,
+  `Prs_Achternaam` varchar(50) NOT NULL,
+  `Prs_Roepnaam` varchar(30) NOT NULL,
+  `Prs_EmailAdres` varchar(100) NOT NULL,
+  `Prs_TelefoonMobiel` varchar(15) NOT NULL,
+  `Prs_GeslachtMV` char(1) NOT NULL DEFAULT '',
+  `Prs_Bst_ID` decimal(2,0) NOT NULL,
+  `Prs_Gem_ID` decimal(2,0) NOT NULL,
+  `Prs_KringlidJN` char(6) NOT NULL DEFAULT '',
+  `Prs_BezoekInfo` varchar(1024) NOT NULL,
+  `Prs_Huidig_Adr_ID` decimal(4,0) NOT NULL,
+  `Prs_Vorig_Adr_ID` decimal(4,0) NOT NULL,
+  `Prs_Geboortedatum` date NOT NULL,
+  `Prs_Huwelijksdatum` date NOT NULL,
+  `Prs_Adresmutatiedatum` date NOT NULL,
+  `Prs_ImportNieuwdatum` date NOT NULL,
+  `Prs_ImportWijzigingdatum` date NOT NULL,
+  PRIMARY KEY (`Prs_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+      ");
+      
+db_query("	            
+             CREATE TABLE IF NOT EXISTS `oostpoort_rol` (
+  `Rol_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Rol_Omschrijving` varchar(20) NOT NULL,
+  `Rol_Rangorde` decimal(1,0) NOT NULL,
+  PRIMARY KEY (`Rol_ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+ ");
+        
+ db_query("	         
+   INSERT INTO `oostpoort_rol` (`Rol_ID`, `Rol_Omschrijving`, `Rol_Rangorde`) VALUES
+(1, 'Ouderling', '1'),
+(2, 'Bezoekmedewerker', '3'),
+(5, 'Predikant', '0'),
+(7, 'Wijkadministrateur', '0'),
+(8, 'Diaken', '2'),
+(9, 'Lid kernteam', '0');
+    ");
+       
   }
 }
-
-
-function oostpoort_update_0001() {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-
-	drupal_set_message(t("Start oostpoort database patch 1."));
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblAdres (
-			Adr_ID DECIMAL(4,0) NOT NULL, 
-			Adr_StraatHuisnr CHAR(30) NOT NULL default '', 
-			Adr_Straat CHAR(26) NOT NULL default '', 
-			Adr_HuisnrNumeriek DECIMAL(3,0) NOT NULL, 
-			Adr_Huisnr CHAR(8) NOT NULL default '', 
-			Adr_PostcodeCijfers DECIMAL(4,0) NOT NULL, 
-			Adr_PostcodeLetters CHAR(2) NOT NULL default '', 
-			Adr_Plaats CHAR(18) NOT NULL default '', 
-			Adr_Telefoon CHAR(11) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		    ");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblBezoek (
-			Bzk_ID DECIMAL(4,0) NOT NULL, 
-			Bzk_Mdw_ID DECIMAL(4,0) NOT NULL, 
-			Bzk_Adr_ID DECIMAL(4,0) NOT NULL, 
-			Bzk_BezoekInfo CHAR(95) NOT NULL default '', 
-			Bzk_Bzt_ID DECIMAL(1,0) NOT NULL, 
-			Bzk_GeplandDatum CHAR(9) NOT NULL default '', 
-			Bzk_AfgelegdDatum CHAR(9) NOT NULL default '', 
-			Bzk_GeannuleerdDatum CHAR(9) NOT NULL default '', 
-			Bzk_BezoekNietGewenstDatum CHAR(9) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		 ");
-
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblBezoekPersoon (
-			Bzp_ID DECIMAL(4,0) NOT NULL, 
-			Bzp_Bzk_ID DECIMAL(4,0) NOT NULL, 
-			Bzp_Prs_ID DECIMAL(4,0) NOT NULL, 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblBezoekType (
-			Bzt_ID DECIMAL(1,0) NOT NULL, 
-			Bzt_Omschrijving CHAR(24) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblBlok (
-			Blk_ID DECIMAL(2,0) NOT NULL, 
-			Blk_Nummer DECIMAL(1,0) NOT NULL, 
-			Blk_Omschrijving CHAR(44) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("			
-		CREATE TABLE IF NOT EXISTS tblBurgelijkeStaat (
-			Bst_ID DECIMAL(2,0) NOT NULL, 
-			Bst_Code CHAR(10) NOT NULL default '', 
-			Bst_Omschrijving CHAR(10) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblGemeente (
-			Gem_ID DECIMAL(2,0) NOT NULL, 
-			Gem_Code DECIMAL(2,0) NOT NULL, 
-			Gem_Omschrijving CHAR(14) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblMedewerker (
-			Mdw_ID DECIMAL(4,0) NOT NULL, 
-			Mdw_Prs_ID DECIMAL(4,0) NOT NULL, 
-			Mdw_Rol_ID DECIMAL(1,0) NOT NULL, 
-			Mdw_ActiefJN CHAR(6) NOT NULL default '', 
-			Mdw_Blk_ID DECIMAL(2,0) NOT NULL, 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblPersoon (
-			Prs_ID DECIMAL(4,0) NOT NULL, 
-			Prs_Kerklidnummer DECIMAL(8,0) NOT NULL, 
-			Prs_Voorletters CHAR(8) NOT NULL default '', 
-			Prs_Tussenvoegsels CHAR(7) NOT NULL default '', 
-			Prs_Voornamen CHAR(28) NOT NULL default '', 
-			Prs_Achternaam CHAR(35) NOT NULL default '', 
-			Prs_Roepnaam CHAR(10) NOT NULL default '', 
-			Prs_EmailAdres CHAR(39) NOT NULL default '', 
-			Prs_TelefoonMobiel CHAR(11) NOT NULL default '', 
-			Prs_GeslachtMV CHAR(1) NOT NULL default '', 
-			Prs_Geboortedatum CHAR(10) NOT NULL default '', 
-			Prs_Huwelijksdatum CHAR(10) NOT NULL default '', 
-			Prs_Bst_ID DECIMAL(2,0) NOT NULL, 
-			Prs_Gem_ID DECIMAL(2,0) NOT NULL, 
-			Prs_KringlidJN CHAR(6) NOT NULL default '', 
-			Prs_BezoekInfo TEXT NOT NULL default '', 
-			Prs_Huidig_Adr_ID DECIMAL(4,0) NOT NULL, 
-			Prs_Vorig_Adr_ID DECIMAL(4,0) NOT NULL, 
-			Prs_Adresmutatiedatum CHAR(9) NOT NULL default '', 
-			Prs_ImportNieuwdatum CHAR(10) NOT NULL default '', 
-			Prs_ImportWijzigingdatum CHAR(10) NOT NULL default '', 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-		");
-
-	db_query("
-		CREATE TABLE IF NOT EXISTS tblRol (
-			Rol_ID DECIMAL(1,0) NOT NULL, 
-			Rol_Omschrijving CHAR(18) NOT NULL default '', 
-			Rol_Rangorde DECIMAL(1,0) NOT NULL, 
-			RECNO INT(10) unsigned NOT NULL auto_increment, 
-			PRIMARY KEY (RECNO) );
-			
-		");	
-
-	drupal_set_message(t("Finished oostpoort database patch 1."));
-      break;
-  }
-}
-
-
-function oostpoort_update_0002() {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-
-	drupal_set_message(t("Start oostpoort database patch 2."));
-
-	db_query(" ALTER TABLE `tbladres` CHANGE `RECNO` `RECNO` INT( 10 ) UNSIGNED NOT NULL; ");
-	db_query(" ALTER TABLE `tbladres` DROP PRIMARY KEY ,ADD PRIMARY KEY ( `Adr_ID` ); ");
-	db_query(" ALTER TABLE `tbladres` CHANGE `Adr_ID` `Adr_ID` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT; ");
-	db_query(" ALTER TABLE `tbladres` DROP `RECNO`; ");
-	
-	db_query(" ALTER TABLE `tbladres` DROP `Adr_StraatHuisnr`; ");
-	db_query(" ALTER TABLE `tbladres` DROP `Adr_HuisnrNumeriek`; ");
-	db_query(" ALTER TABLE `tbladres` ADD `Adr_Postcode` VARCHAR( 7 ) NOT NULL; ");
-	db_query(" update `tbladres` a set a.Adr_Postcode = CONCAT( a.Adr_PostcodeCijfers, ' ', a.Adr_PostcodeLetters); ");
-	db_query(" ALTER TABLE `tbladres` DROP `Adr_PostcodeLetters`; ");
-	db_query(" ALTER TABLE `tbladres` DROP `Adr_PostcodeCijfers`; ");
-	db_query(" ALTER TABLE `tbladres` CHANGE `Adr_Straat` `Adr_Straat` CHAR( 50 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ");
-	db_query(" RENAME TABLE `tbladres`  TO `oostpoort_adres`; ");
-
-	drupal_set_message(t("Finished oostpoort database patch 2."));
-   break;
-  }
-}
-
 
 /**
 * Implementation of hook_uninstall().
 */
 
-function oostpoort_uninstall() 
-{
-   db_query('drop table IF EXISTS oostpoort_members');
-   db_query('drop table IF EXISTS oostpoort_items');
-   db_query('drop table IF EXISTS oostpoort_sections');
-   db_query('drop table IF EXISTS oostpoort_visitors');
-   db_query('drop table IF EXISTS oostpoort_visits');
+function oostpoort_uninstall() {
+   db_query('drop table IF EXISTS oostpoort_adres');
+   db_query('drop table IF EXISTS oostpoort_bezoek');
+   db_query('drop table IF EXISTS oostpoort_bezoekpersoon');
+   db_query('drop table IF EXISTS oostpoort_bezoektype');   
+   db_query('drop table IF EXISTS oostpoort_blok');
+   db_query('drop table IF EXISTS oostpoort_burgelijkestaat');
+   db_query('drop table IF EXISTS oostpoort_gemeente');
+   db_query('drop table IF EXISTS oostpoort_medewerker');
+   db_query('drop table IF EXISTS oostpoort_persoon');
+   db_query('drop table IF EXISTS oostpoort_rol');  
 }

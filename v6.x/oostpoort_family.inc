@@ -32,8 +32,8 @@
 // State Machine
 // ##################################################################################
 
-function oostpoort_family()  
-{
+function oostpoort_family() {
+	
 	$Action=$_POST['Action'];
 	if ($Action=="") {
 		$Action=$_SESSION['Action'];
@@ -88,8 +88,12 @@ function oostpoort_family_list() {
 	// Get Sort value 
 	$Sort=$_POST['Sort'];
 	if ($Sort=="") {
-		$Sort="A";
+		$Sort=$_SESSION['Sort'];
+		if ($Sort=="") {
+			$Sort="A";
+		}
 	}
+	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
 			
 	// Breadcrumb menu
@@ -117,7 +121,7 @@ function oostpoort_family_list() {
 	$page .= '</div>';
 	$page .= '</div>';
 	
-	$page .= oostpoort_sortbar($Sort);
+	$page .= oostpoort_sortbar($Sort,"List");
 	  
 	$page .= '</fieldset>';
 	
@@ -408,7 +412,7 @@ function oostpoort_member_view()
 		
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Roepnaam').':</label>';
-	$page .= '<input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'">';
+	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$data->PrsRoepnaam.'">';
 	$page .= '<div class="description">';
 	$page .= t('Roepnaam van persoon.');
 	$page .= '</div>';
@@ -416,7 +420,7 @@ function oostpoort_member_view()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Telefoon').':</label>';
-	$page .= '<input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->AdrTelefoon.'">';
+	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$data->AdrTelefoon.'">';
 	$page .= '<div class="description">';
 	$page .= t('Telefoon nummer van persoon.');
 	$page .= '</div>';
@@ -424,7 +428,7 @@ function oostpoort_member_view()
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Mobiel').':</label>';
-	$page .= '<input id="text" name="Mobile" size="20" maxlength="20" type="text" value="'.$data->PrsMobiel.'">';
+	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$data->PrsMobiel.'">';
 	$page .= '<div class="description">';
 	$page .= t('Mobiele nummer van persoon.');
 	$page .= '</div>';
@@ -432,7 +436,7 @@ function oostpoort_member_view()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Email').':</label>';
-	$page .= '<input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'">';
+	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$data->PrsEmail.'">';
 	$page .= '<div class="description">';
 	$page .= t('Email adres van persoon.');
 	$page .= '</div>';

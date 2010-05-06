@@ -111,7 +111,7 @@ function oostpoort_visit_admin_list()
 	$page .= '<form name="OostpoortForm" method="POST" >';
   	
 	$query  = 'select ';	
-	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voornamen, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
+	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as geslacht, '; 
 	$query .= ' b.Prs_id as PrsId, ';
 	$query .= ' c.Blk_Nummer as BlkNummer, ';
@@ -119,8 +119,12 @@ function oostpoort_visit_admin_list()
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
 	$query .= ' d.Rol_Omschrijving as RolOmschrijving, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
-	$query .= ' (select count(*) as Amount from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID) as Amount ';
-	$query .= 'from ';
+	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID) as Amount, ';
+	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID and Bzk_GeplandDatum!=0 and Bzk_AfgelegdDatum=0 and Bzk_GeannuleerdDatum=0 and Bzk_BezoekNietGewenstDatum=0) as GeplandTotal, ';
+	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID and Bzk_AfgelegdDatum!=0 and  Bzk_BezoekNietGewenstDatum=0 and Bzk_BezoekNietGewenstDatum=0) as AfgelegdTotal, ';
+	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID and Bzk_GeannuleerdDatum!=0 and Bzk_AfgelegdDatum=0 and Bzk_BezoekNietGewenstDatum=0) as GeannuleerdTotal, ';
+	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID and Bzk_BezoekNietGewenstDatum!=0) as BezoekNietGewenstTotal ';
+	$query .= 'from ';	
 	$query .= ' oostpoort_medewerker a, oostpoort_persoon b, oostpoort_blok c, oostpoort_rol d ';
 	$query .= 'where ';
 	$query .= ' a.Mdw_Prs_ID=b.Prs_id and '; 
@@ -141,7 +145,7 @@ function oostpoort_visit_admin_list()
 	$page .= '<th><b>'.t('Rol').'</b></th>';
 	$page .= '<th><b>'.t('Blok').'</b></th>';
 	$page .= '<th><b>'.t('Login').'</b></th>';   
-	$page .= '<th><b>'.t('Aantal').'</b></th>';   
+	$page .= '<th><b>'.t('Opmerkingen').'</b></th>';   
 	$page .= '</tr>';
 	$page .= '</thead>';
 
@@ -165,7 +169,17 @@ function oostpoort_visit_admin_list()
 		$page .= '<td>'.$data->RolOmschrijving.'</td>';
 		$page .= '<td>Blok '.$data->BlkNummer.'</td>';
 		$page .= '<td>'.oostpoort_view_owner($data->MdwUid,true).'</td>';    
-		$page .= '<td>'.$data->Amount.'</td>';    
+		
+		$page .= '<td>';
+		$page .= '<div class="description">';
+		$page .= 'Geplande: '.$data->GeplandTotal.'<br/>';
+		$page .= 'Afgelegd: '.$data->AfgelegdTotal.'<br/>';
+		$page .= 'Geannuleerd: '.$data->GeannuleerdTotal.'<br/>';
+		$page .= 'Niet gewenst: '.$data->BezoekNietGewenstTotal.'<br/>';
+		$page .= 'Totaal: '.$data->Amount.'<br/>';
+		$page .= '</div class="description">';
+		$page .= '</td>';
+		
 		$page .= '</tr>';
 	}
 	$page .= '</tbody>';
@@ -201,7 +215,7 @@ function oostpoort_visit_admin_member()
 	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
-	$query .= ' concat(b.Prs_Voornamen," ",b.Prs_Tussenvoegsels," ",b.Prs_Achternaam) as Naam, ';
+	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam)," ",b.Prs_Tussenvoegsels," ",b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as Geslacht, '; 
 	$query .= ' a.Mdw_Blk_ID as MdwBlkID, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
@@ -241,6 +255,11 @@ function oostpoort_visit_admin_member()
 	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';	
 
 	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Medewerker Id').':</label>';
+	$page .= $data->PrsId;
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Geslacht').':</label>';
 	$page .= oostpoort_view_geslacht($data->PrsGeslacht);
 	$page .= '</div>';
@@ -270,7 +289,7 @@ function oostpoort_visit_admin_member()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Roepnaam').': <span class="form-required">*</span></label>';
-	$page .= '<input id="text" name="FirstName" size="20" maxlength="20" type="text" value="'.$data->PrsRoepnaam.'">';
+	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$data->PrsRoepnaam.'">';
 	$page .= '<div class="description">';
 	$page .= t('Roepnaam van medewerker.');
 	$page .= '</div>';
@@ -278,7 +297,7 @@ function oostpoort_visit_admin_member()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Telefoon').':</label>';
-	$page .= '<input id="text" name="Phone" size="20" maxlength="20" type="text" value="'.$data->AdrTelefoon.'">';
+	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$data->AdrTelefoon.'">';
 	$page .= '<div class="description">';
 	$page .= t('Telefoon nummer van medewerker.');
 	$page .= '</div>';
@@ -286,7 +305,7 @@ function oostpoort_visit_admin_member()
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Mobiel').':</label>';
-	$page .= '<input id="text" name="Mobile" size="20" maxlength="20" type="text" value="'.$data->PrsMobiel.'">';
+	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$data->PrsMobiel.'">';
 	$page .= '<div class="description">';
 	$page .= t('Mobiele nummer van medewerker.');
 	$page .= '</div>';
@@ -294,7 +313,7 @@ function oostpoort_visit_admin_member()
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Email').': <span class="form-required">*</span></label>';
-	$page .= '<input id="text" name="Email" size="60" maxlength="60" type="text" value="'.$data->PrsEmail.'">';
+	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$data->PrsEmail.'">';
 	$page .= '<div class="description">';
 	$page .= t('Email adres van medewerker.');
 	$page .= '</div>';

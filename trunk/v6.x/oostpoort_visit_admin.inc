@@ -41,6 +41,11 @@ function oostpoort_visit_admin()
 {
 	//echo var_dump($_POST);
 	
+	// Check access for this page.
+	if (!oostpoort_check_admin_access()) {
+		return drupal_access_denied();
+	}
+		
 	$Action=$_POST['Action'];
 	if ($Action=="") {
 		$Action=$_SESSION['Action'];
@@ -117,6 +122,7 @@ function oostpoort_visit_admin_list()
 	$query .= ' c.Blk_Nummer as BlkNummer, ';
 	$query .= ' c.Blk_Omschrijving as BlkOmschrijving, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
+	$query .= ' a.Mdw_Admin as MdwAdmin, ';
 	$query .= ' d.Rol_Omschrijving as RolOmschrijving, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
 	$query .= ' (select count(*) from oostpoort_bezoek where Bzk_Mdw_ID=a.Mdw_ID) as Amount, ';
@@ -138,10 +144,10 @@ function oostpoort_visit_admin_list()
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	//$page .= '<th><b>'.t('Rij').'</b></th>';
 	$page .= '<th><b>'.t('Foto').'</b></th>';
+	$page .= '<th><b>'.t('Actief').'</b></th>';
 	$page .= '<th><b>'.t('Medewerker').'</b></th>';
-	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	$page .= '<th><b>'.t('Admin').'</b></th>';
 	$page .= '<th><b>'.t('Rol').'</b></th>';
 	$page .= '<th><b>'.t('Blok').'</b></th>';
 	$page .= '<th><b>'.t('Login').'</b></th>';   
@@ -158,17 +164,33 @@ function oostpoort_visit_admin_list()
 		} else {
 			$page .= '<tr class="odd">';
 		} 
-		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
+		$page .= '<td>';
+		$page .= oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left");
+		$page .= '</td>';
 
-		if ($data->MdwActief=="ONWAAR") {
-			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Edit', $data->Naam).'</td>';
-		} else {
-			$page .= '<td><b>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Edit', $data->Naam).'</b></td>';		
-		}
-		//$page .= '<td>'.oostpoort_view_geslacht($data->geslacht).'</td>';
-		$page .= '<td>'.$data->RolOmschrijving.'</td>';
-		$page .= '<td>Blok '.$data->BlkNummer.'</td>';
-		$page .= '<td>'.oostpoort_view_owner($data->MdwUid,true).'</td>';    
+		$page .= '<td>';
+		$page .= oostpoort_view_checkbox("Active", $data->MdwActief, true);
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Edit', $data->Naam);
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= oostpoort_view_checkbox("Admin", $data->MdwAdmin, true);
+		$page .= '</td>';
+	
+		$page .= '<td>';
+		$page .= $data->RolOmschrijving;
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= $data->BlkNummer;
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= oostpoort_view_owner($data->MdwUid,true);    
+		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<div class="description">';
@@ -219,6 +241,7 @@ function oostpoort_visit_admin_member()
 	$query .= ' b.Prs_GeslachtMV as Geslacht, '; 
 	$query .= ' a.Mdw_Blk_ID as MdwBlkID, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
+	$query .= ' a.Mdw_Admin as MdwAdmin, ';
 	$query .= ' a.Mdw_Rol_ID as MdwRolID, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
 	$query .= ' b.Prs_Roepnaam as PrsRoepnaam, ';
@@ -332,6 +355,14 @@ function oostpoort_visit_admin_member()
 	$page .= oostpoort_view_checkbox("Active", $data->MdwActief, false);	  
 	$page .= '<div class="description">';
 	$page .= t('Actief of niet actief.');
+	$page .= '</div>';
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Admin').':</label>';
+	$page .= oostpoort_view_checkbox("Admin", $data->MdwAdmin, false);	  
+	$page .= '<div class="description">';
+	$page .= t('Heeft medewerker (Admin rechten) zodat hij medewerkers kan beheren.');
 	$page .= '</div>';
 	$page .= '</div>';
 	
@@ -472,13 +503,16 @@ function oostpoort_visit_admin_save() {
 	$block=$_POST["Block"];
 	oostpoort_debug_param("Block",$block);
   
-   $active=$_POST["Active"];
+   	$active=$_POST["Active"];
 	oostpoort_debug_param("Active",$active);
+	
+	$admin=$_POST["Admin"];
+	oostpoort_debug_param("Admin",$admin);
 	
 	$owner=$_POST["Owner"];
 	oostpoort_debug_param("Owner",$owner);
 
-   $role=$_POST["Role"];
+   	$role=$_POST["Role"];
 	oostpoort_debug_param("Role",$role);
  	
 	$firstName=$_POST["FirstName"];
@@ -491,7 +525,7 @@ function oostpoort_visit_admin_save() {
 	oostpoort_debug_param("Phone",$phone);
 	
 	$mobile=$_POST["Mobile"];
-   oostpoort_debug_param("Mobile",$mobile);
+   	oostpoort_debug_param("Mobile",$mobile);
 	  
 	if ($active == 'on') { 
 	    $active_token="WAAR";
@@ -499,12 +533,19 @@ function oostpoort_visit_admin_save() {
 		$active_token="ONWAAR";
 	}
 	
+	if ($admin == 'on') { 
+	    $admin_token="WAAR";
+	} else {
+		$admin_token="ONWAAR";
+	}
+	
 	$page .= '<div class="messages status">';
-   $page .= t('Wijzingen voor medewerker '.$PrsId.' zijn opgeslagen.');
+   	$page .= t('Wijzingen voor medewerker '.$PrsId.' zijn opgeslagen.');
 	$page .= '</div>';
 	
 	$query  = 'UPDATE oostpoort_medewerker SET ';
 	$query .= '  Mdw_ActiefJN="'.$active_token.'", ';
+	$query .= '  Mdw_Admin="'.$admin_token.'", ';
 	$query .= '  Mdw_Blk_ID='.$block.', ';
 	$query .= '  Mdw_Uid='.$owner.', ';
 	$query .= '  Mdw_Rol_ID='.$role.' ';
@@ -531,8 +572,7 @@ function oostpoort_visit_admin_save() {
 	oostpoort_debug_sql($query);
 	$queryResult = db_query($query);
 	$data = db_fetch_object($queryResult);
-				
-				
+							
 	$query  = 'UPDATE oostpoort_adres SET ';
 	$query .= '  Adr_Telefoon="'.$phone.'" ';
 	$query .= 'where ';
@@ -550,7 +590,7 @@ function oostpoort_visit_admin_add() {
 	oostpoort_debug_param("PrsId",$PrsId);
 	
 	$page .= '<div class="messages status">';
-   $page .= t('Medewerker '.$PrsId.' is toegevoegd.');
+ 	$page .= t('Medewerker '.$PrsId.' is toegevoegd.');
 	$page .= '</div>';
 					
 	// Check if user allready exist. Protect against reload button
@@ -579,11 +619,11 @@ function oostpoort_visit_admin_add() {
  
 function oostpoort_visit_admin_delete() {
 
-   $PrsId=$_POST["PrsId"];
+   	$PrsId=$_POST["PrsId"];
 	oostpoort_debug_param("PrsId",$PrsId);
 	
 	$page .= '<div class="messages status">';
-   $page .= t('Medewerker '.$PrsId.' is verwijderd.');
+   	$page .= t('Medewerker '.$PrsId.' is verwijderd.');
 	$page .= '</div>';
 	
 	// Delete selected visit member

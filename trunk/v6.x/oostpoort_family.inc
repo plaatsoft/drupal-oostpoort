@@ -320,7 +320,10 @@ function oostpoort_family_view($readonly) {
 		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
 	}
 
-	$page .= '</fieldset>';	
+	$page .= '</fieldset>';
+
+	$page .= '</div>';
+	$page .= '</form>';
     return $page;
 }	
 

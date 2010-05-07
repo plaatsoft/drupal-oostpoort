@@ -32,21 +32,40 @@
 // Views
 // ##################################################################################
 
-function oostpoort_jubilea_birthday()  
-{
-   $AgeId= $_POST["AgeId"];
-	if ($AgeId==0) {
-	   $AgeId=50;
+function oostpoort_jubilea_birthday() {
+	
+	$Action=$_POST['Action'];
+
+	oostpoort_debug_param("Action", $Action);
+	        	  
+	if ($Action=="MemberView") {
+     	$page = oostpoort_member_view(true);     	
+     	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Terug').'</a>';     	
+	} else {
+		$page = oostpoort_jubilea_birthday_list();
 	}
+	print theme("page", $page);
+}
+
+function oostpoort_jubilea_birthday_list()  
+{
+    $AgeId= $_POST["AgeId"];
+	if ($AgeId=="") {
+		$AgeId=$_SESSION["AgeId"];
+		if ($AgeId=="") {
+	   		$AgeId=50;
+		}
+	}
+	$_SESSION["AgeId"]=$AgeId;
 	oostpoort_debug_param("AgeId", $AgeId);
 
-	drupal_set_title(t('Verjaardag jubilea Rapport'));
+	drupal_set_title(t('Verjaardag Jubilea Rapport'));
 	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Verjaardag jubilea rapport');
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Verjaardag jubilea rapport').'</a>';
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
@@ -71,8 +90,8 @@ function oostpoort_jubilea_birthday()
 	$startDate = $yearStart."-".$month."-".$day;
 	$endDate = $yearEnd."-".$month."-".$day;
 	
-	 
 	$query = 'select ';
+	$query .= ' a.Prs_Id as PrsId, ';
 	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
 	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
@@ -105,7 +124,7 @@ function oostpoort_jubilea_birthday()
 	$page .= '</div>';		
 	$page .= '</form>';
 	
-	print theme("page", $page);
+	return $page;
 }
 
 function oostpoort_jubilea_birthday_table($queryResult, $mode)
@@ -115,14 +134,14 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
    $page .= '<thead>';
 	// Show Banner
 	$page .= '<tr>';
-	//$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
+	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
-	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
-   //$page .= '<th><b>'.t('Huwelijk datum').'</b></th>';
+    //$page .= '<th><b>'.t('Huwelijk datum').'</b></th>';
 	//$page .= '<th><b>'.t('Telefoon').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
@@ -136,9 +155,19 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-      //$page_tmp .= '<td>'.$data->PrsKerklidnummer.'</td>';
-      $page_tmp .= '<td>'.$data->Naam.'</td>';
-		//$page_tmp .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>';
+		
+		$page_tmp .= '<td>';
+     	$page_tmp .= $data->PrsKerklidnummer;
+     	$page_tmp .= '</td>';
+     			
+     	$page_tmp .= '<td>';
+     	$page_tmp .= oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam);
+     	$page_tmp .= '</td>';
+
+		$page_tmp .= '<td>';
+		$page_tmp .= oostpoort_view_geslacht($data->PrsGeslacht);
+		$page_tmp .= '</td>';
+		
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';

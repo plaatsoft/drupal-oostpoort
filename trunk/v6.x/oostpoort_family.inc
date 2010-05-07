@@ -43,12 +43,17 @@ function oostpoort_family() {
 	        	  
 	if (($Action=="FamilyView") or ($Action=="AddFamilyPicture")) {
 	
-     $page = oostpoort_family_view(false);
+     	$page = oostpoort_family_view(false);
 	  
 	} else if ($Action=="MemberView") {
 	
-     $page = oostpoort_member_view(false);
+     	$page = oostpoort_member_view(false);
 	  
+     } else if ($Action=="Delete") {
+	
+     	$page = oostpoort_member_delete();
+     	$page .= oostpoort_family_view(false);
+     	
 	} else if ($Action=="Save") {
 	
 	   // Get Post and/or Session variables
@@ -59,9 +64,9 @@ function oostpoort_family() {
 		$_SESSION['PrsId']=$PrsId;
 		oostpoort_debug_param("PrsId", $PrsId);
 	
-	  $page  = oostpoort_member_save();
-	  $page .= oostpoort_save_picture("Prs",$PrsId);
-     $page .= oostpoort_member_view(false);
+	  	$page  = oostpoort_member_save();
+	  	$page .= oostpoort_save_picture("Prs",$PrsId);
+     	$page .= oostpoort_member_view(false);
 	  
 	} else  {
 	
@@ -100,9 +105,9 @@ function oostpoort_family_list() {
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Leden Gegevens');
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
 	$page .= '</div>';
-
+	
 	$page .= '<div class="oostpoort">';
 	
 	drupal_set_title(t('Leden Gegevens'));
@@ -214,7 +219,7 @@ function oostpoort_family_view($readonly) {
 		$page  = '<div class="breadcrumb">';
 		$page .= '<a href="'.url("").'">Start</a> > ';
 		$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-		$page .= t('Leden Gegevens');
+		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
 		$page .= ' > ';
 		$page .= t('Familie overzicht');
 		$page .= '</div>';
@@ -256,7 +261,8 @@ function oostpoort_family_view($readonly) {
 	 		a.Prs_Id as PrsId, 
 			concat(a.Prs_Voorletters," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, 
 	  		a.Prs_GeslachtMV as PrsGeslacht, 
-	  		a.Prs_GeboorteDatum as PrsGeboorteDatum, 
+	  		a.Prs_GeboorteDatum as PrsGeboorteDatum,
+	  		a.Prs_Huwelijksdatum as PrsHuwelijksdatum,  
 	  		a.Prs_TelefoonMobiel as PrsMobiel, 
 	  		a.Prs_EmailAdres as PrsEmail  
 		from 
@@ -274,9 +280,9 @@ function oostpoort_family_view($readonly) {
 	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Foto').'</b></th>';
-	$page .= '<th><b>'.t('Naam').'</b></th>';
-	//$page .= '<th><b>'.t('Geslacht').'</b></th>';
+	$page .= '<th><b>'.t('Naam').'</b></th>';	
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
+	$page .= '<th><b>'.t('Huwelijk').'</b></th>';
 	$page .= '<th><b>'.t('Mobiel').'</b></th>';
 	$page .= '<th><b>'.t('Email').'</b></th>';	
 	$page .= '</tr>';
@@ -298,8 +304,8 @@ function oostpoort_family_view($readonly) {
 		} else { 
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam)."</td>";
 		}
-		//$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>';
 		$page .= '<td class="active">'.oostpoort_convert_date($data->PrsGeboorteDatum).'</td>';
+		$page .= '<td>'.oostpoort_convert_date($data->PrsHuwelijksdatum).'</td>';
 		$page .= '<td>'.$data->PrsMobiel.'</td>';
 		$page .= '<td>'.oostpoort_view_email($data->PrsEmail).'</td>';
 		$page .= '</tr>';
@@ -336,14 +342,13 @@ function oostpoort_member_view($readonly)
 	}
 	$_SESSION['PrsId']=$PrsId;
 	
-	echo $PrsId;
 	oostpoort_debug_param("PrsId", $PrsId);
 	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Leden Gegevens');
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
 	$page .= ' > ';
 	$page .= t('Familie overzicht');
 	$page .= ' > ';
@@ -504,6 +509,9 @@ function oostpoort_member_view($readonly)
 
 	if (! $readonly) {	 
 		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';
+		if (user_access('access administration pages')) {
+			$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Delete',t('Verwijder')).' | ';
+		}
 		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
 	}
   
@@ -525,7 +533,7 @@ function oostpoort_member_save() {
 	oostpoort_debug_param("PrsId", $PrsId);
 	
 	$page .= '<div class="messages status">';
-   $page .= t('Wijzingen voor persoon '.$PrsId.' zijn opgeslagen.');
+  	$page .= t('Wijzingen voor persoon '.$PrsId.' zijn opgeslagen.');
 	$page .= '</div>';
 		
 	$firstName=$_POST["FirstName"];
@@ -582,7 +590,34 @@ function oostpoort_member_save() {
 	
 	return $page;	
 }
+
+function oostpoort_member_delete() {
 	
+	// Get Posted parameters
+	$PrsId=$_POST["PrsId"];
+	oostpoort_debug_param("PrsId", $PrsId);
+	
+	if ($PrsId!="") {
+		$query = 'select Prs_Huidig_Adr_ID as AdrId FROM oostpoort_persoon WHERE prs_id='.$PrsId;
+		oostpoort_debug_sql($query);	
+		$queryResult = db_query($query);
+		$data = db_fetch_object($queryResult);
+		$AdrId=$data->AdrId;
+	
+		if ($AdrId!=0) {
+			$query = 'delete FROM oostpoort_persoon WHERE prs_id='.$PrsId;		
+			oostpoort_debug_sql($query);
+			db_query($query);  
+	
+			$page .= '<div class="messages status">';
+	  		$page .= t('Persoon '.$PrsId.' is verwijderd.');
+			$page .= '</div>';
+		}
+		$_SESSION['AdrId']=$AdrId;
+	}
+	return $page;	
+}
+
 // ##################################################################################
 // THE END
 // ##################################################################################

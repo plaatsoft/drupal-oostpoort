@@ -43,7 +43,7 @@ function oostpoort_visit_admin()
 	
 	// Check access for this page.
 	if (!oostpoort_check_admin_access()) {
-		return drupal_access_denied();
+		//return drupal_access_denied();
 	}
 		
 	$Action=$_POST['Action'];

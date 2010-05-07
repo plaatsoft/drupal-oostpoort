@@ -560,7 +560,9 @@ function oostpoort_check_admin_access() {
 	global $user;
     
 	// Drupal admin complet access.
-	if (user_access('access administration pages')) return true;
+	if (user_access('access administration pages')) {
+		return true;
+	}
 	
 	// Check medewerker admin access.
 	if ( !isset($_SESSION['MdwAdmin']) )  { 
@@ -584,10 +586,7 @@ function oostpoort_check_admin_access() {
 			return false;
 		}
 	}
-	
-	echo "MwdAdmin=".$_SESSION['MdwAdmin'];
-	
-	if ($_SESSION['MdwAdmin']=='WAAR') {	
+	if ($_SESSION['MdwAdmin']=='WAAR') {		
 		return true;
 	} else {
 		return false;

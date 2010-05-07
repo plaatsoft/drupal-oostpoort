@@ -47,7 +47,7 @@ function oostpoort_family() {
 	  
 	} else if ($Action=="MemberView") {
 	
-     $page = oostpoort_member_view();
+     $page = oostpoort_member_view(false);
 	  
 	} else if ($Action=="Save") {
 	
@@ -61,7 +61,7 @@ function oostpoort_family() {
 	
 	  $page  = oostpoort_member_save();
 	  $page .= oostpoort_save_picture("Prs",$PrsId);
-     $page .= oostpoort_member_view();
+     $page .= oostpoort_member_view(false);
 	  
 	} else  {
 	
@@ -327,19 +327,17 @@ function oostpoort_family_view($readonly) {
     return $page;
 }	
 
-
-function oostpoort_member_view()
+function oostpoort_member_view($readonly)
 {   
     // Get Post and/or Session variables
 	$PrsId=$_POST['PrsId'];
-   if ($PrsId=="") {
+   	if ($PrsId=="") {
 		$PrsId=$_SESSION['PrsId'];
 	}
 	$_SESSION['PrsId']=$PrsId;
+	
+	echo $PrsId;
 	oostpoort_debug_param("PrsId", $PrsId);
-
-	$Action=$_POST['Action'];
-	oostpoort_debug_param("Action", $Action);
 	
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
@@ -367,6 +365,7 @@ function oostpoort_member_view()
 	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
 	$query .= ' a.Prs_Geboortedatum as PrsGeboorteDatum, ';
 	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksDatum, ';
+	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' a.Prs_KringlidJN as PrsKringLid, ';
 	$query .= ' a.Prs_BezoekInfo as PrsBezoekInfo, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as straat, ';
@@ -394,6 +393,16 @@ function oostpoort_member_view()
 	$page .= '<h4>'.t('Nederland').'</h4>';	
 
 	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Persoon Id').':</label>';
+	$page .= $PrsId;
+	$page .= '</div>';
+		
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Kerkelijke lid nummer').':</label>';
+	$page .= $data->PrsKerklidnummer;
+	$page .= '</div>';
+	
+	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Geslacht').':</label>';
 	$page .= oostpoort_view_geslacht($data->PrsGeslacht);
 	$page .= '</div>';
@@ -403,10 +412,12 @@ function oostpoort_member_view()
 	$page .= oostpoort_convert_date($data->PrsGeboorteDatum);
 	$page .= '</div>';
 
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Huwelijksdatum').':</label>';
-	$page .= oostpoort_convert_date($data->PrsHuwelijksDatum);
-	$page .= '</div>';
+	if ($data->PrsHuwelijksDatum!=0) {
+		$page .= '<div class="form-item">';
+		$page .= '<label>'.t('Huwelijksdatum').':</label>';
+		$page .= oostpoort_convert_date($data->PrsHuwelijksDatum);
+		$page .= '</div>';
+	}
 	
 	$page .= '</fieldset>' ;
 	
@@ -415,66 +426,91 @@ function oostpoort_member_view()
 		
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Roepnaam').':</label>';
-	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$data->PrsRoepnaam.'">';
-	$page .= '<div class="description">';
-	$page .= t('Roepnaam van persoon.');
-	$page .= '</div>';
+	if ($readonly) {
+		$page .= $data->PrsRoepnaam;
+	} else {
+		$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$data->PrsRoepnaam.'">';
+		$page .= '<div class="description">';
+		$page .= t('Roepnaam van persoon.');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Telefoon').':</label>';
-	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$data->AdrTelefoon.'">';
-	$page .= '<div class="description">';
-	$page .= t('Telefoon nummer van persoon.');
-	$page .= '</div>';
+	if ($readonly) {
+		$page .= $data->AdrTelefoon;
+	} else {
+		$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$data->AdrTelefoon.'">';
+		$page .= '<div class="description">';
+		$page .= t('Telefoon nummer van persoon.');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Mobiel').':</label>';
-	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$data->PrsMobiel.'">';
-	$page .= '<div class="description">';
-	$page .= t('Mobiele nummer van persoon.');
-	$page .= '</div>';
+	if ($readonly) {
+		$page .= $data->PrsMobiel;
+	} else {
+		$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$data->PrsMobiel.'">';
+		$page .= '<div class="description">';
+		$page .= t('Mobiele nummer van persoon.');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Email').':</label>';
-	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$data->PrsEmail.'">';
-	$page .= '<div class="description">';
-	$page .= t('Email adres van persoon.');
-	$page .= '</div>';
+	if ($readonly) {
+		$page .= $data->PrsEmail;
+	} else {
+		$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$data->PrsEmail.'">';
+		$page .= '<div class="description">';
+		$page .= t('Email adres van persoon.');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 	    	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Kring lid').':</label>';
-	$page .= oostpoort_view_checkbox("Active", $data->PrsKringLid, false);	  
-	$page .= '<div class="description">';
-	$page .= t('Actief op een bijbelkring, Alfa groep en/of groeigroep.');
-	$page .= '</div>';
+	$page .= oostpoort_view_checkbox("Active", $data->PrsKringLid, $readonly);
+	if (! $readonly) {	  
+		$page .= '<div class="description">';
+		$page .= t('Actief op een bijbelkring, Alfa groep en/of groeigroep.');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Notitie').':</label>';
-	$page .= oostpoort_view_note("BezoekInfo", $data->PrsBezoekInfo, false);
-	$page .= '<div class="description">';
-	$page .= t('Hier kunt U algemene niet vertrouwelijke informatie vastleggen. Bv. Beroep, Hobby, etc...');
-	$page .= '</div>';
+	$page .= oostpoort_view_note("BezoekInfo", $data->PrsBezoekInfo, $readonly);
+	if (! $readonly) {	 
+		$page .= '<div class="description">';
+		$page .= t('Hier kunt U algemene niet vertrouwelijke informatie vastleggen. Bv. Beroep, Hobby, etc...');
+		$page .= '</div>';
+	}
 	$page .= '</div>';
 	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Foto bestand').':</label>';
-	$page .= '<input name="uploadedfile" size="100" type="file" />';
-	$page .= '<div class="description">';
-	$page .= t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B';
-	$page .= '</div>';
-	$page .= '</div>';
+	if (! $readonly) {	 
+		$page .= '<div class="form-item">';
+		$page .= '<label>'.t('Foto bestand').':</label>';
+		$page .= '<input name="uploadedfile" size="100" type="file" />';
+		$page .= '<div class="description">';
+		$page .= t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B';
+		$page .= '</div>';
+		$page .= '</div>';
+	}
 
-	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
+	if (! $readonly) {	 
+		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';
+		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
+	}
   
-   $page .= '</fieldset>' ;  
+   	$page .= '</fieldset>' ;  
 	$page .= '</form>';  
 	$page .= '</div>';
+	
 	return $page;
 }	
 		

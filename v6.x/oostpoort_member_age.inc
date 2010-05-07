@@ -39,10 +39,8 @@ function oostpoort_member_age() {
 	oostpoort_debug_param("Action", $Action);
 	        	  
 	if ($Action=="MemberView") {
-     	$page = oostpoort_member_view(true);
-     	
-     	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Terug').'</a>';
-     	
+     	$page = oostpoort_member_view(true);     	
+     	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Terug').'</a>';     	
 	} else {
 		$page = oostpoort_member_age_list();
 	}
@@ -75,7 +73,7 @@ function oostpoort_member_age_list()
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Leeftijdscategorie Rapport');
+	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
@@ -99,7 +97,7 @@ function oostpoort_member_age_list()
 	$page .= '<div class="description">'.t('Voer een geboorte datum in. Formaat (dd-mm-jjjj)').'</div>';
 	$page .= '</div>';
 	
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Filteren'));
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoeken'));
 	
 	$page .= '</fieldset>';
  
@@ -125,8 +123,8 @@ function oostpoort_member_age_list()
 	$query .= ' a.Prs_Geboortedatum desc';
 
 	oostpoort_debug_sql($query);
-   $queryResult = db_query($query);
-   $page .= oostpoort_member_age_table($queryResult,1);
+   	$queryResult = db_query($query);
+   	$page .= oostpoort_member_age_table($queryResult,1);
 
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
@@ -142,6 +140,7 @@ function oostpoort_member_age_table($queryResult, $mode)
 
    	$page .= '<thead>';
 	$page .= '<tr>';
+	$page .= '<th><b>'.t('KerkLidNr').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	//$page .= '<th><b>'.t('Mobiel').'</b></th>';
@@ -153,7 +152,7 @@ function oostpoort_member_age_table($queryResult, $mode)
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
-   $page .= '<tbody>';
+  	$page .= '<tbody>';
 	// Show all found members
 	$page_tmp='';
 	while ($data = db_fetch_object($queryResult))
@@ -164,6 +163,10 @@ function oostpoort_member_age_table($queryResult, $mode)
 			$page_tmp .= '<tr class="odd">';
 		}
       
+		$page_tmp .= '<td>';
+     	$page_tmp .= $data->PrsKerklidnummer;
+     	$page_tmp .= '</td>';
+     			
      	$page_tmp .= '<td>';
      	$page_tmp .= oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam);
      	$page_tmp .= '</td>';

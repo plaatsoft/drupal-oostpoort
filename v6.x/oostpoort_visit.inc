@@ -843,16 +843,10 @@ function oostpoort_visit_cancel()
 	$adaptedPlanDate=false;		
 	list($BzkYear, $BzkMonth, $BzkDay) = split("-",$tmp->BzkGeplandDatum);
 	
-	echo "BzkYear=".$BzkYear;
-	echo "BzkMonth=".$BzkMonth;
-	echo "BzkDay=".$BzkDay;
-	
 	$planDate = mktime(0,0,0,$Bzkmonth,$Bzkday,$Bzkyear);
-	echo "planDate=".$planDate;
 	
 	list($day, $month, $year) = split("-",$CancelDate);
 	$cancelDate = mktime(0,0,0,$month,$day,$year);
-	echo "cancelDate=".$cancelDate;
 		
 	if ( $planDate>$cancelDate ) {
 		$adaptedPlanDate=true;	
@@ -867,7 +861,6 @@ function oostpoort_visit_cancel()
 	$query .= 'where ';
 	$query .= '  Bzk_ID='.$BzkId;
 	
-	echo $query;
 	oostpoort_debug_sql($query);
 	db_query($query); 
 			
@@ -982,17 +975,10 @@ function oostpoort_visit_ready()
 	
 	$adaptedPlanDate=false;		
 	list($BzkYear, $BzkMonth, $BzkDay) = split("-",$tmp->BzkGeplandDatum);
-	
-	echo "BzkYear=".$BzkYear;
-	echo "BzkMonth=".$BzkMonth;
-	echo "BzkDay=".$BzkDay;
-	
 	$planDate = mktime(0,0,0,$Bzkmonth,$Bzkday,$Bzkyear);
-	echo "planDate=".$planDate;
 	
 	list($day, $month, $year) = split("-",$VisitDate);
 	$visitDate = mktime(0,0,0,$month,$day,$year);
-	echo "visitDate=".$visitDate;
 	
 	if ( $planDate>$visitDate ) {
 		$adaptedPlanDate=true;	
@@ -1009,13 +995,10 @@ function oostpoort_visit_ready()
 	if ($adaptedPlanDate) {
 		$query .= '  Bzk_GeplandDatum="'.oostpoort_convert_date_reverse($VisitDate).'", ';
 	}
-	$query .= '  Bzk_Bzt_ID="'.$VisitType.'" ';
-	
+	$query .= '  Bzk_Bzt_ID="'.$VisitType.'" ';	
 	$query .= 'where ';
 	$query .= '  Bzk_ID='.$BzkId;
-	
-	echo $query;
-	
+		
 	oostpoort_debug_sql($query);
 	db_query($query); 
 

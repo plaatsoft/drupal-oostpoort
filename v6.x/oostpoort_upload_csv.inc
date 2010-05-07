@@ -425,6 +425,7 @@ function oostpoort_find_member($KerkLidNr,$Name) {
 
 	$name = oostpoort_split_name($Name);
 
+	// First try to match member with Church Member Id
 	if ($KerkLidNr!=0) {
 	
 		$sql  = 'select ';
@@ -434,8 +435,15 @@ function oostpoort_find_member($KerkLidNr,$Name) {
 		$sql .= 'where ';
 		$sql .= '  Prs_Kerklidnummer="'.$KerkLidNr.'"';
 		
-	} else {
+		oostpoort_debug_sql($sql);
+		$queryResult = db_query($sql);     
+		$data = db_fetch_object($queryResult);
 	
+		$PrsId = $data->PrsId;
+	}
+	
+	// Second try to match the member by number
+	if ($PrsId=="") {
 		$sql  = 'select ';
 		$sql .= '  Prs_ID as PrsId ';
 		$sql .= 'from ';
@@ -443,20 +451,17 @@ function oostpoort_find_member($KerkLidNr,$Name) {
 		$sql .= 'where ';
 		$sql .= '  Prs_Voorletters="'.$name['Initials'].'" and ';
 		$sql .= '  Prs_Tussenvoegsels="'.$name['MiddleName'].'" and ';
-		$sql .= '  Prs_Achternaam="'.$name['LastName'].'"';	
+		$sql .= '  Prs_Achternaam="'.$name['LastName'].'"';
+
+		oostpoort_debug_sql($sql);
+		$queryResult = db_query($sql);     
+		$data = db_fetch_object($queryResult);
+		$PrsId = $data->PrsId;
 	}
 	
-	oostpoort_debug_sql($sql);
-	$queryResult = db_query($sql);     
-	$data = db_fetch_object($queryResult);
-	
-	$PrsId = $data->PrsId;
-	oostpoort_debug_param('PrsId',$PrsId);
-	
+	oostpoort_debug_param('PrsId',$PrsId);	
 	return $PrsId;
 }
-
-
 
 function oostpoort_member_state($TypeOrig) {
 	
@@ -465,7 +470,7 @@ function oostpoort_member_state($TypeOrig) {
 	$sql  = 'select ';
 	$sql .= ' Bst_ID as BstId ';
 	$sql .= 'from  ';
-   $sql .= '  oostpoort_burgelijkestaat ';
+   	$sql .= '  oostpoort_burgelijkestaat ';
 	$sql .= 'where ';
 	$sql .= ' Bst_Code like "'.$Type.'"';
   

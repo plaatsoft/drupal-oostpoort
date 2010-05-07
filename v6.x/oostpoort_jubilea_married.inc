@@ -32,24 +32,43 @@
 // Views
 // ##################################################################################
 
-function oostpoort_jubilea_married()  
+function oostpoort_jubilea_married() {
+	
+	$Action=$_POST['Action'];
+
+	oostpoort_debug_param("Action", $Action);
+	        	  
+	if ($Action=="FamilyView") {
+     	$page = oostpoort_family_view(true);     	
+     	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">'.t('Terug').'</a>';     	
+	} else {
+		$page = oostpoort_jubilea_married_list();
+	}
+	print theme("page", $page);
+}
+
+function oostpoort_jubilea_married_list()  
 {
    $AgeId= $_POST["AgeId"];
-	if ($AgeId==0) {
-	   $AgeId=12;
+	if ($AgeId=="") {
+		$AgeId=$_SESSION["AgeId"];
+		if ($AgeId=="") {
+	   		$AgeId=12;
+		}
 	}
+	$_SESSION["AgeId"]=$AgeId;
 	oostpoort_debug_param("AgeId", $AgeId);
 
 	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Huwelijk Jubilea Rapport');
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">'.t('Huwelijk Jubilea Rapport').'</a>';
 	$page .= '</div>';
 
 	$page .= '<div class="oostpoort">';
 
-	drupal_set_title(t('Huwelijk jubilea Rapport' ) );
+	drupal_set_title(t('Huwelijk Jubilea Rapport' ) );
 	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
@@ -64,7 +83,6 @@ function oostpoort_jubilea_married()
 	
 	$page .= '</fieldset>' ;
 
-
 	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
 	$yearStart=$year-$AgeId;
 	$yearEnd=$year-$AgeId+1;	
@@ -73,11 +91,12 @@ function oostpoort_jubilea_married()
 	
 	$query = 'select ';
 	$query .= ' concat("Familie ", a.Prs_Tussenvoegsels, " ", substring_index(a.Prs_Achternaam,"-",1)) as Naam, ';
-   $query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+    $query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
 	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
 	$query .= ' b.Adr_Plaats as AdrPlaats, ';
-	$query .= ' b.Adr_Postcode as AdrPostcode ';	
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';
+	$query .= ' b.Adr_ID as AdrId ';
 	$query .= 'from ';
 	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
 	$query .= 'where ';
@@ -98,24 +117,23 @@ function oostpoort_jubilea_married()
 	$page .= '</div>';
 	$page .= '</form>';
 	
-	print theme("page", $page);
+	return $page;
 }
 
 function oostpoort_jubilea_married_table($queryResult, $mode)
 {
 	$page .= '<table>';
 
-   $page .= '<thead>';
-	// Show Banner
+   	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
-   $page .= '<th class="active"><b>'.t('Huwelijksdatum').'</b></th>';
+  	$page .= '<th class="active"><b>'.t('Huwelijksdatum').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
-   $page .= '<tbody>';
+   	$page .= '<tbody>';
 	// Show all found members
 	$page_tmp='';
 	while ($data = db_fetch_object($queryResult))
@@ -125,7 +143,11 @@ function oostpoort_jubilea_married_table($queryResult, $mode)
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-      $page_tmp .= '<td>'.$data->Naam.'</td>';
+		
+		$page_tmp .= '<td>';
+		$page_tmp .= oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'FamilyView', $data->Naam);
+		$page_tmp .= '</td>';
+		
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';

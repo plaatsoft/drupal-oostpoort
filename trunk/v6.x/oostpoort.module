@@ -44,34 +44,28 @@ define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
 define('OOSTPOORT_MENU',            'oostpoort');
 
 define('OOSTPOORT_FAMILY',     		'oostpoort/family');
+
 define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
 define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
 define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
 
-define('OOSTPOORT_UPLOAD_CSV',      'oostpoort/upload/csv');
-
 define('OOSTPOORT_VISIT',           'oostpoort/visit');
 define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');
+define('OOSTPOORT_UPLOAD_CSV',      'oostpoort/upload/csv');
 
 // ##################################################################################
 // Load all php modules
 // ##################################################################################
 
 // PHP module files
-module_load_include('inc', 'oostpoort', 'oostpoort_general');
 module_load_include('inc', 'oostpoort', 'oostpoort_utils'); 
 module_load_include('inc', 'oostpoort', 'oostpoort_mainmenu');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_family');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_birthday');
 module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_married');
 module_load_include('inc', 'oostpoort', 'oostpoort_member_age');
-
 module_load_include('inc', 'oostpoort', 'oostpoort_visit');
 module_load_include('inc', 'oostpoort', 'oostpoort_visit_admin');
-
-module_load_include('inc', 'oostpoort', 'oostpoort_upload_picture');
 module_load_include('inc', 'oostpoort', 'oostpoort_upload_csv');
 
 // ADD Java Scripts files
@@ -140,12 +134,6 @@ function oostpoort_menu() {
                    'access arguments' => array('view member'),
                    'type' => MENU_CALLBACK);
 
-  $items[OOSTPOORT_UPLOAD_PICTURE] = array(
-                   'title' => t('Oostpoort upload foto'),
-                   'page callback' => 'oostpoort_upload_picture',
-                   'access arguments' => array('edit member'),
-                   'type' => MENU_CALLBACK);
-
   $items[OOSTPOORT_MEMBER_AGE] = array(
                    'title' => t('Oostpoort ledenlijst leeftijd'),
                    'page callback' => 'oostpoort_member_age',
@@ -173,13 +161,13 @@ function oostpoort_menu() {
   $items[OOSTPOORT_UPLOAD_CSV] = array(
                    'title' => t('Oostpoort CSV upload'),
                    'page callback' => 'oostpoort_upload_csv',
-                   'access arguments' => array('administer site configuration'),
+                   'access arguments' => array('edit member'),
                    'type' => MENU_CALLBACK);
 						 
   $items[OOSTPOORT_VISIT_ADMIN] = array(
                    'title' => t('Oostpoort bezoekwerk administratie'), 
                    'page callback' => 'oostpoort_visit_admin',
-                   'access arguments' => array('administer site configuration'),
+                   'access arguments' => array('edit member'),
                    'type' => MENU_CALLBACK);
 
   $items['admin/settings/oostpoort'] = array(

@@ -51,10 +51,10 @@ function oostpoort_mainmenu( )
 
 	$page .= '<div class="oostpoort">';
 
-	drupal_set_title(t('Oostpoort Menu'));
+	drupal_set_title(t('Leden Administratie').' - '.VERSION);
 
 	$page .= '<br/>';
-
+	
 	$page .= '<div class="admin-panel">';
 	$page .= '<H3>';
 	$page .= t('Keuze menu');
@@ -62,7 +62,7 @@ function oostpoort_mainmenu( )
 	$page .= '<br/>';
 	
 	$page .= '<div class="body">';
-
+	
 	$page .= '<dl class="admin-list">';
     
 	$page .= '<dt>';
@@ -124,13 +124,15 @@ function oostpoort_mainmenu( )
 	}
 
 	$page .= '<br/>';
-
+		
 	$page .= '<fieldset>' ;	
 	$page .= '<legend>'.t('Opmerkingen *').'</legend>';
 	$page .= '<dd>';
+	$page .= t('Gegevens zijn bij gewerkte tot en met <b>'.variable_get('oostpoort_date', '').'</b>');
+	$page .= '<br/>';
+	$page .= '<br/>';
 	$page .= t('Alle getoonde informatie die niet aangepast kan worden is afkomstig van het ');
-	$page .= t('kerkelijk bureau. Mocht er iets niet kloppen neem dan contact op met het Goudse ');
-	$page .= t('Hervormde kerkelijke bureau.');
+	$page .= t('hervormd kerkelijk bureau.<br/>Mocht er iets niet kloppen neem dan contact op met: ');
 	$page .= '<br/>';
 	$page .= '<br/>';
 	$page .= '<b>'.t('Hervormd Kerkelijkbureau Gouda').'</b>';
@@ -139,9 +141,9 @@ function oostpoort_mainmenu( )
 	$page .= '<br/>';
 	$page .= t('2805 BP').'&nbsp;&nbsp;'.t('Gouda'); 
 	$page .= '<br/>';
-	$page .= t('0182-513360');
+	$page .= t('tel: 0182-513360');
 	$page .= '<br/>';
-	$page .= oostpoort_view_email( t('kerkelijkbureau@hervormdgouda.nl') );
+	$page .= 'email : '.oostpoort_view_email( t('kerkelijkbureau@hervormdgouda.nl') );
 	$page .= '</dd>';
 	$page .= '</fieldset>' ;
 	

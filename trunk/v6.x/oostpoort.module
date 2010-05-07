@@ -33,6 +33,9 @@
 // Defines
 // ##################################################################################
 
+// Version banner
+define('VERSION', 'versie 0.70');
+
 // Oostpoort Files store
 define('OOSTPOORT_IMAGE_DIR',       'files/oostpoort');
 define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
@@ -181,7 +184,7 @@ function oostpoort_menu() {
 
   $items['admin/settings/oostpoort'] = array(
                    'title' => 'Oostpoort',
-                   'description' => t('Instellingen Oostpoort leden administratie module.'),
+                   'description' => t('Leden administratie instellingen.'),
                    'page callback' => 'drupal_get_form',
                    'page arguments' => array('oostpoort_settings'),
                    'access arguments' => array('administer site configuration'),
@@ -203,31 +206,55 @@ function oostpoort_settings() {
     return drupal_access_denied();
  }
 
- $form['settings_general'] = array('#type' => 'fieldset', '#title' => t('General settings'));
+  $form['general'] = array('#type' => 'fieldset', '#title' => t('General settings'));
 
- $form['settings_general']['oostpoort_roles'] = array(
-     '#type' => 'textarea',
-     '#title' => t('Roles'),
-     '#default_value' => variable_get('oostpoort_roles', ''),
-     '#rows' => 1,
-     '#description' => t("Enter roles with a person can have (Seperated items with commas. No space allowed).") );
-
-  $form['map24'] = array('#type' => 'fieldset', '#title' => t('Map settings'));
-
-  $form['map24']['addressbook_map_link'] = array(
-     '#type' => 'select',
-     '#title' => t('Activate map link'),
-     '#default_value' => variable_get('addressbook_map_link',0),
-     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
-     '#description' => t('Enable / Disable Activate www.map24.com fast link.'));
-
-  $form['map24']['addressbook_map_key'] = array(
+  $form['general']['oostpoort_date'] = array(
      '#type' => 'textfield',
-     '#title' => t('Free www.map24.com access key'),
-     '#default_value' => variable_get('addressbook_map_key', ''),
-     '#description' => t("Enter access key (Visit http://www.map24.com to get a free key)"),
+     '#title' => t('Date'),
+     '#default_value' => variable_get('oostpoort_date', ''),
+     '#description' => t("Enter the date (dd-mm-yyyy) when the latest csv file was uploaded."),
+     '#maxlength' => '20',
+     '#size' => '20');
+     
+  $form['map'] = array('#type' => 'fieldset', '#title' => t('Map settings'));
+
+  $form['map']['oostpoort_map_link'] = array(
+     '#type' => 'select',
+     '#title' => t('Activate map'),
+     '#default_value' => variable_get('oostpoort_map_link',0),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / Disable Activate Google map.'));
+
+  $form['map']['oostpoort_map_key'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Google code access key'),
+     '#default_value' => variable_get('oostpoort_map_key', ''),
+     '#description' => t("Enter google code access key"),
      '#maxlength' => '50',
      '#size' => '50');
+         
+  $form['birthday'] = array('#type' => 'fieldset', '#title' => t('Birthday notification settings'));
+
+  $form['birthday']['oostpoort_birthday_notification'] = array(
+     '#type' => 'select',
+     '#title' => t('Birthday email notification'),
+     '#default_value' => variable_get('oostpoort_birthday_notification',0),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / disable email birthday notification.'));
+
+  $form['birthday']['oostpoort_birthday_subject'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Subject of birtday e-mail'),
+     '#default_value' => variable_get('oostpoort_birthday_subject','Happy birthday %username from %site_name'),
+     '#maxlength' => 180,
+     '#description' => t('Customize the subject of your birthday e-mail, which is sent to members upon their birthday.') .' '. t('Available variables are:') .' %username, %site_name');
+
+  $form['birthday']['oostpoort_birthday_body'] = array(
+     '#type' => 'textarea',
+     '#title' => t('Body of birthday e-mail'),
+     '#default_value' => variable_get('oostpoort_birthday_body',"Dear %username,\r\n\r\nCongratulation with your %user_age ste birthday.\r\nHave a nice day!\r\n"),
+     '#rows' => 15,
+     '#description' => t('Customize the body of the birthday e-mail, which is sent to members upon their birthday.') .' '. t('Available variables are:') .' %username, %user_age, %site_name');
 
   return system_settings_form($form);
 }

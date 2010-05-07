@@ -276,9 +276,9 @@ function oostpoort_view_date($id, $value, $readonly) {
 function oostpoort_view_note($id, $value, $readonly) {
 
    if ( ! $readonly ) {
-		return '<textarea name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';
+		return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';
 	} else {
-	   return '<textarea name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
+	   return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
 	}
 }
 

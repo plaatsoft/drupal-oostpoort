@@ -1,6 +1,7 @@
  Release Notes
  -------------
- 12-04-2010 (Week 16)
+ 
+ 12-04-2010 (Week 16) Version 0.40
  - Started programming.
  - Create Google Code repository   
  - Create Ohloh project account
@@ -11,12 +12,12 @@
  - Convert existing data to mysql format.
  - Start building first pages.
 
- 19-04-2010 (Week 17)
+ 19-04-2010 (Week 17) Version 0.50
  - Create admin visit page.
  - Add functionality to update visitors data.
  - Replace button by links (based on JavaScript)
 
- 26-04-2010 (Week 18)
+ 26-04-2010 (Week 18) Version 0.60
  - Created visit pages including history information.
  - Added back links to every page.
  - Bugfix: Solve reload button (Multi insert) issue.
@@ -34,7 +35,7 @@
  - Bugfix: Now member AdrId is also update during CSV upload.
  - Added security access for the visit part.
 
- 04-04-2010 (Week 19)
+ 04-04-2010 (Week 19) Version 0.70
  - Added date picker.
  - Added Access security for all user type's. 
  - Show more information about family in visit address select page.
@@ -42,11 +43,12 @@
  - Show more statistics information on visit admin list page. 
  - Return to old datamodel.
  - Clean available data.
+ - Added version banner on main menu page.
+ - Added latest csv upload date on main menu page.
  - BugFix: KerkLidNr is not loaded!
  - BugFix: Member record is not completly update when record is found during CSV upload.
- - BugFix: During address selection, go to detail page, return, selection of address is lost!   
- - Retested everything.
-  
+ - BugFix: During address selection, go to detail page, return, selection of address was lost!   
+   
 To do List
 ----------
 - Add Block info to each address

@@ -45,6 +45,7 @@
  - Clean available data.
  - Added version banner on main menu page.
  - Added latest csv upload date on main menu page.
+ - Optimise HTML output for Internet Explorer (IE) and Firefox. 
  - BugFix: KerkLidNr is not loaded!
  - BugFix: Member record is not completly update when record is found during CSV upload.
  - BugFix: During address selection, go to detail page, return, selection of address was lost!   

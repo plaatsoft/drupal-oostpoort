@@ -34,14 +34,12 @@
 
 function oostpoort_upload_csv() {
 
-	global $user;
-
-	//only administrators can access this module
-	if (!user_access('access administration pages')) {
-		return drupal_access_denied();;
+	// Check access for this page.
+	if (!oostpoort_check_admin_access()) {
+		return drupal_access_denied();
 	}
-	
-		// Breadcrumb menu
+		
+	// Breadcrumb menu
 	$page  = '<div class="breadcrumb">';
 	$page .= '<a href="'.url("").'">Start</a> > ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';

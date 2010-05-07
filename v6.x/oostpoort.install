@@ -126,6 +126,7 @@ INSERT INTO `oostpoort_gemeente` (`Gem_ID`, `Gem_Code`, `Gem_Omschrijving`) VALU
 db_query("	
 CREATE TABLE IF NOT EXISTS `oostpoort_medewerker` (
   `Mdw_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Mdw_Admin` char(6) NOT NULL DEFAULT '',
   `Mdw_Prs_ID` decimal(4,0) NOT NULL,
   `Mdw_Rol_ID` decimal(1,0) NOT NULL,
   `Mdw_ActiefJN` char(6) NOT NULL DEFAULT '',

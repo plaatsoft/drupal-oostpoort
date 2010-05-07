@@ -93,7 +93,9 @@ function oostpoort_mainmenu( )
 	$page .= t('Dit rapport geeft alle huwelijksjubilea weer. *');
 	$page .= '</dd>';
   
-	$page .= '<br/>';
+	$page .= '<dt>';
+	$page .= '&nbsp;';
+	$page .= '</dt>';
 
    // Only visit members can access this page.
 	if (oostpoort_check_access()) {
@@ -106,7 +108,7 @@ function oostpoort_mainmenu( )
 	}
 	
 	//only administrators can access these pages.
-  if (user_access('access administration pages')) {
+    if (oostpoort_check_admin_access()) {
    
 		$page .= '<dt>';
 		$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
@@ -123,11 +125,13 @@ function oostpoort_mainmenu( )
 		$page .= '</dd>';
 	}
 
-	$page .= '<br/>';
+	$page .= '<dt>';
+	$page .= '&nbsp;';
+	$page .= '</dt>';
 		
 	$page .= '<fieldset>' ;	
 	$page .= '<legend>'.t('Opmerkingen *').'</legend>';
-	$page .= '<dd>';
+	$page .= '<div class="description">';
 	$page .= t('Gegevens zijn bij gewerkte tot en met <b>'.variable_get('oostpoort_date', '').'</b>');
 	$page .= '<br/>';
 	$page .= '<br/>';
@@ -144,7 +148,7 @@ function oostpoort_mainmenu( )
 	$page .= t('tel: 0182-513360');
 	$page .= '<br/>';
 	$page .= 'email : '.oostpoort_view_email( t('kerkelijkbureau@hervormdgouda.nl') );
-	$page .= '</dd>';
+	$page .= '</div>';
 	$page .= '</fieldset>' ;
 	
 	$page .= '</dl>';

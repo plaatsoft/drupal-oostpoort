@@ -37,10 +37,7 @@ function oostpoort_visit() {
 
    	// Check access for this page.
 	if (!oostpoort_check_access()) {
-	
-		$page .= t('Geen toegang');
-		print theme("page", $page);	
-	   return;
+		return drupal_access_denied();
 	}
 	
 	$Action=$_POST['Action'];

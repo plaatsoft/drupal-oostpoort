@@ -110,7 +110,7 @@ function oostpoort_process_csv($filename) {
 	
 	$address_error_counter=0;
 	$address_insert_counter=0;
-	$address_unchanged_counter=0;
+	$address_update_counter=0;
 	
 	$member_error_counter=0;
 	$member_insert_counter=0;
@@ -180,19 +180,13 @@ function oostpoort_process_csv($filename) {
 			if ($AdrId=="") {
 			
 				// Address not found, insert it!
-				$AdrId = oostpoort_insert_adress(
-					$data["Straatnaam"], 
-					$data["Huisnr"].$data["HuisLetter"], 
-					$data["Postcode"], 
-					$data["Woonplaats"] );
+				$AdrId = oostpoort_insert_adress($data);
 				$address_insert_counter++;
-				
 			} else {
-			
-				$address_unchanged_counter++;
+				oostpoort_update_address($data,$AdrId);
+				$address_update_counter++;
 			}
 		} else {
-		
 			$AdrId="";
 			$address_error_counter++;
 		}
@@ -245,10 +239,10 @@ function oostpoort_process_csv($filename) {
 	$page .= ($line_counter-1).' '.t('leden geanalyseerd.');
 	$page .= '</li>';
 	$page .= '<li>';
-	$page .= $address_unchanged_counter.' '.t('adressen ongewijzigd.');
+	$page .= $address_insert_counter.' '.t('adressen toegevoegd.');
 	$page .= '</li>';
 	$page .= '<li>';
-	$page .= $address_insert_counter.' '.t('adressen toegevoegd.');
+	$page .= $address_update_counter.' '.t('adressen bijgewerkt.');
 	$page .= '</li>';
 	$page .= '<li>';
 	$page .= $address_error_counter.' '.t('addressen niet verwerkt (data incorrect).');
@@ -290,24 +284,42 @@ function oostpoort_find_address($Postcode,$HuisNr)
 	return $AdrId;
 }
 	
-function oostpoort_insert_adress($Straatnaam,$HuisNr,$Postcode,$Woonplaats) {
+function oostpoort_insert_adress($data) {
+				
+	$HuisNr=$data["Huisnr"].$data["HuisLetter"];
 	
 	$sql  = 'INSERT INTO oostpoort_adres ( ';
 	$sql .= '`Adr_Straat`, ';
 	$sql .= '`Adr_Huisnr`, ';
 	$sql .= '`Adr_Plaats`, ';
+	$sql .= '`Adr_Blk_Id`, ';
 	$sql .= '`Adr_Postcode` ';
 	$sql .= ') VALUES (';
-	$sql .= '"'.$Straatnaam.'", ';
+	$sql .= '"'.$data["Straatnaam"].'", ';
 	$sql .= '"'.$HuisNr.'", ';
-	$sql .= '"'.$Woonplaats.'", ';
-	$sql .= '"'.$Postcode.'") ';
+	$sql .= '"'.$data["Woonplaats"].'", ';
+	$sql .= oostpoort_convert_blok($data["Postcode"]).', ';
+	$sql .= '"'.$data["Postcode"].'") ';
 		
 	oostpoort_debug_sql($sql);
 	db_query($sql); 	
 	
-	return oostpoort_find_address($Postcode,$HuisNr);
+	return oostpoort_find_address($data["Postcode"],$HuisNr);
 }
+
+function oostpoort_update_address($data, $AdrId) {
+
+	$sql  = 'UPDATE ';
+	$sql .= '  oostpoort_adres ';
+	$sql .= 'SET ';
+	$sql .= '  Adr_Blk_Id='.oostpoort_convert_blok($data["Postcode"]).' ';
+	$sql .= 'WHERE ';
+	$sql .= '  Adr_Id='.$AdrId;
+	
+	oostpoort_debug_sql($sql);
+	db_query($sql); 	
+}
+	
 
 function oostpoort_insert_member(
 			$Voornamen,
@@ -480,6 +492,26 @@ function oostpoort_member_state($TypeOrig) {
 		
 	oostpoort_debug_param('BstId',$data->BstId);
 	return $data->BstId;
+}
+
+function oostpoort_convert_blok($Postcode) {
+
+	list( $Nummer, $Letters ) = split(' ', $Postcode);
+	
+	if ($Nummer=="2806") {
+		return 1;
+	} else if (($Nummer=="2807") 
+				&& preg_match("/[D-H][A-B]/", $Letters)) { 
+		return 2;
+	} else if (($Nummer=="2807") 
+				&& (preg_match("/[K-N][A-Z]/", $Letters)
+				|| preg_match("/[R-R][A-Z]/", $Letters))) {
+		return 4;
+	} else if ($Nummer=="2807") {
+		return 3;
+	} else {
+		return 5;
+	}
 }
 
 // ##################################################################################

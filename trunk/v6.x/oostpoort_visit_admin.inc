@@ -244,6 +244,7 @@ function oostpoort_visit_admin_member()
 	$query .= ' a.Mdw_Admin as MdwAdmin, ';
 	$query .= ' a.Mdw_Rol_ID as MdwRolID, ';
 	$query .= ' a.Mdw_UID as MdwUid, ';
+	$query .= ' b.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' b.Prs_Roepnaam as PrsRoepnaam, ';
 	$query .= ' b.Prs_EmailAdres as PrsEmail, ';
 	$query .= ' b.Prs_TelefoonMobiel as PrsMobiel, ';
@@ -275,11 +276,16 @@ function oostpoort_visit_admin_member()
 	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right");
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
-	$page .= '<h4>'.$data->AdrPlaats.' '.$data->AdrPostcode.'</h4>';	
+	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Medewerker Id').':</label>';
 	$page .= $data->PrsId;
+	$page .= '</div>';
+		
+	$page .= '<div class="form-item">';
+	$page .= '<label>'.t('Kerkelijke lid nummer').':</label>';
+	$page .= $data->PrsKerklidnummer;
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';

@@ -530,6 +530,30 @@ function oostpoort_visit_part($data, $readonly)
 	return $page;
 }
 
+function oostpoort_get_block($MdwId) {
+	
+	// Query Database
+	$query  = '
+		select 
+			a.Blk_Id as BlkId 
+		from 
+			oostpoort_blok a, oostpoort_medewerker b
+		where
+			b.Mdw_Blk_ID=a.Blk_ID and
+			b.Mdw_Id='.$MdwId;
+	
+	echo "sql = ".$query;
+	oostpoort_debug_sql($query);
+	$queryResult = db_query($query);
+  	$result = db_fetch_object($queryResult);
+  	
+  	$BlkId=$result->BlkId;
+  	echo "BlkId = ".$BlkId;
+  	
+  	return $BlkId;
+}
+
+
 function oostpoort_visit_search() {
   
 	// Create Breadcrumb menu
@@ -543,6 +567,8 @@ function oostpoort_visit_search() {
 	$MdwId=$_SESSION["MdwId"];
 	oostpoort_debug_param("MdwId", $MdwId);
  	
+	$BlkId=oostpoort_get_block($MdwId);
+	
 	// Get search value out post or session scope
 	$Search=$_POST['Search'];
 	oostpoort_debug_param("Search", $Search);
@@ -576,20 +602,12 @@ function oostpoort_visit_search() {
 	$page .= t('Filteren op straatnaam.');
 	$page .= '</div>';
 	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Blok').' :</label>';
-	$page .= oostpoort_view_block(0, false, false);
-	$page .= '<div class="description">';
-	$page .= t('Filteren op blok.');
-	$page .= '</div>';
-	$page .= '</div>';
 	
 	$page .= oostpoort_sortbar($Sort,"Search");
 	
-   $page .= '</fieldset>' ;
+	$page .= '</fieldset>' ;
   
-   $page .= t('Selecteer nieuwe adressen om te bezoeken.');
+   	$page .= t('Selecteer nieuwe adressen om te bezoeken.');
 
 	// Query Database
 	$query  = '
@@ -600,6 +618,7 @@ function oostpoort_visit_search() {
     	a.Adr_Plaats as AdrPlaats, 
     	a.Adr_postcode as AdrPostcode, 
     	a.Adr_Telefoon as AdrTelefoon,  
+    	a.Adr_Blk_Id as AdrBlkId,
     	(select concat(Prs_Tussenvoegsels, " ", substring_index(Prs_Achternaam,"-",1)) from oostpoort_persoon where Prs_Huidig_Adr_Id=a.Adr_id limit 1) as Naam, 
     	(select Bzk_Id from oostpoort_bezoek where Bzk_Adr_Id=a.Adr_Id order by Bzk_Id desc limit 1) as BzkId,
  		(select Bzk_GeplandDatum from oostpoort_bezoek where Bzk_id=BzkId) as BzkGeplandDatum,
@@ -610,10 +629,13 @@ function oostpoort_visit_search() {
 	from 
 		oostpoort_adres a  
 	where ';
+	if 	($BlkId!=0) {
+		$query .= 'a.Adr_Blk_ID='.$BlkId.' and ';
+	}
 	if (strlen($Search)==0) {
-		$query  .= 'a.Adr_Straat LIKE "'.$Sort.'%" ';
+		$query .= 'a.Adr_Straat LIKE "'.$Sort.'%" ';
 	} else { 
-		$query  .= 'a.Adr_Straat LIKE "'.$Search.'%" ';
+		$query .= 'a.Adr_Straat LIKE "'.$Search.'%" ';
  	}
 	$query .= '
 		order by 
@@ -631,7 +653,7 @@ function oostpoort_visit_search() {
 	$page .= '<th class="active"><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
-	//$page .= '<th><b>'.t('Telefoon').'</b></th>';
+	$page .= '<th><b>'.t('Blok').'</b></th>';
 	$page .= '<th><b>'.t('Opmerking').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
@@ -658,7 +680,7 @@ function oostpoort_visit_search() {
 		$page_tmp .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'Show', $data->Straatnaam)."</td>";
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';	
-		//$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';	
+		$page_tmp .= '<td>'.$data->AdrBlkId.'</td>';	
 		
 		$page_tmp .= '<td>';
 		$page_tmp .= '<div class="description">';

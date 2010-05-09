@@ -499,10 +499,9 @@ function oostpoort_member_state($TypeOrig) {
 
 function oostpoort_convert_block($data) {
 	
-	$block=0;
+	$block=5;
 	
 	list( $Nummer, $Letters ) = split(' ', $data["Postcode"]);
-	//echo 'Line: ['. $Nummer.'] [' .$Letters.'] ['.$data['Straatnaam'].']';
 	
 	try
   	{

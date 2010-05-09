@@ -138,32 +138,32 @@ function oostpoort_view_owner($uid, $readonly) {
 /**
  * View Block dropdown
  */
-function oostpoort_view_block($block, $readonly, $omschrijving) {
+function oostpoort_view_block($blockId, $readonly, $omschrijving) {
 
    if ( ! $readonly ) {
-		$query  = 'SELECT Blk_ID, Blk_nummer, Blk_Omschrijving FROM {oostpoort_blok} order by Blk_nummer';
+		$query  = 'SELECT Blk_ID, Blk_Omschrijving FROM {oostpoort_blok} order by Blk_ID';
 		$queryResult = db_query($query);     
 		
 		$page.='<select name="Block">';
 		while ($data = db_fetch_object($queryResult)) {
-		
+					
 			$page.='<option value="'.$data->Blk_ID.'" ';
-			if ($data->Blk_ID==$block) $page.='selected="selected" ';
+			if ($data->Blk_ID==$blockId) $page.='selected="selected" ';
 			if ($omschrijving) {
-				$page.='>'.$data->Blk_Omschrijving.' [Blok '.$data->Blk_nummer.']</option>';
+				$page.='>'.$data->Blk_Omschrijving.' [Blok '.$data->Blk_ID.']</option>';
 			} else {
-				$page.='>Blok '.$data->Blk_nummer.'</option>';
-			}
+				$page.='>Blok '.$data->Blk_Id.'</option>';
+			}		
 		}
 		$page.='</select> ';
 	  
    } else {
 	 
-      $query  = 'SELECT Blk_ID, Blk_nummer, Blk_Omschrijving FROM {oostpoort_blok} WHERE Blk_ID='.$block;
+      $query  = 'SELECT Blk_ID, Blk_Omschrijving FROM {oostpoort_blok} WHERE Blk_ID='.$blockId;
       $queryResult = db_query($query);
       $data = db_fetch_object($queryResult);
 		 
-      $page .= $data->Blk_Omschrijving.' [Blok '.$data->Blk_nummer.']';
+      $page .= $data->Blk_Omschrijving.' [Blok '.$data->Blk_Id.']';
    }
    return $page;
 }

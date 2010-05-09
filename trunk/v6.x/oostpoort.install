@@ -66,20 +66,19 @@ function oostpoort_install() {
        db_query("	
        CREATE TABLE IF NOT EXISTS `oostpoort_blok` (
   `Blk_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `Blk_Nummer` decimal(1,0) NOT NULL,
   `Blk_Omschrijving` varchar(50) NOT NULL,
   PRIMARY KEY (`Blk_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
       ");
       
        db_query("	
-       INSERT INTO `oostpoort_blok` (`Blk_ID`, `Blk_Nummer`, `Blk_Omschrijving`) VALUES
-(11, '1', 'Vreewijk en Oosterwei 2806'),
-(12, '2', 'Molenbuurt 2807'),
-(13, '4', 'Polder- en Vrijheidsbuurt 2807'),
-(14, '5', 'Overige straten anders dan 2806/2807'),
-(15, '3', 'Oud-Goverwelle, Muziek/Componistenbuurt 2807'),
-(0, '0', 'Alle blokken');
+INSERT INTO `oostpoort_blok` (`Blk_ID`, `Blk_Omschrijving`) VALUES
+(1, 'Vreewijk en Oosterwei 2806'),
+(2, 'Molenbuurt 2807'),
+(4, 'Polder- en Vrijheidsbuurt 2807'),
+(5, 'Overige straten anders dan 2806/2807'),
+(3, 'Oud-Goverwelle, Muziek/Componistenbuurt 2807'),
+(0, 'Alle blokken');
       ");
       
        db_query("	

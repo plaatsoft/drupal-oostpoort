@@ -119,7 +119,7 @@ function oostpoort_visit_admin_list()
 	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as geslacht, '; 
 	$query .= ' b.Prs_id as PrsId, ';
-	$query .= ' c.Blk_Nummer as BlkNummer, ';
+	$query .= ' c.Blk_Id as BlkId, ';
 	$query .= ' c.Blk_Omschrijving as BlkOmschrijving, ';
 	$query .= ' a.Mdw_ActiefJN as MdwActief, ';
 	$query .= ' a.Mdw_Admin as MdwAdmin, ';
@@ -185,7 +185,7 @@ function oostpoort_visit_admin_list()
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $data->BlkNummer;
+		$page .= $data->BlkId;
 		$page .= '</td>';
 		
 		$page .= '<td>';

@@ -50,11 +50,12 @@
  - Added functionality to remove members (Drupal admin rights needed) 
  - BugFix: KerkLidNr is not loaded!
  - BugFix: Member record is not completly update when record is found during CSV upload.
- - BugFix: During address selection, go to detail page, return, selection of address was lost!   
+ - BugFix: During address selection, go to detail page, return, selection of address was lost!    
+ - Added Church Block number to each address
     
 To do List
 ----------
-- Add Block info to each address
+
 - Add Block filter in visit address search page.
 
 Nice to have

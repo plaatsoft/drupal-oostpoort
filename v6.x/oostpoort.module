@@ -37,8 +37,8 @@
 define('VERSION', 'versie 0.70');
 
 // Oostpoort Files store
-define('OOSTPOORT_IMAGE_DIR',       'files/oostpoort');
-define('OOSTPOORT_THUMBNAILS_DIR',  'files/oostpoort/thumbnails');
+define('OOSTPOORT_IMAGE_DIR',       file_directory_path().'/oostpoort');
+define('OOSTPOORT_THUMBNAILS_DIR',  file_directory_path().'/oostpoort/thumbnails');
 
 // Oostpoort URLs
 define('OOSTPOORT_MENU',            'oostpoort');

@@ -161,12 +161,12 @@ function oostpoort_visit_list() {
 	
  	// Query Database
 	$query  = 'select ';
-	$query .= '   (select concat(Prs_Tussenvoegsels, " ", substring_index(Prs_Achternaam,"-",1)) from oostpoort_persoon where Prs_Huidig_Adr_Id=b.Adr_id limit 1) as Naam, ';
-	$query .= '   concat (b.Adr_Straat," ", b.Adr_Huisnr) as Straatnaam, ';
 	$query .= '   b.Adr_Plaats as AdrPlaats, ';
 	$query .= '   b.Adr_postcode as AdrPostcode, ';
+	$query .= '   concat(b.Adr_Straat," ", b.Adr_Huisnr) as Straatnaam, ';
 	$query .= '   a.Bzk_GeplandDatum as BzkGeplande, ';
 	$query .= '   a.Bzk_AfgelegdDatum as BzkAfgelegd, ';
+	$query .= '   (select concat(Prs_Tussenvoegsels, " ", substring_index(Prs_Achternaam,"-",1)) as naam from oostpoort_persoon where Prs_Huidig_Adr_Id=b.Adr_id limit 1) as Naam, ';
 	$query .= '   a.Bzk_ID as BzkId '; 
 	$query .= 'from ';
 	$query .= '   oostpoort_bezoek a, oostpoort_adres b ';
@@ -174,7 +174,7 @@ function oostpoort_visit_list() {
 	$query .= '   a.Bzk_Adr_ID=b.Adr_id and ';
 	$query .= '   a.Bzk_AfgelegdDatum=0 and ';
 	$query .= '   a.Bzk_GeannuleerdDatum=0 and ';
-   	$query .= '   a.Bzk_BezoekNietGewenstDatum=0 and '; 
+   $query .= '   a.Bzk_BezoekNietGewenstDatum=0 and '; 
 	$query .= '   a.Bzk_Mdw_id='.$MdwId.' ';
 	$query .= 'order by ';
 	$query .= '   Straatnaam';

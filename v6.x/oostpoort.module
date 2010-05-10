@@ -34,7 +34,7 @@
 // ##################################################################################
 
 // Version banner
-define('VERSION', 'versie 0.70');
+define('VERSION', 'versie 0.8');
 
 // Oostpoort Files store
 define('OOSTPOORT_IMAGE_DIR',       file_directory_path().'/oostpoort');

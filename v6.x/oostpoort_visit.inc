@@ -542,14 +542,11 @@ function oostpoort_get_block($MdwId) {
 			b.Mdw_Blk_ID=a.Blk_ID and
 			b.Mdw_Id='.$MdwId;
 	
-	echo "sql = ".$query;
 	oostpoort_debug_sql($query);
 	$queryResult = db_query($query);
   	$result = db_fetch_object($queryResult);
   	
-  	$BlkId=$result->BlkId;
-  	echo "BlkId = ".$BlkId;
-  	
+  	$BlkId=$result->BlkId;	
   	return $BlkId;
 }
 
@@ -614,7 +611,7 @@ function oostpoort_visit_search() {
 	
 	select 
     	a.Adr_id as AdrId,      
-    	concat (a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, 
+    	concat(a.Adr_Straat," ", a.Adr_Huisnr) as Straatnaam, 
     	a.Adr_Plaats as AdrPlaats, 
     	a.Adr_postcode as AdrPostcode, 
     	a.Adr_Telefoon as AdrTelefoon,  

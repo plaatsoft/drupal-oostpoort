@@ -165,7 +165,7 @@ function oostpoort_visit_admin_list()
 			$page .= '<tr class="odd">';
 		} 
 		$page .= '<td>';
-		$page .= oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left");
+		$page .= oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false);
 		$page .= '</td>';
 
 		$page .= '<td>';
@@ -273,7 +273,7 @@ function oostpoort_visit_admin_member()
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Medewerker</legend>';
-	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right");
+	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right", true);
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
@@ -478,7 +478,7 @@ function oostpoort_visit_admin_search()
 				$page .= '<tr class="odd">';
 			}
 			//$page .= '<td>'.$i.'</td>';	  
-			$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
+			$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
 			$page .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Add', $data->Naam).'</td>';
 			//$page .= '<td>'.$data->PrsId.'</td>';	  	  
 			$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>'; 

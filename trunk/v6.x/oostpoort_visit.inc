@@ -192,7 +192,6 @@ function oostpoort_visit_list() {
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Geplande').'</b></th>';
-	$page .= '<th><b>'.t('Afgelegde').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
 
@@ -212,7 +211,6 @@ function oostpoort_visit_list() {
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';	
 		$page_tmp .= '<td>'.oostpoort_convert_date($data->BzkGeplande).'</td>';
-		$page_tmp .= '<td>'.oostpoort_convert_date($data->BzkAfgelegd).'</td>';
 		$page_tmp .= '</tr>';
    }
 

@@ -138,7 +138,7 @@ function oostpoort_view_owner($uid, $readonly) {
 function oostpoort_breadcrumb($node) {
 	
 	$page  = '<div class="breadcrumb">';
-	$page .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; > ';
+	$page .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; > ';
 	$page .= t('Leden administratie');
 	
 	if ($node["child1"]!="") {

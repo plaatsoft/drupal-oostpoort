@@ -80,6 +80,8 @@
  - Update data model.
  - Retest everything.
  - Bugfixes: Solve some minor issues after first deployment of my demo drupal6 internet site.
+ - Added support for lightbox2 drupal module. Nice foto popup effect!
+ - Improve module directory structure.
  - This is the first beta release for beta testers.
  - Build for Drupal 6.x
     

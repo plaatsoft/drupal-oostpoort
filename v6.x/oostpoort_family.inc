@@ -172,7 +172,7 @@ function oostpoort_family_list() {
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-		$page_tmp .= '<td>'.oostpoort_load_picture("Adr",$data->AdrId, 25, 35, "left" ).'</td>';
+		$page_tmp .= '<td>'.oostpoort_load_picture("Adr",$data->AdrId, 25, 35, "left", false).'</td>';
 		$page_tmp .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'AdrId', $data->AdrId, 'FamilyView', $data->Naam)."</td>";
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
@@ -248,7 +248,7 @@ function oostpoort_family_view($readonly) {
 	$page .= '<fieldset>' ;
 	$page .= '<legend></legend>';
 
-	$page .= oostpoort_load_picture("Adr",$AdrId, 0, 0,"right");
+	$page .= oostpoort_load_picture("Adr",$AdrId, 0, 0,"right", true);
 	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
@@ -298,7 +298,7 @@ function oostpoort_family_view($readonly) {
 		} else {
 			$page .= '<tr class="odd">';
 		}
-		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left").'</td>';
+		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
 		if ($readonly) {
 			$page .= '<td>'.$data->Naam.'</td>';
 		} else { 
@@ -391,7 +391,7 @@ function oostpoort_member_view($readonly)
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>'.t('Kerkelijke bureau gegevens').'</legend>';
-	$page .= oostpoort_load_picture("Prs",$PrsId,0,0,"right");
+	$page .= oostpoort_load_picture("Prs",$PrsId,0,0,"right", true);
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	

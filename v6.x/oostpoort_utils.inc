@@ -326,15 +326,21 @@ function oostpoort_sortbar($Sort,$Action)
 	return $page;
 }
 
-function oostpoort_load_picture($Group,$AdrId,$height,$width, $align) {
+function oostpoort_load_picture($Group,$AdrId,$height,$width, $align, $lightbox) {
 	
-	// Construct a valid drupal path for the named file
-	$file=OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$AdrId.'.jpg';
+   // Construct a valid drupal path for the named file
+   $file=OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$AdrId.'.jpg';
+   $file_normal=OOSTPOORT_IMAGE_DIR.'/'.$Group.$AdrId.'.jpg';
    $target = file_create_path($file);
+   $target_normal = file_create_path($file_normal);
 
    // Check to see if the file exists
    if (file_exists($target)) {	
 		$filename=str_replace(array("?q="), "", url($file));
+		$filename_normal=str_replace(array("?q="), "", url($file_normal));
+		if ($lightbox) {
+			$page.='<a href="'.$filename_normal.'" rel="lightbox" >';
+		}
 		$page.='<img align="'.$align.'" ';
 		if ($width!=0) {
 			$page.='width="'.$width.'" ';
@@ -343,10 +349,15 @@ function oostpoort_load_picture($Group,$AdrId,$height,$width, $align) {
 			$page.='height="'.$height.'" ';
 		}
 		$page.='src="'.$filename.'" />';
+		if ($lightbox) {
+			$page.='</a>';
+		}
 	} 
 	return $page;
 }
-		
+
+//<a href="images/image-1.jpg" rel="lightbox" title="my caption">image #1</a>
+
 function oostpoort_save_picture($Group,$AdrId)
 {
 	// Fetch Image upload in a HTTP request

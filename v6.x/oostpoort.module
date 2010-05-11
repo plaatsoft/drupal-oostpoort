@@ -69,8 +69,9 @@ module_load_include('inc', 'oostpoort', 'oostpoort_visit_admin');
 module_load_include('inc', 'oostpoort', 'oostpoort_upload_csv');
 
 // ADD Java Scripts files
-drupal_add_js(drupal_get_path('module', 'oostpoort'). '/oostpoort.js');
-drupal_add_js(drupal_get_path('module', 'oostpoort'). '/ui.datepicker.js');
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/js/oostpoort.js');
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/js/ui.datepicker.js');
+
 
 drupal_add_js('
 	$(function() {
@@ -85,8 +86,8 @@ drupal_add_js('
 	});','inline');
 
 // Add CSS files
-drupal_add_css(drupal_get_path('module', 'oostpoort') .'/oostpoort.css');
-drupal_add_css(drupal_get_path('module', 'oostpoort') .'/datepicker.css');
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/css/oostpoort.css');
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/css/datepicker.css');
 
 // ##################################################################################
 // Drupal hooks

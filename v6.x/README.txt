@@ -77,10 +77,8 @@
  10-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
  - Show only address in the block where the visitor is active.
- - Update data model.
- - Retest everything.
  - Bugfixes: Solve some minor issues after first deployment of my demo drupal6 internet site.
- - Added support for lightbox2 drupal module. Nice foto popup effect!
+ - Added support for lightbox2 drupal module. Nice photo popup effect!
  - Improve module directory structure.
  - This is the first beta release for beta testers.
  - Build for Drupal 6.x

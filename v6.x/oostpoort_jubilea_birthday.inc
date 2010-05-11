@@ -62,14 +62,10 @@ function oostpoort_jubilea_birthday_list()
 	drupal_set_title(t('Verjaardag Jubilea Rapport'));
 	
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Verjaardag jubilea rapport').'</a>';
-	$page .= '</div>';
+	$node["child1"] = '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Verjaardag jubilea rapport').'</a>';
+	$page .= oostpoort_breadcrumb($node);
 
 	$page .= '<div class="oostpoort">';
-	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 		
 	$page .= '<fieldset>' ;

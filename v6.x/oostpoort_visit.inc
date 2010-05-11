@@ -112,14 +112,11 @@ function oostpoort_visit() {
 
 function oostpoort_visit_list() {
   
-	// Create Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Bezoekwerk ');
-	$page .= '</div>';
-
-   // Get posted parameters
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk ');
+	$page .= oostpoort_breadcrumb($node);
+	
+    // Get posted parameters
 	$MdwId=$_POST["MdwId"];
 	if ($MdwId=="") {
 		$MdwId=$_SESSION["MdwId"];

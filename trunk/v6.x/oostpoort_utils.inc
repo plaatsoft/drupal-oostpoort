@@ -138,8 +138,8 @@ function oostpoort_view_owner($uid, $readonly) {
 function oostpoort_breadcrumb($node) {
 	
 	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= t('Oostpoort');
+	$page .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; > ';
+	$page .= t('Leden administratie');
 	
 	if ($node["child1"]!="") {
 		$page .= ' > '.$node["child1"];		
@@ -645,6 +645,25 @@ function oostpoort_keep_selection() {
 	return $page;
 }
 
+function oostpoort_get_block($MdwId) {
+	
+	// Query Database
+	$query  = '
+		select 
+			a.Blk_Id as BlkId 
+		from 
+			oostpoort_blok a, oostpoort_medewerker b
+		where
+			b.Mdw_Blk_ID=a.Blk_ID and
+			b.Mdw_Id='.$MdwId;
+	
+	oostpoort_debug_sql($query);
+	$queryResult = db_query($query);
+  	$result = db_fetch_object($queryResult);
+  	
+  	$BlkId=$result->BlkId;	
+  	return $BlkId;
+}
 
 // ##################################################################################
 // THE END

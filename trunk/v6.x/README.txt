@@ -16,18 +16,18 @@
  - Build for Drupal 5.x
 
  10-04-2010 (Week 15) v6.x-0.3 
- - Convert module for Drupal 5 ro Drupal 6.
+ - Convert module for Drupal 5 to Drupal 6.
+ - Convert existing data to mysql format.
+ - Create datamodel.
  - Build for Drupal 6.x
 
  18-04-2010 (Week 16) v6.x-0.4
- - Started programming.
- - Create Google Code repository   
- - Create Ohloh project account
- - Create Information page on PlaatSoft website.
+ - Started PHP programming.
+ - Create Google Code repository.   
+ - Create Ohloh project account.
+ - Create information page on PlaatSoft website.
  - Create Drupal project "Oostpoort"
  - Based HTML on standard Drupal style sheet
- - Create datamodel.
- - Convert existing data to mysql format.
  - Start building first pages.
  - Build for Drupal 6.x
 
@@ -77,9 +77,10 @@
  10-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
  - Show only address in the block where the visitor is active.
- - Bugfixes: Solve some minor issues after first deployment of my demo drupal6 internet site.
+ - Bugfixes: Solve some minor issues after first deployment on my demo drupal6 site.
  - Added support for lightbox2 drupal module. Nice photo popup effect!
  - Improve module directory structure.
+ - Improve breadcrumb menu. 
  - This is the first beta release for beta testers.
  - Build for Drupal 6.x
     

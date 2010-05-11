@@ -94,10 +94,7 @@ function oostpoort_visit_admin()
 // VIEWS
 // ##################################################################################
 
-function oostpoort_visit_admin_list()
-{
-	$page .= '<div class="oostpoort">';
-
+function oostpoort_visit_admin_list() {
  	// Remove access rights for this module it will be updated if you enter the main menu again.
 	unset($_SESSION['MdwId']);
 	
@@ -107,11 +104,12 @@ function oostpoort_visit_admin_list()
 	    
 	drupal_set_title(t('Bezoekwerk administratie' ) );
 
+	$page .= '<div class="oostpoort">';
+	$page .= '<form name="OostpoortForm" method="POST" >';
+		
 	$page .= '<br/>';
 	$page .= t('Dit zijn alle bezoekmedewerkers van de oostpoort.');
 
-	$page .= '<form name="OostpoortForm" method="POST" >';
-  	
 	$query  = 'select ';	
 	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam)," ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) as Naam, ';
 	$query .= ' b.Prs_GeslachtMV as geslacht, '; 
@@ -227,6 +225,11 @@ function oostpoort_visit_admin_member()
 	$node["child2"] = t('Bezoekmedewerker Details');
 	$page .= oostpoort_breadcrumb($node);
 	
+	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
+		
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
+	
 	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
@@ -258,12 +261,7 @@ function oostpoort_visit_admin_member()
 	oostpoort_debug_sql($query);
 	$queryResult = db_query($query);
 	$data = db_fetch_object($queryResult);
-	
-	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
 		
-	$page .= '<form name="OostpoortForm" method="POST" >';
-	$page .= '<div class="oostpoort">';
-	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Medewerker</legend>';
 	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right", true);
@@ -395,9 +393,7 @@ function oostpoort_visit_admin_search()
    // Get posted parameters
    $Search=$_POST['Search'];
    oostpoort_debug_param("Search",$Search);
- 
-	$page .= '<div class="oostpoort">';
-		
+ 		
 	// Breadcrumb menu
 	$node["child1"] = t('Bezoekwerk Administratie');
 	$node["child2"] = t('Bezoekmedewerker toevoegen');
@@ -405,8 +401,9 @@ function oostpoort_visit_admin_search()
 	
 	// Page title
 	drupal_set_title( t('Bezoekmedewerker toevoegen') );
-		
-   $page .= '<form name="OostpoortForm" method="POST" >';  
+
+	$page .= '<div class="oostpoort">';
+   	$page .= '<form name="OostpoortForm" method="POST" >';  
 
 	if ($Search=="") {
 		$page .= '<div class="messages error">';

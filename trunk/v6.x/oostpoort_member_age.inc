@@ -68,15 +68,15 @@ function oostpoort_member_age_list()
 	}
 	$_SESSION['EndDate']=$EndDate; 
 	oostpoort_debug_param("EndDate", $EndDate);
-
+	
+	$page .= '<div class="oostpoort">';
+	
 	// Breadcrumb menu
 	$node["child1"] = '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
 	$page .= oostpoort_breadcrumb($node);
-	
-	$page .= '<div class="oostpoort">';
 
 	drupal_set_title(t('Leeftijdscategorie Rapport' ));
-	
+		
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<fieldset>' ;

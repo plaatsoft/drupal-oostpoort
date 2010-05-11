@@ -111,11 +111,7 @@ function oostpoort_visit() {
 // ##################################################################################
 
 function oostpoort_visit_list() {
-  
-	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk ');
-	$page .= oostpoort_breadcrumb($node);
-	
+ 
     // Get posted parameters
 	$MdwId=$_POST["MdwId"];
 	if ($MdwId=="") {
@@ -129,6 +125,10 @@ function oostpoort_visit_list() {
 	
 	// Build page
 	$page .= '<div class="oostpoort">';
+
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk ');
+	$page .= oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Bezoekwerk' ) );
 
@@ -232,25 +232,24 @@ function oostpoort_visit_list() {
 
 function oostpoort_visit_view($readonly) {
   
-	// Create Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= 'Bezoekwerk > Bezoek Informatie';
-	$page .= '</div>';
-
     // Get posted parameters
 	$BzkId=$_POST["BzkId"];
 	oostpoort_debug_param("BzkId", $BzkId);
 	
 	$AdrId=$_POST["AdrId"];
 	oostpoort_debug_param("AdrId", $AdrId);
-	
-	$page .= '<form name="OostpoortForm" method="POST" >';		
+
 	$page .= '<div class="oostpoort">';
+		
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk');
+	$node["child2"] = t('Bezoek informormatie');
+	$page .= oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Bezoek Informatie' ) );
 	
+	$page .= '<form name="OostpoortForm" method="POST" >';	
+		
 	if (!$readonly) {
 		
 		$query = '
@@ -333,8 +332,10 @@ function oostpoort_visit_view($readonly) {
    return $page;  
 }
 
-function oostpoort_visit_part($data, $readonly)
-{		
+function oostpoort_visit_part($data, $readonly) {
+
+	// Get POST and SESSION parameters
+	
 	$VisitDate=$_POST["VisitDate"];
 	oostpoort_debug_param("VisitDate", $VisitDate);
 	
@@ -525,37 +526,10 @@ function oostpoort_visit_part($data, $readonly)
 	return $page;
 }
 
-function oostpoort_get_block($MdwId) {
-	
-	// Query Database
-	$query  = '
-		select 
-			a.Blk_Id as BlkId 
-		from 
-			oostpoort_blok a, oostpoort_medewerker b
-		where
-			b.Mdw_Blk_ID=a.Blk_ID and
-			b.Mdw_Id='.$MdwId;
-	
-	oostpoort_debug_sql($query);
-	$queryResult = db_query($query);
-  	$result = db_fetch_object($queryResult);
-  	
-  	$BlkId=$result->BlkId;	
-  	return $BlkId;
-}
-
-
 function oostpoort_visit_search() {
-  
-	// Create Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= 'Bezoekwerk > Bezoeken plannen';
-	$page .= '</div>';
+  	
+	// Get POST and SESSION variables
 	
-	// Not use on this moment
 	$MdwId=$_SESSION["MdwId"];
 	oostpoort_debug_param("MdwId", $MdwId);
  	
@@ -575,12 +549,16 @@ function oostpoort_visit_search() {
 	}	
 	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
-	
-	// Build page
-	$page .= '<div class="oostpoort">';
+		
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk');
+	$node["child2"] = t('Bezoek plannen');
+	$page .= oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Bezoeken plannen' ) );
 
+	// Build page
+	$page .= '<div class="oostpoort">';
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<fieldset>' ;

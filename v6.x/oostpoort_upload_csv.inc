@@ -38,18 +38,14 @@ function oostpoort_upload_csv() {
 	if (!oostpoort_check_admin_access()) {
 		return drupal_access_denied();
 	}
-		
+			
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('ledenbestand upload');
-	$page .= '</div>';
-	
-	$page .= '<div class="oostpoort">';
+	$node["child1"] = t('ledenbestand upload');
+	$page .= oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Ledenbestand upload'));
-
+	
+	$page .= '<div class="oostpoort">';
 	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
 	
 	$page .= oostpoort_save_csv();

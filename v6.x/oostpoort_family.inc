@@ -84,9 +84,8 @@ function oostpoort_family() {
  * Function shows all family in a list form
  */
 function oostpoort_family_list() {
-
-	$page .= '<div class="oostpoort">';
-
+			
+	// Process parameters
 	$Search=$_POST['Search'];
 	oostpoort_debug_param("Search", $Search);
 	
@@ -100,12 +99,12 @@ function oostpoort_family_list() {
 	}
 	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
-			
+
+	$page .= '<div class="oostpoort">';
+		
 	// Breadcrumb menu
 	$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
 	$page .= oostpoort_breadcrumb($node);
-	
-	$page .= '<div class="oostpoort">';
 	
 	drupal_set_title(t('Leden Gegevens'));
 
@@ -210,7 +209,9 @@ function oostpoort_family_view($readonly) {
 	
 	$Action=$_POST['Action'];
 	oostpoort_debug_param("Action", $Action);
-				
+
+	$page .= '<div class="oostpoort">';
+	
 	if (!$readonly) {
 		// Breadcrumb menu
 		$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
@@ -219,8 +220,6 @@ function oostpoort_family_view($readonly) {
 
 		drupal_set_title(t('Familie overzicht'));
 	}
-
-	$page .= '<div class="oostpoort">';
 
 	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
 	$page .= oostpoort_save_picture("Adr",$AdrId);
@@ -336,15 +335,15 @@ function oostpoort_member_view($readonly)
 	$_SESSION['PrsId']=$PrsId;
 	
 	oostpoort_debug_param("PrsId", $PrsId);
-	
+
+	$page .= '<div class="oostpoort">';
+		
 	// Breadcrumb menu
 	$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
 	$node["child2"] = t('Familie overzicht');
 	$node["child3"] = t('Lid overzicht');
 	$page .= oostpoort_breadcrumb($node);
-	
-	$page .= '<div class="oostpoort">';
-	
+
 	drupal_set_title(t('Lid overzicht'));
 
 	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';

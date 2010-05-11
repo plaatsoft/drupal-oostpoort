@@ -77,14 +77,14 @@ function oostpoort_mainmenu( )
 	$page .= '</dd>';
 
 	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilea rapport</a>';
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilaris rapport</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
 	$page .= t('Dit rapport geeft alle verjaarsjubilea weer. *');
 	$page .= '</dd>';
 
 	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilea rapport</a>';
+	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilaris rapport</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
 	$page .= t('Dit rapport geeft alle huwelijksjubilea weer. *');

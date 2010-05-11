@@ -135,6 +135,25 @@ function oostpoort_view_owner($uid, $readonly) {
    return $page;
 }
 
+function oostpoort_breadcrumb($node) {
+	
+	$page  = '<div class="breadcrumb">';
+	$page .= '<a href="'.url("").'">Start</a> > ';
+	$page .= t('Oostpoort');
+	
+	if ($node["child1"]!="") {
+		$page .= ' > '.$node["child1"];		
+	}
+	if ($node["child2"]!="") {
+		$page .= ' > '.$node["child2"];		
+	}
+	if ($node["child3"]!="") {
+		$page .= ' > '.$node["child3"];		
+	}
+	$page .= '</div>';
+	
+	return $page;
+}
 /**
  * View Block dropdown
  */

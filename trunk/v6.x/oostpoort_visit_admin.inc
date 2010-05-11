@@ -98,16 +98,13 @@ function oostpoort_visit_admin_list()
 {
 	$page .= '<div class="oostpoort">';
 
-   // Remove access rights for this module it will be updated if you enter the main menu again.
+ 	// Remove access rights for this module it will be updated if you enter the main menu again.
 	unset($_SESSION['MdwId']);
-
-	// Create Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Bezoekwerk Administratie');
-	$page .= '</div>';
-    
+	
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk Administratie');
+	$page .= oostpoort_breadcrumb($node);
+	    
 	drupal_set_title(t('Bezoekwerk administratie' ) );
 
 	$page .= '<br/>';
@@ -226,14 +223,10 @@ function oostpoort_visit_admin_member()
    oostpoort_debug_param("PrsId",$PrsId);
     
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Bezoekwerk Administratie');
-	$page .= ' > ';
-	$page .= t('Bezoekmedewerker Details');
-	$page .= '</div>';
-		
+	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child2"] = t('Bezoekmedewerker Details');
+	$page .= oostpoort_breadcrumb($node);
+	
 	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
@@ -406,14 +399,10 @@ function oostpoort_visit_admin_search()
 	$page .= '<div class="oostpoort">';
 		
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= t('Bezoekwerk Administratie');
-	$page .= ' > ';
-	$page .= t('Bezoekmedewerker toevoegen');
-	$page .= '</div>';
-
+	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child2"] = t('Bezoekmedewerker toevoegen');
+	$page .= oostpoort_breadcrumb($node);
+	
 	// Page title
 	drupal_set_title( t('Bezoekmedewerker toevoegen') );
 		

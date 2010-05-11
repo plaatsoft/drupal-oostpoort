@@ -44,10 +44,7 @@ function oostpoort_mainmenu( )
 	$_SESSION['AdrId']="";
 	
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= t('Oostpoort');
-	$page .= '</div>';
+	$page .= oostpoort_breadcrumb('');
 
 	$page .= '<div class="oostpoort">';
 

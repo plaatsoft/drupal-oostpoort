@@ -70,12 +70,9 @@ function oostpoort_member_age_list()
 	oostpoort_debug_param("EndDate", $EndDate);
 
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
-	$page .= '</div>';
-
+	$node["child1"] = '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
+	$page .= oostpoort_breadcrumb($node);
+	
 	$page .= '<div class="oostpoort">';
 
 	drupal_set_title(t('Leeftijdscategorie Rapport' ));

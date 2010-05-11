@@ -102,11 +102,8 @@ function oostpoort_family_list() {
 	oostpoort_debug_param("Sort", $Sort);
 			
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
-	$page .= '</div>';
+	$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
+	$page .= oostpoort_breadcrumb($node);
 	
 	$page .= '<div class="oostpoort">';
 	
@@ -214,15 +211,11 @@ function oostpoort_family_view($readonly) {
 	$Action=$_POST['Action'];
 	oostpoort_debug_param("Action", $Action);
 				
-	// Breadcrumb menu
 	if (!$readonly) {
-		$page  = '<div class="breadcrumb">';
-		$page .= '<a href="'.url("").'">Start</a> > ';
-		$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
-		$page .= ' > ';
-		$page .= t('Familie overzicht');
-		$page .= '</div>';
+		// Breadcrumb menu
+		$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
+		$node["child2"] = t('Familie overzicht');
+		$page .= oostpoort_breadcrumb($node);
 
 		drupal_set_title(t('Familie overzicht'));
 	}
@@ -345,16 +338,11 @@ function oostpoort_member_view($readonly)
 	oostpoort_debug_param("PrsId", $PrsId);
 	
 	// Breadcrumb menu
-	$page  = '<div class="breadcrumb">';
-	$page .= '<a href="'.url("").'">Start</a> > ';
-	$page .= '<a href="'.url(OOSTPOORT_MENU).'">Oostpoort</a> > ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
-	$page .= ' > ';
-	$page .= t('Familie overzicht');
-	$page .= ' > ';
-	$page .= t('Lid overzicht');
-	$page .= '</div>';
-
+	$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
+	$node["child2"] = t('Familie overzicht');
+	$node["child3"] = t('Lid overzicht');
+	$page .= oostpoort_breadcrumb($node);
+	
 	$page .= '<div class="oostpoort">';
 	
 	drupal_set_title(t('Lid overzicht'));

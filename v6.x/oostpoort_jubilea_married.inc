@@ -58,15 +58,17 @@ function oostpoort_jubilea_married_list()
 	}
 	$_SESSION["AgeId"]=$AgeId;
 	oostpoort_debug_param("AgeId", $AgeId);
+
+	// Build page
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
 		
 	// Breadcrumb menu
 	$node["child1"] = '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">'.t('Huwelijksjubilaris Rapport').'</a>';
 	$page .= oostpoort_breadcrumb($node);
 
+	// title
 	drupal_set_title(t('Huwelijksjubilaris Rapport' ) );
-
-	$page .= '<div class="oostpoort">';
-	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>'.t('Filteren').'</legend>';

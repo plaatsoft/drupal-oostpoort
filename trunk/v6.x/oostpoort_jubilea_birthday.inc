@@ -59,15 +59,17 @@ function oostpoort_jubilea_birthday_list()
 	$_SESSION["AgeId"]=$AgeId;
 
 	oostpoort_debug_param("AgeId", $AgeId);
+
+	// build page
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
 		
 	// Breadcrumb menu
 	$node["child1"] = '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Verjaardagsjubilaris Rapport').'</a>';
-	$page .= oostpoort_breadcrumb($node);
+	oostpoort_breadcrumb($node);
 
+	// title
 	drupal_set_title(t('Verjaardagsjubilaris Rapport'));
-
-	$page .= '<div class="oostpoort">';
-	$page .= '<form name="OostpoortForm" method="POST" >';
 		
 	$page .= '<fieldset>' ;
 	$page .= '<legend>'.t('Filteren').'</legend>';

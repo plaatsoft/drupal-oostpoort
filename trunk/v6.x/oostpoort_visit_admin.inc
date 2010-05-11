@@ -43,7 +43,7 @@ function oostpoort_visit_admin()
 	
 	// Check access for this page.
 	if (!oostpoort_check_admin_access()) {
-		//return drupal_access_denied();
+		return drupal_access_denied();
 	}
 		
 	$Action=$_POST['Action'];
@@ -67,17 +67,17 @@ function oostpoort_visit_admin()
 	  
 	} else if ($Action=="Save") { 
   
-	  $page .= oostpoort_visit_admin_save();
+	  oostpoort_visit_admin_save();
      $page .= oostpoort_visit_admin_list();
 	  
 	}  else if ($Action=="Add") {
 	
-     $page .= oostpoort_visit_admin_add();
+     oostpoort_visit_admin_add();
      $page .= oostpoort_visit_admin_member();
 	  
 	} else if ($Action=="Delete") {
   
-     $page .= oostpoort_visit_admin_delete();
+     oostpoort_visit_admin_delete();
      $page .= oostpoort_visit_admin_list();
 	  
 	} else {
@@ -85,9 +85,7 @@ function oostpoort_visit_admin()
 	  $page .= oostpoort_visit_admin_list();
 	}
   
-	if ($page!="") {
-		print theme("page", $page);
-	}
+	print theme("page", $page);
 }
 
 // ##################################################################################
@@ -97,15 +95,17 @@ function oostpoort_visit_admin()
 function oostpoort_visit_admin_list() {
  	// Remove access rights for this module it will be updated if you enter the main menu again.
 	unset($_SESSION['MdwId']);
-	
+
+	// Build page
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
+
 	// Breadcrumb menu
 	$node["child1"] = t('Bezoekwerk Administratie');
-	$page .= oostpoort_breadcrumb($node);
-	    
-	drupal_set_title(t('Bezoekwerk administratie' ) );
+	oostpoort_breadcrumb($node);
 
-	$page .= '<div class="oostpoort">';
-	$page .= '<form name="OostpoortForm" method="POST" >';
+	// title
+	drupal_set_title(t('Bezoekwerk administratie' ) );
 		
 	$page .= '<br/>';
 	$page .= t('Dit zijn alle bezoekmedewerkers van de oostpoort.');
@@ -206,9 +206,9 @@ function oostpoort_visit_admin_list() {
  	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId','0','Search',t('Toevoegen')).' | ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 
-	$page .= '</form>';  
 	$page .= '</div>';
-  
+	$page .= '</form>';  
+
 	return $page;
 }
 	
@@ -219,17 +219,19 @@ function oostpoort_visit_admin_member()
 	// Get posted parameters		
 	$PrsId=$_POST["PrsId"];
    oostpoort_debug_param("PrsId",$PrsId);
-    
-	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk Administratie');
-	$node["child2"] = t('Bezoekmedewerker Details');
-	$page .= oostpoort_breadcrumb($node);
-	
-	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
-		
+   
+	// Build page
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';
 	
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child2"] = t('Bezoekmedewerker Details');
+	oostpoort_breadcrumb($node);
+	
+	// title
+	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
+			
 	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
@@ -383,8 +385,10 @@ function oostpoort_visit_admin_member()
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Cancel',t('Terug'));
   
    $page .= '</fieldset>' ;  
-	$page .= '</form>';  
+	
 	$page .= '</div>';
+	$page .= '</form>';  
+
 	return $page;
 }	
 
@@ -393,18 +397,19 @@ function oostpoort_visit_admin_search()
    // Get posted parameters
    $Search=$_POST['Search'];
    oostpoort_debug_param("Search",$Search);
+
+	// Build page
+   $page .= '<form name="OostpoortForm" method="POST" >';  
+	$page .= '<div class="oostpoort">';
  		
 	// Breadcrumb menu
 	$node["child1"] = t('Bezoekwerk Administratie');
 	$node["child2"] = t('Bezoekmedewerker toevoegen');
-	$page .= oostpoort_breadcrumb($node);
+	oostpoort_breadcrumb($node);
 	
 	// Page title
 	drupal_set_title( t('Bezoekmedewerker toevoegen') );
-
-	$page .= '<div class="oostpoort">';
-   	$page .= '<form name="OostpoortForm" method="POST" >';  
-
+	
 	if ($Search=="") {
 		$page .= '<div class="messages error">';
 		$page .= t('Geen achternaam ingevoerd!');
@@ -476,8 +481,8 @@ function oostpoort_visit_admin_search()
 	} 
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Cancel',t('Terug'));
 	
-	$page .= '</form>';  
 	$page .= '</div>';
+	$page .= '</form>';  
 	
 	return $page;
 }
@@ -530,10 +535,9 @@ function oostpoort_visit_admin_save() {
 	} else {
 		$admin_token="ONWAAR";
 	}
-	
-	$page .= '<div class="messages status">';
-   	$page .= t('Wijzingen voor medewerker '.$PrsId.' zijn opgeslagen.');
-	$page .= '</div>';
+
+	$msg .= t('Wijzingen voor medewerker '.$PrsId.' zijn opgeslagen.');
+	drupal_set_message($msg, 'status');	
 	
 	$query  = 'UPDATE oostpoort_medewerker SET ';
 	$query .= '  Mdw_ActiefJN="'.$active_token.'", ';
@@ -570,9 +574,7 @@ function oostpoort_visit_admin_save() {
 	$query .= 'where ';
 	$query .= '  Adr_ID='.$data->AdrId;
 	oostpoort_debug_sql($query);
-	db_query($query);  
-	
-	return $page;	
+	db_query($query);  	
 }
 		  
 function oostpoort_visit_admin_add() {
@@ -581,9 +583,8 @@ function oostpoort_visit_admin_add() {
 	$PrsId=$_POST["PrsId"];
 	oostpoort_debug_param("PrsId",$PrsId);
 	
-	$page .= '<div class="messages status">';
- 	$page .= t('Medewerker '.$PrsId.' is toegevoegd.');
-	$page .= '</div>';
+	$msg .= t('Medewerker '.$PrsId.' is toegevoegd.');
+	drupal_set_message($msg, 'status');	
 					
 	// Check if user allready exist. Protect against reload button
 	$query  = 'select ';
@@ -606,17 +607,15 @@ function oostpoort_visit_admin_add() {
 		oostpoort_debug_sql($query);
 		db_query($query); 
 	}
-	return $page;
 }
  
 function oostpoort_visit_admin_delete() {
 
-   	$PrsId=$_POST["PrsId"];
+   $PrsId=$_POST["PrsId"];
 	oostpoort_debug_param("PrsId",$PrsId);
 	
-	$page .= '<div class="messages status">';
-   	$page .= t('Medewerker '.$PrsId.' is verwijderd.');
-	$page .= '</div>';
+	$msg .= t('Medewerker '.$PrsId.' is verwijderd.');
+	drupal_set_message($msg, 'status');	
 	
 	// Delete selected visit member
 	$query  = 'delete from ';
@@ -625,8 +624,6 @@ function oostpoort_visit_admin_delete() {
 	$query .= ' Mdw_Prs_ID='.$PrsId  ;	
 	oostpoort_debug_sql($query);
 	db_query($query); 
-	
-	return $page;
 }
 
 // ##################################################################################

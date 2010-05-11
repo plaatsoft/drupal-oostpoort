@@ -33,9 +33,10 @@
 // ##################################################################################
 
 function oostpoort_visit() {
+	
 	//echo var_dump($_POST);
 
-   	// Check access for this page.
+   // Check access for this page.
 	if (!oostpoort_check_access()) {
 		return drupal_access_denied();
 	}
@@ -65,45 +66,44 @@ function oostpoort_visit() {
 	
 	} else if ($Action=="Select") {
 
-		$page .= oostpoort_visit_select();
+		oostpoort_visit_select();
 		$page .= oostpoort_visit_list();
 	
 	} else if ($Action=="VisitCancel") {
 	
-		$message = oostpoort_visit_cancel();
-		if ($message["error"]==0) {
+		$error = oostpoort_visit_cancel();
+		if ($error==0) {
 		
-			$page .= $message["page"];
 			$page .= oostpoort_visit_list();
 
 		} else {
 		
-			$page .= $message["page"];
 			$page .= oostpoort_visit_view(false);
 			
 		}
 	
 	} else if ($Action=="VisitReady") {
 	
-		$message = oostpoort_visit_ready();
-		if ($message["error"]==0)
+		$error = oostpoort_visit_ready();
+		if ($error==0)
 		{
-			$page .= $message["page"];
 			$page .= oostpoort_visit_list();
 			
 		} else {
-			$page .= $message["page"];
+		
 			$page .= oostpoort_visit_view(false);
 		}
 	
 	} else if ($Action=="FamilyView") { 
+	
 	  	$page .= oostpoort_family_view(true);
+		
 	} else {
+	
 		$page = oostpoort_visit_list();
 	}
-  	if ($page!="") {
-		print theme("page", $page);
-	}
+	
+	print theme("page", $page);
 }
 
 // ##################################################################################
@@ -124,16 +124,16 @@ function oostpoort_visit_list() {
 	oostpoort_debug_param("MdwId", $MdwId);
 	
 	// Build page
+	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';
-
-	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk ');
-	$page .= oostpoort_breadcrumb($node);
 	
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk');
+	oostpoort_breadcrumb($node);
+	
+	// title
 	drupal_set_title(t('Bezoekwerk' ) );
 
-	$page .= '<form name="OostpoortForm" method="POST" >';
-  
    //only administrators can switch between visit members.
    if (user_access('access administration pages')) {
   
@@ -238,17 +238,16 @@ function oostpoort_visit_view($readonly) {
 	
 	$AdrId=$_POST["AdrId"];
 	oostpoort_debug_param("AdrId", $AdrId);
-
+	
+	$page .= '<form name="OostpoortForm" method="POST" >';	
 	$page .= '<div class="oostpoort">';
-		
+	
 	// Breadcrumb menu
 	$node["child1"] = t('Bezoekwerk');
 	$node["child2"] = t('Bezoek informormatie');
-	$page .= oostpoort_breadcrumb($node);
+	oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Bezoek Informatie' ) );
-	
-	$page .= '<form name="OostpoortForm" method="POST" >';	
 		
 	if (!$readonly) {
 		
@@ -320,13 +319,13 @@ function oostpoort_visit_view($readonly) {
 		$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Cancel',t('Terug'));	
 	}
 		
-   	$page .= '</div>';
    
-   	if ($readonly) {
-   		// Repost selected address previous screen.
-    	$page.=oostpoort_keep_selection();
-   	}
+   if ($readonly) {
+   	// Repost selected address previous screen.
+		$page.=oostpoort_keep_selection();
+   }
    
+	$page .= '</div>';
 	$page .= '</form>';
 	
    return $page;  
@@ -550,16 +549,16 @@ function oostpoort_visit_search() {
 	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
 		
+	// Build page
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
+	
 	// Breadcrumb menu
 	$node["child1"] = t('Bezoekwerk');
 	$node["child2"] = t('Bezoek plannen');
-	$page .= oostpoort_breadcrumb($node);
+	oostpoort_breadcrumb($node);
 	
 	drupal_set_title(t('Bezoeken plannen' ) );
-
-	// Build page
-	$page .= '<div class="oostpoort">';
-	$page .= '<form name="OostpoortForm" method="POST" >';
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Filteren</legend>';
@@ -654,22 +653,31 @@ function oostpoort_visit_search() {
 		
 		$page_tmp .= '<td>';
 		$page_tmp .= '<div class="description">';
+		
 		if ($data->BzkBezoekNietGewenstDatum!=0) {
+		
 			$page_tmp.=t('Bezoek niet gewenst').'<br/>';
 			$page_tmp.=oostpoort_convert_date($data->BzkBezoekNietGewenstDatum).'<br/>';
 			$page_tmp.= $data->BzkBezoekPersoon;
+			
 		} else if ($data->BzkAfgelegdDatum!=0) {
+		
 			$page_tmp.=t('Afgelegde bezoek').'<br/>';
 			$page_tmp.=oostpoort_convert_date($data->BzkAfgelegdDatum).'<br/>';
 			$page_tmp.= $data->BzkBezoekPersoon;
+			
 		} else if ($data->BzkGeannuleerdDatum!=0) {
+		
 			$page_tmp.=t('Geannuleerd bezoek').'<br/>';
 			$page_tmp.=oostpoort_convert_date($data->BzkGeannuleerdDatum).'<br/>';
 			$page_tmp.= $data->BzkBezoekPersoon;
+			
 		} else if ($data->BzkGeplandDatum!=0) {
+		
 			$page_tmp.=t('Ingepland bezoek').'<br/>';
 			$page_tmp.=oostpoort_convert_date($data->BzkGeplandDatum).'<br/>';
 			$page_tmp.= $data->BzkBezoekPersoon;
+			
 		} else 
 		$page_tmp .= '</div>';
 		$page_tmp .= '</td>';
@@ -690,9 +698,9 @@ function oostpoort_visit_search() {
   	// Button bar
  	$page .= oostpoort_hiddenlink('OostpoortForm','',0,'Select',t('Selecteren')).' | ';
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Cancel',t('Terug'));
-	
+
+	$page .= '</div>';	
 	$page .= '</form>';
-	$page .= '</div>';
 
 	return $page;  
 }
@@ -748,15 +756,17 @@ function oostpoort_visit_select()
 	}
 
    if ($amount>0) {	
-		$page .= '<div class="messages status">';
-		$page .= t($amount.' bezoeken zijn ingepland.');
-		$page .= '</div>';
+		drupal_set_message(t($amount.' bezoeken zijn ingepland.'), 'status');
 	}
-	
-	return $page;
 }
 
 
+/**
+ * Process cancel request
+ *
+ * @return  1  validation error
+ *          0  ok
+ */
 function oostpoort_visit_cancel()
 {	
 	// *****************************
@@ -775,52 +785,39 @@ function oostpoort_visit_cancel()
 	// *****************************
 	// Input Validation
 	// *****************************
-
-	$page = '<div class="messages error">';
-	$page .= '<ul>';
+	
+	$error=0;
 	
 	if ($BzkInfo=="") {
-		$page .= '<li>';
-		$page .= t('Annuleer notitie is verplicht');
-		$page .= '</li>';
-		$message["error"]=1;
+
+		drupal_set_message(t('Annuleer notitie is verplicht'), 'error');
+		$error=1;
 	}
 
 	// Validate Cancel Date
-	if ($CancelDate=="")
-	{
-		$page .= '<li>';
-		$page .= t('Annuleer datum is verplicht');
-		$page .= '</li>';
-		$message["error"]=1;
+	if ($CancelDate=="") {
+		drupal_set_message(t('Annuleer datum is verplicht'), 'error');
+		$error=1;
+		
 	} else {
 	
 		list($day, $month, $year) = split("-",$CancelDate);
 		if (!checkdate($month,$day,$year))  {
-			$page .= '<li>';
-			$page .= t('Annuleer datum is incorrect!');
-			$page .= '</li>';
-			$message["error"]=1;
+			
+			drupal_set_message(t('Annuleer datum is incorrect!'), 'error');
+			$error=1;
 		
 		} else if (mktime(0,0,0,$month,$day,$year)>mktime()) {
 		
-			$page .= '<li>';
-			$page .= t('Annuleer datum ligt in de toekomst!');
-			$page .= '</li>';
-			$message["error"]=1;
+			drupal_set_message(t('Annuleer datum ligt in de toekomst!'), 'error');
+			$error=1;
 		}
 	}
-	$page .= '</ul>';
-	$page .= '</div>';
 		
-	if ($message["error"]==1) {
+	if ($error==1) {
 	
-		$message["page"]=$page;
-		$message["error"]=1;
-		return $message;
-	} else {
-	   $page="";
-	}
+		return 1;
+	} 
 	
 	// *****************************
 	// Data ok, update database
@@ -855,17 +852,19 @@ function oostpoort_visit_cancel()
 	
 	oostpoort_debug_sql($query);
 	db_query($query); 
-			
-	$page .= '<div class="messages status">';
-    $page .= t('Bezoek '.$BzkId.' is geannuleerd');
-	$page .= '</div>';
 	
-	$message["page"]=$page;
-	$message["error"]=0;
-	
-	return $message;
+	$msg .= t('Bezoek '.$BzkId.' is geannuleerd');
+	drupal_set_message($msg, 'status');
+		
+	return 0;
 }
 
+/**
+ * Process ready request
+ *
+ * @return  1  validation error
+ *          0  ok
+ */
 function oostpoort_visit_ready()
 {
 	// *****************************
@@ -891,41 +890,33 @@ function oostpoort_visit_ready()
 	// Input Validation
 	// *****************************
 	
-	$page = '<div class="messages error">';
-	$page .= '<ul>';
+	$error=0;
 	
 	// Validate Note
 	if ($BzkInfo=="")
 	{
-		$page .= '<li>';
-		$page .= t('Bezoek notitie is verplicht');
-		$page .= '</li>';
-		$message["error"]=1;
+		drupal_set_message(t('Bezoek notitie is verplicht'), 'error');
+		$error=1;
 	}
 
     // Validate VisitDate
 	if ($VisitDate=="")
 	{
-		$page .= '<li>';
-		$page .= t('Bezoek datum is verplicht');
-		$page .= '</li>';
-		$message["error"]=1;
+		drupal_set_message(t('Bezoek datum is verplicht'), 'error');	
+		$error=1;
+		
 	} else {
 	
 		list($day, $month, $year) = split("-",$VisitDate);
 		if (!checkdate($month,$day,$year))  {
-			$page .= '<li>';
-			$page .= t('Bezoekdatum is incorrect!');
-			$page .= '</li>';
-			$message["error"]=1;
+		
+			drupal_set_message(t('Bezoekdatum is incorrect!'), 'error');	
+			$error=1;
 		
 		} else if (mktime(0,0,0,$month,$day,$year)>mktime()) {
 		
-			$page .= '<li>';
-			$page .= t('Bezoekdatum ligt in de toekomst!');
-			$page .= '</li>';
-			$message["error"]=1;
-			
+			drupal_set_message(t('Bezoekdatum ligt in de toekomst!'), 'error');	
+			$error=1;			
 		}
 	}
 	
@@ -938,22 +929,16 @@ function oostpoort_visit_ready()
 			$amount++;
 		}
 	}
-	if ($amount=="")
-	{
-		$page .= '<li>';
-		$page .= t('Geen personen geselecteerd');
-		$page .= '</li>';
-		$message["error"]=1;
+	if ($amount=="") {
+		
+		drupal_set_message(t('Geen personen geselecteerd'), 'error');	
+		$error=1;	
 	}
 		
-	$page .= '</ul>';
-	$page .= '</div>';
-		
-	if ($message["error"]==1) {
-		$message["page"]=$page;
-		$message["error"]=1;
-		return $message;
-	}
+	if ($error==1) {
+	
+		return 1;
+	} 
 
 	// *****************************
 	// Data ok, update database
@@ -1018,15 +1003,12 @@ function oostpoort_visit_ready()
 				db_query($query);		
 			}
 		}
-		$page = '<div class="messages status">';
-		$page .= t('Bezoek '.$BzkId.' is afgerond');
-		$page .= '</div>';
-   }
-
-	$message["page"]=$page;
-	$message["error"]=0;
 		
-	return $message;
+		$msg .= t('Bezoek '.$BzkId.' is afgerond');
+		drupal_set_message($msg, 'status');	
+   }		
+	
+	return 0;
 }
 
 // ##################################################################################

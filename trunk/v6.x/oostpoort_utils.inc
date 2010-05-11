@@ -136,23 +136,22 @@ function oostpoort_view_owner($uid, $readonly) {
 }
 
 function oostpoort_breadcrumb($node) {
+		
+	$data = array();
 	
-	$page  = '<div class="breadcrumb">';
-	$page .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; > ';
-	$page .= t('Leden administratie');
+	$tmp[] = l(t('Start'), "");
+	$tmp[] = l(t('Leden administratie'),OOSTPOORT_MENU);
 	
 	if ($node["child1"]!="") {
-		$page .= ' > '.$node["child1"];		
+		$tmp[] = $node["child1"];		
 	}
 	if ($node["child2"]!="") {
-		$page .= ' > '.$node["child2"];		
+		$tmp[] = $node["child2"];		
 	}
 	if ($node["child3"]!="") {
-		$page .= ' > '.$node["child3"];		
+		$tmp[] = $node["child3"];		
 	}
-	$page .= '</div>';
-	
-	return $page;
+	drupal_set_breadcrumb( $tmp );
 }
 /**
  * View Block dropdown
@@ -375,7 +374,6 @@ function oostpoort_load_picture($Group,$AdrId,$height,$width, $align, $lightbox)
 	return $page;
 }
 
-//<a href="images/image-1.jpg" rel="lightbox" title="my caption">image #1</a>
 
 function oostpoort_save_picture($Group,$AdrId)
 {
@@ -387,9 +385,10 @@ function oostpoort_save_picture($Group,$AdrId)
 			$error='0';
 			if(!is_dir(OOSTPOORT_IMAGE_DIR)) {
 				if( !mkdir(OOSTPOORT_IMAGE_DIR) ) {
-					$page .= '<div class="error status">';
-					$page .= t('Creating image directory failed!');
-					$page .= '</div>';
+				
+					$msg .= t('Creating image directory failed!');
+					drupal_set_message($msg, 'error');
+					
 					$error='1';
 				}
 			}
@@ -427,9 +426,10 @@ function oostpoort_save_picture($Group,$AdrId)
 			// Resize uploaded picture
 			if ( $resize == 1 ) {
 				if (!image_scale($_FILES['uploadedfile']['tmp_name'], file_create_path(OOSTPOORT_IMAGE_DIR.'/'.$filename), $width, $height)) {
-					$page .= '<div class="error status">';
-					$page .= t('Foto bestand te groot!');
-					$page .= '</div>';
+				
+					$msg .= t('Foto bestand te groot!');
+					drupal_set_message($msg, 'error');
+					
 					$error='1';
 				}
 			} else {
@@ -441,9 +441,10 @@ function oostpoort_save_picture($Group,$AdrId)
 				// Create thumbnails directory store
 				if(!is_dir(OOSTPOORT_THUMBNAILS_DIR)) {
 					if( !mkdir(OOSTPOORT_THUMBNAILS_DIR) )	{
-						$page .= '<div class="error status">';
-						$page .= t('Creating image directory failed!');
-						$page .= '</div>';
+					
+						$msg .= t('Creating image directory failed!');
+						drupal_set_message($msg, 'error');
+					
 						$error='1';
 					}
 				}
@@ -471,9 +472,9 @@ function oostpoort_save_picture($Group,$AdrId)
 				// Resize uploaded picture
 				if ( $resize == 1 ) {
 					if (!image_scale(OOSTPOORT_IMAGE_DIR.'/'.$filename, file_create_path(OOSTPOORT_THUMBNAILS_DIR.'/'.$filename), $width, $height)) {
-						$page .= '<div class="error status">';
-						$page .= t('Foto bestand is te groot ');
-						$page .= '</div>';
+					
+						$msg .= t('Foto bestand is te groot ');
+						drupal_set_message($msg, 'error');
 			
 						$error='1';
 					}
@@ -483,20 +484,19 @@ function oostpoort_save_picture($Group,$AdrId)
 				}
 
 				if ($error=='0') {
-					$page .= '<div class="messages status">';
-					$page .= t('Foto is opgeslagen.');
-					$page .= '</div>';
+				
+					$msg .= t('Foto is opgeslagen.');
+					drupal_set_message($msg, 'status');
 				}
 			}
 		} else {
-			$page .= '<div class="error status">';
-			$page .= t('Alleen JPG foto formaat wordt ondersteund.');
-			$page .= '</div>';
 		
+			$msg .= t('Alleen JPG foto formaat wordt ondersteund.');
+			drupal_set_message($msg, 'status');
+				
 			$_FILES['uploadedfile']['name']='';
 		}
 	}
-	return $page;
 }
 
 

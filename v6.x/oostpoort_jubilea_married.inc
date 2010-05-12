@@ -35,7 +35,6 @@
 function oostpoort_jubilea_married() {
 	
 	$Action=$_POST['Action'];
-
 	oostpoort_debug_param("Action", $Action);
 	        	  
 	if ($Action=="FamilyView") {
@@ -130,11 +129,11 @@ function oostpoort_jubilea_married_list() {
 	return $page;
 }
 
-function oostpoort_jubilea_married_table($queryResult, $mode)
-{
+function oostpoort_jubilea_married_table($queryResult, $mode) {
+
 	$page .= '<table>';
 
-   	$page .= '<thead>';
+	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
@@ -143,7 +142,8 @@ function oostpoort_jubilea_married_table($queryResult, $mode)
   	$page .= '<th class="active"><b>'.t('Huwelijksdatum').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
-   	$page .= '<tbody>';
+	$page .= '<tbody>';
+		
 	// Show all found members
 	$page_tmp='';
 	while ($data = db_fetch_object($queryResult))
@@ -180,7 +180,6 @@ function oostpoort_jubilea_married_table($queryResult, $mode)
 
 	return $page;
 }
-
 
 function oostpoort_married_range($id, $AgeId) {
 

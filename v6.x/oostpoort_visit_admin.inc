@@ -50,15 +50,11 @@ function oostpoort_visit_admin()
 	}
 	
 	// *****************************
-	// Process POST an SESSION variables
+	// Process POST variables
 	// *****************************
 	
-	$Action=$_POST['Action'];
-	if ($Action=="") {
-		$Action=$_SESSION['Action'];
-	}
+	$Action=htmlentities($_POST['Action']);
 	oostpoort_debug_param("Action",$Action);	
-	$_SESSION['Action']=$Action;
 		  
 	// *****************************
 	// Process statemachine
@@ -154,7 +150,7 @@ function oostpoort_visit_admin_list() {
 	$page .= '<div class="oostpoort">';
 
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child1"] = l(t('Bezoekwerk Administratie'),OOSTPOORT_VISIT_ADMIN);
 	oostpoort_breadcrumb($node);
 
 	// title
@@ -247,7 +243,7 @@ function oostpoort_visit_admin_member()
 	// Get posted Inputs
 	// *****************************
 	
-	$PrsId=$_POST["PrsId"];
+	$PrsId=htmlentities($_POST["PrsId"]);
    oostpoort_debug_param("PrsId",$PrsId);
    
 	// *****************************
@@ -290,39 +286,39 @@ function oostpoort_visit_admin_member()
 	// *****************************
 	
 	if ( isset($_POST["FirstName"]) ) {
-		$firstName=$_POST["FirstName"];
+		$firstName=htmlentities($_POST["FirstName"]);
 	} else {
 	   $firstName=$data->PrsRoepnaam;
 	}
 	oostpoort_debug_param("FirstName",$firstName);
   
 	if ( isset($_POST["Email"]) ) {
-		$email=$_POST["Email"];
+		$email=htmlentities($_POST["Email"]);
 	} else {
 	   $email=$data->PrsEmail;
 	}
 	oostpoort_debug_param("Email",$email);
  
 	if ( isset($_POST["Phone"]) ) {
-		$phone=$_POST["Phone"];
+		$phone=htmlentities($_POST["Phone"]);
 	} else {
 	   $phone=$data->AdrTelefoon;
 	}
 	oostpoort_debug_param("Phone",$phone);
 	
 	if ( isset($_POST["Mobile"]) ) {
-		$mobile=$_POST["Mobile"];
+		$mobile=htmlentities($_POST["Mobile"]);
 	} else {
 	   $mobile=$data->PrsMobiel;
 	}
 	oostpoort_debug_param("mobile",$mobile);
 	
 	if ( isset($_POST["Block"]) ) {
-		$block=$_POST["Block"];		
+		$block=htmlentities($_POST["Block"]);		
 		
 		// Checkbox POST tag is only available if active.
 		if ( isset($_POST["Active"]) ) {
-			$active=$_POST["Active"];
+			$active=htmlentities($_POST["Active"]);
 		} else {
 			$active="";
 		}
@@ -330,7 +326,7 @@ function oostpoort_visit_admin_member()
 
 		// Checkbox POST tag is only available if active.
 		if ( isset($_POST["Admin"]) ) {
-			$admin=$_POST["Admin"];
+			$admin=htmlentities($_POST["Admin"]);
 		} else {
 			$admin="";
 		}
@@ -349,14 +345,14 @@ function oostpoort_visit_admin_member()
 	oostpoort_debug_param("Block",$block);
 		
 	if ( isset($_POST["Owner"]) ) {
-		$owner=$_POST["Owner"];
+		$owner=htmlentities($_POST["Owner"]);
 	} else {
 	   $owner=$data->MdwUid;
 	}
 	oostpoort_debug_param("Owner",$owner);
 
 	if ( isset($_POST["Role"]) ) {
-		$role=$_POST["Role"];
+		$role=htmlentities($_POST["Role"]);
 	} else {
 	   $role=$data->MdwRolID;
 	}
@@ -370,7 +366,7 @@ function oostpoort_visit_admin_member()
 	$page .= '<div class="oostpoort">';
 	
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child1"] = l(t('Bezoekwerk Administratie'),OOSTPOORT_VISIT_ADMIN);
 	$node["child2"] = t('Bezoekmedewerker');
 	oostpoort_breadcrumb($node);
 	
@@ -523,7 +519,7 @@ function oostpoort_visit_admin_search() {
 	$page .= '<div class="oostpoort">';
  		
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child1"] = l(t('Bezoekwerk Administratie'),OOSTPOORT_VISIT_ADMIN);
 	$node["child2"] = t('Bezoekmedewerker toevoegen');
 	oostpoort_breadcrumb($node);
 	

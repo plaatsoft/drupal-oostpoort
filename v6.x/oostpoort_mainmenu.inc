@@ -44,7 +44,7 @@ function oostpoort_mainmenu( )
 	$_SESSION['AdrId']="";
 	
 	// Breadcrumb menu
-	$page .= oostpoort_breadcrumb('');
+	oostpoort_breadcrumb('');
 
 	$page .= '<div class="oostpoort">';
 
@@ -140,7 +140,7 @@ function oostpoort_mainmenu( )
 	$page .= '<br/>';
 	$page .= t('Willem de Zwijgersingel 1');
 	$page .= '<br/>';
-	$page .= t('2805 BP').'&nbsp;&nbsp;'.t('Gouda'); 
+	$page .= t('2805 BP').'&nbsp;&nbsp;'.t('GOUDA'); 
 	$page .= '<br/>';
 	$page .= t('tel: 0182-513360');
 	$page .= '<br/>';

@@ -46,14 +46,10 @@ function oostpoort_visit() {
 	}
 	
 	// *****************************
-	// Process POST an SESSION variables
+	// Process POST variables
 	// *****************************
 	
 	$Action=htmlentities($_POST['Action']);
-	if ($Action=="") {
-		$Action=$_SESSION['Action'];
-	}
-	$_SESSION['Action']=$Action;
 	oostpoort_debug_param("Action", $Action);
 		
 	// *****************************
@@ -142,7 +138,7 @@ function oostpoort_visit_list() {
 	$page .= '<div class="oostpoort">';
 	
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk');
+	$node["child1"] = l(t('Bezoekwerk'),OOSTPOORT_VISIT);
 	oostpoort_breadcrumb($node);
 	
 	// title
@@ -264,7 +260,7 @@ function oostpoort_visit_view($readonly) {
 	$page .= '<div class="oostpoort">';
 	
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk');
+	$node["child1"] = l(t('Bezoekwerk'),OOSTPOORT_VISIT);
 	$node["child2"] = t('Bezoek informormatie');
 	oostpoort_breadcrumb($node);
 	
@@ -416,7 +412,7 @@ function oostpoort_visit_part($data, $readonly) {
 	
 	if ($type==4)  {	
 		$page .= '<div class="form-item">';
-		$page .= '<label>'.t('Datum').': <span class="form-required">*</span></label>';
+		$page .= '<label>'.t('Datum').': '.oostpoort_view_manitory().'</label>';
 		$page .= oostpoort_view_date("VisitDate", $VisitDate, $readonly);
 		$page .= '<div class="description">';
 		$page .= t('Datum wanneer bezoek is uitgevoerd of geannuleerd.');
@@ -426,7 +422,7 @@ function oostpoort_visit_part($data, $readonly) {
 	
 	if (($type==1) or ($type==3) or ($type==4)) {
 		$page .= '<div class="form-item">';
-		$page .= '<label>'.t('Bezoek type').': <span class="form-required">*</span></label>';
+		$page .= '<label>'.t('Bezoek type').': '.oostpoort_view_manitory().'</label>';
 		$page .= oostpoort_view_type("VisitType", $VisitType, $readonly);
 		$page .= '<div class="description">';
 		if ($type==4)  {
@@ -437,7 +433,7 @@ function oostpoort_visit_part($data, $readonly) {
 	}
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Notities').': <span class="form-required">*</span></label>';
+	$page .= '<label>'.t('Notities').': '.oostpoort_view_manitory().'</label>';
 	$page .= oostpoort_view_note("BzkInfo", $BzkInfo, $readonly);
 	$page .= '<div class="description">';
 	if ($type==4) {
@@ -462,7 +458,7 @@ function oostpoort_visit_part($data, $readonly) {
 		$page .= '</div>';
 	}
 	
-	if (($type==1) or ($type==4)) {
+	if (($type==1) or ($type==2) or ($type==4)) {
 	
 		// Get Address members.
 	
@@ -504,7 +500,7 @@ function oostpoort_visit_part($data, $readonly) {
 		$page .= '<table>';
 		$page .= '<thead>';
 		$page .= '<tr>';
-		$page .= '<th><b>'.t('Aanwezig').'<span class="form-required">*</span></b></th>';
+		$page .= '<th><b>'.t('Aanwezig').oostpoort_view_manitory().'</b></th>';
 		$page .= '<th><b>'.t('Naam').'</b></th>';
 		$page .= '<th><b>'.t('Geslacht').'</b></th>';
 		$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
@@ -586,7 +582,7 @@ function oostpoort_visit_search() {
 	$page .= '<div class="oostpoort">';
 	
 	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk');
+	$node["child1"] = l(t('Bezoekwerk'),OOSTPOORT_VISIT);
 	$node["child2"] = t('Bezoek plannen');
 	oostpoort_breadcrumb($node);
 	

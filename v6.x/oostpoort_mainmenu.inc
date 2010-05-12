@@ -129,7 +129,7 @@ function oostpoort_mainmenu( )
 	$page .= '<fieldset>' ;	
 	$page .= '<legend>'.t('Opmerkingen *').'</legend>';
 	$page .= '<div class="description">';
-	$page .= t('Gegevens zijn bij gewerkte tot en met <b>'.variable_get('oostpoort_date', '').'</b>');
+	$page .= t('Gegevens zijn bij gewerkte tot en met <b>'.variable_get('oostpoort_last_upload_date', '').'</b>');
 	$page .= '<br/>';
 	$page .= '<br/>';
 	$page .= t('Alle getoonde informatie die niet aangepast kan worden is afkomstig van het ');

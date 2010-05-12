@@ -32,6 +32,10 @@
 // SUPPORT FUNCTIONS
 // ##################################################################################
 
+// ********************************************
+// Debug methods
+// ********************************************
+
 /**
  * debug_param
  * Print on screen POSTED parameters
@@ -48,22 +52,33 @@ function oostpoort_debug_sql($sql) {
 	//echo '[Query='.$sql.']';
 }
 
-function oostpoort_view_email($email) {
-	return '<a href="mailto:'.$email.'">'.$email.'</a>';
+
+function oostpoort_show_array($array) {
+    foreach ($array as $value) {
+        if (is_array($value)) {
+            show_array($value);
+        } else {
+            echo $value . "<br>";
+        }
+    }
 }
 
+// ********************************************
+// View methods
+// ********************************************
+
 /**
- * Create hidden link 
+ * View email
  */
-function oostpoort_hiddenlink($form,$key,$value,$action,$label) {
-   return '<a href="#" onClick="hiddenInput(\''.$form.'\', \''.$key.'\', \''.$value.'\',\''.$action.'\');">'.$label.'</a>';
+function oostpoort_view_email($email) {
+	return '<a href="mailto:'.$email.'">'.$email.'</a>';
 }
  
 /**
  * View Manitory & character
  */
 function oostpoort_view_manitory() {
-	return '<span class="form-required"> *</span>';
+	return '<span class="form-required" title="'.t('Dit veld is verplicht').'"> *</span>';
 }
 
 /**
@@ -135,24 +150,6 @@ function oostpoort_view_owner($uid, $readonly) {
    return $page;
 }
 
-function oostpoort_breadcrumb($node) {
-		
-	$data = array();
-	
-	$tmp[] = l(t('Start'), "");
-	$tmp[] = l(t('Leden administratie'),OOSTPOORT_MENU);
-	
-	if ($node["child1"]!="") {
-		$tmp[] = $node["child1"];		
-	}
-	if ($node["child2"]!="") {
-		$tmp[] = $node["child2"];		
-	}
-	if ($node["child3"]!="") {
-		$tmp[] = $node["child3"];		
-	}
-	drupal_set_breadcrumb( $tmp );
-}
 /**
  * View Block dropdown
  */
@@ -214,32 +211,6 @@ function oostpoort_view_role($role, $readonly) {
    }
    return $page;
 }
-
-/**
- * View Date type
- */
-function oostpoort_convert_date($date) { 
-
-  $page = "";
-  
-  if ($date!=0) {
-		list($year, $month, $day) = split('[/.-]', $date);
-		$page = $day.'-'.$month.'-'.$year;
-  }
-  return $page;
-}
-
-function oostpoort_convert_date_reverse($date) { 
-
-  $page = "";
-  
-  if ($date!="") {
-		list($day, $month, $year) = split('[/.-]', $date);
-		$page = $year.'-'.$month.'-'.$day;
-  }
-  return $page;
-}
-
 
 /**
  * View Visitors dropdown
@@ -329,6 +300,33 @@ function oostpoort_view_type($id, $value, $readonly) {
    return $page;
 }
 
+/**
+ * Create hidden link 
+ */
+function oostpoort_hiddenlink($form,$key,$value,$action,$label) {
+   return '<a href="#" onClick="hiddenInput(\''.$form.'\', \''.$key.'\', \''.$value.'\',\''.$action.'\');">'.$label.'</a>';
+}
+
+function oostpoort_breadcrumb($node) {
+		
+	$data = array();
+	
+	$tmp[] = l(t('Start'), "");
+	$tmp[] = l(t('Leden administratie'),OOSTPOORT_MENU);
+	
+	if ($node["child1"]!="") {
+		$tmp[] = $node["child1"];		
+	}
+	if ($node["child2"]!="") {
+		$tmp[] = $node["child2"];		
+	}
+	if ($node["child3"]!="") {
+		$tmp[] = $node["child3"];		
+	}
+	drupal_set_breadcrumb( $tmp );
+}
+
+
 function oostpoort_sortbar($Sort,$Action)
 {
 	$sort_bar=array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q","R","S","T","U","V","W","X","Y","Z");
@@ -344,6 +342,46 @@ function oostpoort_sortbar($Sort,$Action)
 	return $page;
 }
 
+
+// ********************************************
+// Convert methods
+// ********************************************
+
+/**
+ * View Date type
+ */
+function oostpoort_convert_date($date) { 
+
+  $page = "";
+  
+  if ($date!=0) {
+		list($year, $month, $day) = split('[/.-]', $date);
+		$page = $day.'-'.$month.'-'.$year;
+  }
+  return $page;
+}
+
+/**
+ * View Date Reverse type
+ */
+function oostpoort_convert_date_reverse($date) { 
+
+  $page = "";
+  
+  if ($date!="") {
+		list($day, $month, $year) = split('[/.-]', $date);
+		$page = $year.'-'.$month.'-'.$day;
+  }
+  return $page;
+}
+
+// ********************************************
+// Picture methods
+// ********************************************
+
+/**
+ * Load picture
+ */
 function oostpoort_load_picture($Group,$AdrId,$height,$width, $align, $lightbox) {
 	
    // Construct a valid drupal path for the named file
@@ -374,7 +412,9 @@ function oostpoort_load_picture($Group,$AdrId,$height,$width, $align, $lightbox)
 	return $page;
 }
 
-
+/**
+ * Save picture
+ */
 function oostpoort_save_picture($Group,$AdrId)
 {
 	// Fetch Image upload in a HTTP request
@@ -493,12 +533,16 @@ function oostpoort_save_picture($Group,$AdrId)
 		
 			$msg .= t('Alleen JPG foto formaat wordt ondersteund.');
 			drupal_set_message($msg, 'status');
-				
-			$_FILES['uploadedfile']['name']='';
 		}
 	}
+	
+	// Clear uploaded file
+	$_FILES['uploadedfile']['name']='';
 }
 
+// ********************************************
+// Other methods
+// ********************************************
 
 /**
  * Call makeCksum once upon landing on the homepage
@@ -542,7 +586,7 @@ function oostpoort_validate_email($address) {
  * Function valid number imput
  * @returns true if valid number (only numeric string), false if not
  */
-function oostpoort_check_number($str) {
+function oostpoort_validate_number($str) {
 
   if (ereg('^[[:digit:]]+$', $str))
     return true;
@@ -621,16 +665,6 @@ function oostpoort_check_admin_access() {
 	} else {
 		return false;
 	}
-}
-
-function oostpoort_show_array($array) {
-    foreach ($array as $value) {
-        if (is_array($value)) {
-            show_array($value);
-        } else {
-            echo $value . "<br>";
-        }
-    }
 }
 
 function oostpoort_keep_selection() {

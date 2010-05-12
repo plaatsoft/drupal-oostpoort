@@ -45,8 +45,8 @@ function oostpoort_upload_csv() {
 	
 	drupal_set_title(t('Ledenbestand upload'));
 	
-	$page .= '<div class="oostpoort">';
 	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
 	
 	$page .= oostpoort_save_csv();
 		
@@ -63,9 +63,9 @@ function oostpoort_upload_csv() {
 	
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
-	$page .= '</form>';  
 	$page .= '</div>';
-	
+	$page .= '</form>';  
+		
 	print theme("page", $page);
 }
 
@@ -84,15 +84,10 @@ function oostpoort_save_csv()
 			$page .= oostpoort_process_csv($_FILES['uploadedfile']['tmp_name']);
 			
 		} else {
-		
-			$page .= '<div class="error status">';
-			$page .= '<ul>';
-			$page .= '<li>';
-			$page .= t('Alleen CSV bestand formaat wordt ondersteund.');
-			$page .= '</li>';
-			$page .= '</ul>';
-			$page .= '</div>';
-		
+				
+			$msg = t('Alleen CSV bestand formaat wordt ondersteund.');
+			drupal_set_message($msg, 'error');
+	
 			$_FILES['uploadedfile']['name']='';
 		}
 	}
@@ -216,35 +211,36 @@ function oostpoort_process_csv($filename) {
 	}
 	fclose($fh);
 
-	$page .= '<div class="messages status">';
-	$page .= '<ul>';
-	$page .= '<li>';
-	$page .= t('Ledenbestand is verwerkt.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= ($line_counter-1).' '.t('leden geanalyseerd.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $address_insert_counter.' '.t('adressen toegevoegd.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $address_update_counter.' '.t('adressen bijgewerkt.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $address_error_counter.' '.t('addressen niet verwerkt (data incorrect).');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $member_insert_counter.' '.t('personen toegevoegd.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $member_update_counter.' '.t('personen bijgewerkt.');
-	$page .= '</li>';
-	$page .= '<li>';
-	$page .= $member_error_counter.' '.t('personen niet verwerkt (data incorrect).');
-	$page .= '</li>';
-	$page .= '</ul>';
-	$page .= '</div>';
+	$msg = t('Ledenbestand is verwerkt.');
+	drupal_set_message($msg, 'status');
+	
+	$msg = ($line_counter-1).' '.t('leden geanalyseerd.');
+	drupal_set_message($msg, 'status');
+	
+	$msg = $address_insert_counter.' '.t('adressen toegevoegd.');
+	drupal_set_message($msg, 'status');
 
+	$msg = $address_update_counter.' '.t('adressen bijgewerkt.');
+	drupal_set_message($msg, 'status');
+
+	$msg = $address_error_counter.' '.t('addressen niet verwerkt (data incorrect).');
+	drupal_set_message($msg, 'status');
+
+	$msg = $member_insert_counter.' '.t('personen toegevoegd.');
+	drupal_set_message($msg, 'status');
+
+	$msg = $member_update_counter.' '.t('personen bijgewerkt.');
+	drupal_set_message($msg, 'status');
+
+	$msg = $member_error_counter.' '.t('personen niet verwerkt (data incorrect).');
+	drupal_set_message($msg, 'status');
+
+	$msg .= t('Nieuw oostpoort CSV data file geladen.');
+	watchdog('user', $msg);
+	
+	// Update drupal module variable
+	variable_set("oostpoort_last_upload_date",date("d-m-Y"));
+	
 	return $page;
 }
 
@@ -480,7 +476,7 @@ function oostpoort_member_state($TypeOrig) {
 	$sql  = 'select ';
 	$sql .= ' Bst_ID as BstId ';
 	$sql .= 'from  ';
-   	$sql .= '  oostpoort_burgelijkestaat ';
+	$sql .= '  oostpoort_burgelijkestaat ';
 	$sql .= 'where ';
 	$sql .= ' Bst_Code like "'.$Type.'"';
   
@@ -520,8 +516,8 @@ function oostpoort_convert_block($data) {
 			$block=5;
 		}
   	} catch(Exception $e) {
-  		echo 'Line: ['. $Nummer.'] [' .$Letters.'] ['.$data['Straatnaam'].']';
-  		echo 'Message: ' .$e->getMessage();
+  		//echo 'Line: ['. $Nummer.'] [' .$Letters.'] ['.$data['Straatnaam'].']';
+  		//echo 'Message: ' .$e->getMessage();
   	}  		
 	return $block;
 }

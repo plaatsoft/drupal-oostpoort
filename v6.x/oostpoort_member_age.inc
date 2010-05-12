@@ -29,7 +29,7 @@
 */
 
 // ##################################################################################
-// Views
+// State Machine
 // ##################################################################################
 
 function oostpoort_member_age() {
@@ -47,8 +47,16 @@ function oostpoort_member_age() {
 	print theme("page", $page);
 }
 
-function oostpoort_member_age_list()  
-{
+// ##################################################################################
+// Views
+// ##################################################################################
+
+function oostpoort_member_age_list() {
+
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
 	$StartDate=$_POST["StartDate"];
 	if ($StartDate=="") {
 		$StartDate=$_SESSION['StartDate']; 
@@ -69,7 +77,10 @@ function oostpoort_member_age_list()
 	$_SESSION['EndDate']=$EndDate; 
 	oostpoort_debug_param("EndDate", $EndDate);
 	
-	// Build page
+	// *****************************
+	// Create page
+	// *****************************
+
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';
 	

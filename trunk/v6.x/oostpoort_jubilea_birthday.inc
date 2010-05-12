@@ -34,10 +34,17 @@
 
 function oostpoort_jubilea_birthday() {
 	
+	// *****************************
+	// Process POST variables
+	// *****************************
+	
 	$Action=$_POST['Action'];
-
 	oostpoort_debug_param("Action", $Action);
-	        	  
+	       
+	// *****************************
+	// Process statemachine
+	// *****************************
+ 	  
 	if ($Action=="MemberView") {
      	$page = oostpoort_member_view(true);     	
      	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Terug').'</a>';     	
@@ -138,8 +145,7 @@ function oostpoort_jubilea_birthday_list() {
 	return $page;
 }
 
-function oostpoort_jubilea_birthday_table($queryResult, $mode)
-{
+function oostpoort_jubilea_birthday_table($queryResult, $mode) {
 	$page .= '<table>';
 
    $page .= '<thead>';
@@ -203,7 +209,6 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode)
 
 	return $page;
 }
-
 
 function oostpoort_age_range($id, $AgeId) {
 

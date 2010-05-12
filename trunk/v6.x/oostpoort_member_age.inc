@@ -143,25 +143,24 @@ function oostpoort_member_age_list() {
 	return $page;
 }
 
-function oostpoort_member_age_table($queryResult, $mode)
-{
+function oostpoort_member_age_table($queryResult, $mode) {
+
 	$page .= '<table>';
 
-   	$page .= '<thead>';
+	$page .= '<thead>';
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('KerkLidNr').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Geslacht').'</b></th>';
-	//$page .= '<th><b>'.t('Mobiel').'</b></th>';
-	//$page .= '<th><b>'.t('Email').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
-	//$page .= '<th><b>'.t('Telefoon').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
+	
   	$page .= '<tbody>';
+	
 	// Show all found members
 	$page_tmp='';
 	while ($data = db_fetch_object($queryResult))
@@ -184,14 +183,9 @@ function oostpoort_member_age_table($queryResult, $mode)
 		$page_tmp .= oostpoort_view_geslacht($data->PrsGeslacht);
 		$page_tmp .= '</td>';
 		
-		//$page_tmp .= '<td>'.$data->PrsMobiel.'</td>';
-		
-		//$page_tmp .= '<td>'.$data->PrsEmail.'</td>';
-		
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
 		$page_tmp .= '<td>'.$data->AdrPostcode.'</td>';
-		//$page_tmp .= '<td>'.$data->AdrTelefoon.'</td>';
 		
 		$page_tmp .= '<td class="active">';
 		$page_tmp .= oostpoort_convert_date($data->PrsGeboortedatum);
@@ -205,6 +199,7 @@ function oostpoort_member_age_table($queryResult, $mode)
 		$page .= $page_tmp;
 		
 	} else  {
+	
 		$page .= '<tr>';
 		$page .= '<td>'.t('Geen informatie gevonden').'</td>';
 		$page .= '</tr>';

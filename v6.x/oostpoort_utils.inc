@@ -533,9 +533,9 @@ function oostpoort_decode($x) {
  * Function valid email address
  * @return true or false
  */
-function oostpoort_check_mail($adres) {
+function oostpoort_validate_email($address) {
 
-   return ! ereg("[A-Za-z0-9_-]+([\.]{1}[A-Za-z0-9_-]+)*@[A-Za-z0-9-]+([\.]{1}[A-Za-z0-9-]+)+",$adres);
+   return ! ereg("[A-Za-z0-9_-]+([\.]{1}[A-Za-z0-9_-]+)*@[A-Za-z0-9-]+([\.]{1}[A-Za-z0-9-]+)+",$address);
 }
 
 /*

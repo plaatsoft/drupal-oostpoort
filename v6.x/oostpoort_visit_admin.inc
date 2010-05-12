@@ -67,9 +67,13 @@ function oostpoort_visit_admin()
 	  
 	} else if ($Action=="Save") { 
   
-	  oostpoort_visit_admin_save();
-     $page .= oostpoort_visit_admin_list();
-	  
+		$error=oostpoort_visit_admin_save();
+		if ($error==0) {
+			$page .= oostpoort_visit_admin_list();
+		} else {
+			$page .= oostpoort_visit_admin_member();
+		}	
+		
 	}  else if ($Action=="Add") {
 	
      oostpoort_visit_admin_add();
@@ -216,23 +220,17 @@ function oostpoort_visit_admin_member()
 {
    global $user;
    
-	// Get posted parameters		
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
 	$PrsId=$_POST["PrsId"];
    oostpoort_debug_param("PrsId",$PrsId);
    
-	// Build page
-	$page .= '<form name="OostpoortForm" method="POST" >';
-	$page .= '<div class="oostpoort">';
+	// *****************************
+	// Query data
+	// *****************************
 	
-	// Breadcrumb menu
-	$node["child1"] = t('Bezoekwerk Administratie');
-	$node["child2"] = t('Bezoekmedewerker Details');
-	oostpoort_breadcrumb($node);
-	
-	// title
-	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
-			
-	// Query
 	$query  = 'select ';
 	$query .= ' b.Prs_id as PrsId, ';
 	$query .= ' concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam)," ",b.Prs_Tussenvoegsels," ",b.Prs_Achternaam) as Naam, ';
@@ -263,7 +261,81 @@ function oostpoort_visit_admin_member()
 	oostpoort_debug_sql($query);
 	$queryResult = db_query($query);
 	$data = db_fetch_object($queryResult);
-		
+	
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
+	if ( isset($_POST["FirstName"]) ) {
+		$firstName=$_POST["FirstName"];
+	} else {
+	   $firstName=$data->PrsRoepnaam;
+	}
+	oostpoort_debug_param("FirstName",$firstName);
+  
+	if ( isset($_POST["Email"]) ) {
+		$email=$_POST["Email"];
+	} else {
+	   $email=$data->PrsEmail;
+	}
+	oostpoort_debug_param("Email",$email);
+ 
+	if ( isset($_POST["Phone"]) ) {
+		$phone=$_POST["Phone"];
+	} else {
+	   $phone=$data->AdrTelefoon;
+	}
+	oostpoort_debug_param("Phone",$phone);
+	
+	if ( isset($_POST["Mobile"]) ) {
+		$mobile=$_POST["Mobile"];
+	} else {
+	   $mobile=$data->PrsMobiel;
+	}
+	oostpoort_debug_param("mobile",$mobile);
+	
+	if ( isset($_POST["Block"]) ) {
+		$block=$_POST["Block"];
+	} else {
+	   $block=$data->MdwBlkID;
+	}
+	oostpoort_debug_param("Block",$block);
+	
+   $active=$data->MdwActief;
+	oostpoort_debug_param("Active",$active);
+	
+   $admin=$data->MdwAdmin;
+	oostpoort_debug_param("Admin",$admin);
+	
+	if ( isset($_POST["Owner"]) ) {
+		$owner=$_POST["Owner"];
+	} else {
+	   $owner=$data->MdwUid;
+	}
+	oostpoort_debug_param("Owner",$owner);
+
+	if ( isset($_POST["Role"]) ) {
+		$role=$_POST["Role"];
+	} else {
+	   $role=$data->MdwRolID;
+	}
+	oostpoort_debug_param("Role",$role);
+	
+	// *****************************
+	// Build page
+	// *****************************
+
+	$page .= '<form name="OostpoortForm" method="POST" >';
+	$page .= '<div class="oostpoort">';
+	
+	// Breadcrumb menu
+	$node["child1"] = t('Bezoekwerk Administratie');
+	$node["child2"] = t('Bezoekmedewerker Details');
+	oostpoort_breadcrumb($node);
+	
+	// title
+	drupal_set_title(t('Bezoekwerkmedewerker Details' ) );
+			
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Medewerker</legend>';
 	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right", true);
@@ -302,72 +374,72 @@ function oostpoort_visit_admin_member()
 	$page .= '<legend>Instellingen</legend>';
 		
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Eigenaar').': <span class="form-required">*</span></label>';
-	$page .= oostpoort_view_owner($data->MdwUid, false);
+	$page .= '<label>'.t('Eigenaar').': '.oostpoort_view_manitory().'</label>';
+	$page .= oostpoort_view_owner($owner, false);
 	$page .= '<div class="description">';
-	$page .= t('Selecteer hier de login naam van de medewerker. Zo lang een bezoek medewerker niet gekoppeld is aan een login account kan hij geen bezoeken in plannen.');
+	$page .= t('Selecteer hier de login naam van de bezoekmedewerker. Zo lang een bezoekmedewerker niet gekoppeld is aan een drupal login account kan hij geen bezoeken in plannen.');
 	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Roepnaam').': <span class="form-required">*</span></label>';
-	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$data->PrsRoepnaam.'">';
+	$page .= '<label>'.t('Roepnaam').': '.oostpoort_view_manitory().'</label>';
+	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$firstName.'">';
 	$page .= '<div class="description">';
-	$page .= t('Roepnaam van medewerker.');
+	$page .= t('Roepnaam van bezoekmedewerker.');
 	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Telefoon').':</label>';
-	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$data->AdrTelefoon.'">';
+	$page .= '<label>'.t('Telefoon').': '.oostpoort_view_manitory().'</label>';
+	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$phone.'">';
 	$page .= '<div class="description">';
-	$page .= t('Telefoon nummer van medewerker.');
+	$page .= t('Telefoon nummer van bezoekmedewerker.');
 	$page .= '</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Mobiel').':</label>';
-	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$data->PrsMobiel.'">';
+	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$mobile.'">';
 	$page .= '<div class="description">';
-	$page .= t('Mobiele nummer van medewerker.');
+	$page .= t('Mobiele nummer van bezoekmedewerker.');
 	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Email').': <span class="form-required">*</span></label>';
-	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$data->PrsEmail.'">';
+	$page .= '<label>'.t('Email').':  '.oostpoort_view_manitory().'</label>';
+	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$email.'">';
 	$page .= '<div class="description">';
-	$page .= t('Email adres van medewerker.');
+	$page .= t('Email adres van bezoekmedewerker.');
 	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Blok').': <span class="form-required">*</span></label>';
-	$page .= oostpoort_view_block($data->MdwBlkID, false, true);
+	$page .= '<label>'.t('Blok').':  '.oostpoort_view_manitory().'</label>';
+	$page .= oostpoort_view_block($block, false, true);
 	$page .= '<div class="description">';
-	$page .= t('Selecteer blok waar medewerker actief is.');
+	$page .= t('Selecteer blok waar bezoekmedewerker actief is.');
 	$page .= '</div>';
 	$page .= '</div>';
 
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Actief').':</label>';
-	$page .= oostpoort_view_checkbox("Active", $data->MdwActief, false);	  
+	$page .= oostpoort_view_checkbox("Active", $active, false);	  
 	$page .= '<div class="description">';
-	$page .= t('Actief of niet actief.');
+	$page .= t('Actief of niet actief bezoekmedewerker.');
 	$page .= '</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Admin').':</label>';
-	$page .= oostpoort_view_checkbox("Admin", $data->MdwAdmin, false);	  
+	$page .= oostpoort_view_checkbox("Admin", $admin, false);	  
 	$page .= '<div class="description">';
-	$page .= t('Heeft medewerker (Admin rechten) zodat hij medewerkers kan beheren.');
+	$page .= t('Heeft bezoekmedewerker (Admin rechten) zodat hij bezoekmedewerkers kan beheren.');
 	$page .= '</div>';
 	$page .= '</div>';
 	
 	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Rol Omschrijving').': <span class="form-required">*</span></label>';
-	$page .= oostpoort_view_role($data->MdwRolID, false);
+	$page .= '<label>'.t('Rol Omschrijving').':  '.oostpoort_view_manitory().'</label>';
+	$page .= oostpoort_view_role($role, false);
 	$page .= '<div class="description">';
 	$page .= t('Selecteer welk rol deze medewerker heeft.');
 	$page .= '</div>';
@@ -493,14 +565,17 @@ function oostpoort_visit_admin_search()
  
 function oostpoort_visit_admin_save() {
 	
-	// Get Posted parameters
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
 	$PrsId=$_POST["PrsId"];
 	oostpoort_debug_param("PrsId",$PrsId);
 		
 	$block=$_POST["Block"];
 	oostpoort_debug_param("Block",$block);
   
-   	$active=$_POST["Active"];
+   $active=$_POST["Active"];
 	oostpoort_debug_param("Active",$active);
 	
 	$admin=$_POST["Admin"];
@@ -509,7 +584,7 @@ function oostpoort_visit_admin_save() {
 	$owner=$_POST["Owner"];
 	oostpoort_debug_param("Owner",$owner);
 
-   	$role=$_POST["Role"];
+   $role=$_POST["Role"];
 	oostpoort_debug_param("Role",$role);
  	
 	$firstName=$_POST["FirstName"];
@@ -522,7 +597,7 @@ function oostpoort_visit_admin_save() {
 	oostpoort_debug_param("Phone",$phone);
 	
 	$mobile=$_POST["Mobile"];
-   	oostpoort_debug_param("Mobile",$mobile);
+   oostpoort_debug_param("Mobile",$mobile);
 	  
 	if ($active == 'on') { 
 	    $active_token="WAAR";
@@ -536,6 +611,49 @@ function oostpoort_visit_admin_save() {
 		$admin_token="ONWAAR";
 	}
 
+	// *****************************
+	// Input Validation
+	// *****************************
+	
+	$error=0;
+	
+	if ($firstName=="") {
+
+		$msg = t('Roepnaam is verplicht');
+		drupal_set_message( $msg, 'error');
+		$error=1;
+	}
+
+	if ($phone=="") {
+
+		$msg = t('Telefoonnummer is verplicht');
+		drupal_set_message( $msg, 'error');
+		$error=1;
+	}
+	
+	if ($email=="") {
+
+		$msg = t('Email is verplicht');
+		drupal_set_message( $msg, 'error');
+		$error=1;
+		
+	} else if (oostpoort_validate_email($email)) {
+
+		$msg = t('Email formaat is niet correct');
+		drupal_set_message( $msg, 'error');
+		$error=1;
+	}
+	
+	if ($error==1) {
+	
+		// If error return direct!
+		return 1;
+	} 
+	
+	// *****************************
+	// Update database
+	// *****************************
+	
 	$msg .= t('Wijzingen voor medewerker '.$PrsId.' zijn opgeslagen.');
 	drupal_set_message($msg, 'status');	
 	
@@ -575,6 +693,8 @@ function oostpoort_visit_admin_save() {
 	$query .= '  Adr_ID='.$data->AdrId;
 	oostpoort_debug_sql($query);
 	db_query($query);  	
+	
+	return 0;
 }
 		  
 function oostpoort_visit_admin_add() {

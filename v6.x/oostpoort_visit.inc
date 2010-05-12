@@ -68,7 +68,7 @@ function oostpoort_visit() {
 			
 		case 'Edit':	
 			$page .= oostpoort_visit_view(false);
-			breal;
+			break;
 			
 		case 'Cancel':
 			$page .= oostpoort_visit_list();
@@ -107,6 +107,7 @@ function oostpoort_visit() {
 				
 		default: 
 			$page = oostpoort_visit_list();
+			break;
 		
 	}
 	

@@ -48,7 +48,7 @@ function oostpoort_mainmenu( )
 
 	$page .= '<div class="oostpoort">';
 
-	drupal_set_title(t('Leden Administratie').' - '.VERSION);
+	drupal_set_title(t('Leden Administratie').' '.VERSION);
 
 	$page .= '<br/>';
 	

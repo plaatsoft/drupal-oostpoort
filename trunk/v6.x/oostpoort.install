@@ -74,12 +74,13 @@ function oostpoort_install() {
       
        db_query("	
 INSERT INTO `oostpoort_blok` (`Blk_ID`, `Blk_Omschrijving`) VALUES
+(0, 'Alle blokken'),
 (1, 'Vreewijk en Oosterwei 2806'),
 (2, 'Molenbuurt 2807'),
-(4, 'Polder- en Vrijheidsbuurt 2807'),
-(5, 'Overige straten anders dan 2806/2807'),
 (3, 'Oud-Goverwelle, Muziek/Componistenbuurt 2807'),
-(0, 'Alle blokken');
+(4, 'Polder- en Vrijheidsbuurt 2807'),
+(5, 'Overige straten anders dan 2806/2807');
+
       ");
       
        db_query("	

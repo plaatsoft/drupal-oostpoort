@@ -35,72 +35,79 @@
 function oostpoort_visit() {
 	
 	//echo var_dump($_POST);
-
+	
+	// *****************************
+	// Check access for this page.
+	// *****************************
+	
    // Check access for this page.
 	if (!oostpoort_check_access()) {
 		return drupal_access_denied();
 	}
 	
-	$Action=$_POST['Action'];
+	// *****************************
+	// Process POST an SESSION variables
+	// *****************************
+	
+	$Action=htmlentities($_POST['Action']);
 	if ($Action=="") {
 		$Action=$_SESSION['Action'];
 	}
 	$_SESSION['Action']=$Action;
 	oostpoort_debug_param("Action", $Action);
 		
-	if ($Action=="Show") {
+	// *****************************
+	// Process statemachine
+	// *****************************
 	
-		$page .= oostpoort_visit_view(true);
+	switch ($Action) {
 	
-	} else if ($Action=="Edit") {
-	
-		$page .= oostpoort_visit_view(false);
-		
-	} else if ($Action=="Cancel") {
-		
-		$page .= oostpoort_visit_list();
-	
-	} else if (($Action=="Search")) {
-
-		$page .= oostpoort_visit_search();
-	
-	} else if ($Action=="Select") {
-
-		oostpoort_visit_select();
-		$page .= oostpoort_visit_list();
-	
-	} else if ($Action=="VisitCancel") {
-	
-		$error = oostpoort_visit_cancel();
-		if ($error==0) {
-		
-			$page .= oostpoort_visit_list();
-
-		} else {
-		
-			$page .= oostpoort_visit_view(false);
+		case 'Show':  
+			$page .= oostpoort_visit_view(true);
+			break;
 			
-		}
-	
-	} else if ($Action=="VisitReady") {
-	
-		$error = oostpoort_visit_ready();
-		if ($error==0)
-		{
-			$page .= oostpoort_visit_list();
-			
-		} else {
-		
+		case 'Edit':	
 			$page .= oostpoort_visit_view(false);
-		}
+			breal;
+			
+		case 'Cancel':
+			$page .= oostpoort_visit_list();
+			break;
+				
+		case 'Search':
+			$page .= oostpoort_visit_search();
+			break;
 	
-	} else if ($Action=="FamilyView") { 
-	
-	  	$page .= oostpoort_family_view(true);
+		case 'FamilyView':	
+			$page .= oostpoort_family_view(true);
+			break;
 		
-	} else {
-	
-		$page = oostpoort_visit_list();
+		case 'Select':
+			oostpoort_visit_select();
+			$page .= oostpoort_visit_list();
+			break;
+			
+		case 'VisitCancel':				
+			$error = oostpoort_visit_cancel();
+			if ($error==0) {		
+				$page .= oostpoort_visit_list();
+			} else {		
+				$page .= oostpoort_visit_view(false);			
+			}
+			break;
+			
+		case 'VisitReady':
+			$error = oostpoort_visit_ready();
+			if ($error==0) {
+				$page .= oostpoort_visit_list();
+			} else {		
+				$page .= oostpoort_visit_view(false);
+			}
+			break;
+				
+		default: 
+			$page = oostpoort_visit_list();
+		
 	}
 	
 	print theme("page", $page);
@@ -112,8 +119,11 @@ function oostpoort_visit() {
 
 function oostpoort_visit_list() {
  
-    // Get posted parameters
-	$MdwId=$_POST["MdwId"];
+ 	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
+	$MdwId=htmlentities($_POST["MdwId"]);
 	if ($MdwId=="") {
 		$MdwId=$_SESSION["MdwId"];
 		if ($MdwId=="") {
@@ -123,7 +133,10 @@ function oostpoort_visit_list() {
 	$_SESSION["MdwId"]=$MdwId;
 	oostpoort_debug_param("MdwId", $MdwId);
 	
+	// *****************************
 	// Build page
+	// *****************************
+	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';
 	
@@ -232,12 +245,19 @@ function oostpoort_visit_list() {
 
 function oostpoort_visit_view($readonly) {
   
-    // Get posted parameters
-	$BzkId=$_POST["BzkId"];
+   // *****************************
+	// Get posted Inputs
+	// *****************************
+	
+	$BzkId=htmlentities($_POST["BzkId"]);
 	oostpoort_debug_param("BzkId", $BzkId);
 	
-	$AdrId=$_POST["AdrId"];
+	$AdrId=htmlentities($_POST["AdrId"]);
 	oostpoort_debug_param("AdrId", $AdrId);
+	
+	// *****************************
+	// Build page
+	// *****************************
 	
 	$page .= '<form name="OostpoortForm" method="POST" >';	
 	$page .= '<div class="oostpoort">';
@@ -333,23 +353,29 @@ function oostpoort_visit_view($readonly) {
 
 function oostpoort_visit_part($data, $readonly) {
 
-	// Get POST and SESSION parameters
+	// *****************************
+	// Get posted Inputs
+	// *****************************
 	
-	$VisitDate=$_POST["VisitDate"];
+	$VisitDate=htmlentities($_POST["VisitDate"]);
 	oostpoort_debug_param("VisitDate", $VisitDate);
 	
-	$BzkInfo=$_POST["BzkInfo"];
+	$BzkInfo=htmlentities($_POST["BzkInfo"]);
 	if ($BzkInfo=="") {
 		$BzkInfo=$data->BzkInfo;
 	}
 	oostpoort_debug_param("BzkInfo", $BzkInfo);
 	
-	$VisitType=$_POST["VisitType"];
+	$VisitType=htmlentities($_POST["VisitType"]);
 	if ($VisitType=="") {
 		$VisitType=$data->BzkBztId;
 	}
 	oostpoort_debug_param("VisitType", $VisitType);
 
+	// *****************************
+	// Build page
+	// *****************************
+	
 	$page .= '<fieldset>';
 	
 	if ($data->BzkBezoekNietGewenstDatum!=0) {
@@ -527,7 +553,9 @@ function oostpoort_visit_part($data, $readonly) {
 
 function oostpoort_visit_search() {
   	
-	// Get POST and SESSION variables
+	// *****************************
+	// Get posted Inputs
+	// *****************************
 	
 	$MdwId=$_SESSION["MdwId"];
 	oostpoort_debug_param("MdwId", $MdwId);
@@ -535,11 +563,11 @@ function oostpoort_visit_search() {
 	$BlkId=oostpoort_get_block($MdwId);
 	
 	// Get search value out post or session scope
-	$Search=$_POST['Search'];
+	$Search=htmlentities($_POST['Search']);
 	oostpoort_debug_param("Search", $Search);
 	
 	// Get Sort value 
-	$Sort=$_POST['Sort'];
+	$Sort=htmlentities($_POST['Sort']);
 	if ($Sort=="") {
 		$Sort=$_SESSION['Sort'];
 		if ($Sort=="") {
@@ -549,7 +577,10 @@ function oostpoort_visit_search() {
 	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
 		
+	// *****************************
 	// Build page
+	// *****************************
+	
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';
 	
@@ -709,11 +740,19 @@ function oostpoort_visit_search() {
 // ACTIONS
 // ##################################################################################
 
-function oostpoort_visit_select()
-{
+function oostpoort_visit_select() {
+
+ 	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
 	// Get PrsId from session scope
-    $MdwId=$_SESSION["MdwId"];
+   $MdwId=$_SESSION["MdwId"];
 	oostpoort_debug_param("MdwId", $MdwId);
+	
+	// *****************************
+	// Update database
+	// *****************************
 	
 	foreach( $_POST as $var => $value) {
 			
@@ -755,8 +794,14 @@ function oostpoort_visit_select()
 		}
 	}
 
+	// *****************************
+	// Create page
+	// *****************************
+	
    if ($amount>0) {	
-		drupal_set_message(t($amount.' bezoeken zijn ingepland.'), 'status');
+		$msg = t($amount.' bezoeken zijn ingepland.');
+		drupal_set_message($msg, 'status');
+		watchdog('user', $msg);
 	}
 }
 
@@ -773,13 +818,13 @@ function oostpoort_visit_cancel()
 	// Get posted Inputs
 	// *****************************
 	
-	$BzkId=$_POST["BzkId"];
+	$BzkId=htmlentities($_POST["BzkId"]);
 	oostpoort_debug_param("BzkId", $BzkId);
 	
-	$BzkInfo=$_POST["BzkInfo"];
+	$BzkInfo=htmlentities($_POST["BzkInfo"]);
 	oostpoort_debug_param("BzkInfo", $BzkInfo);
 	
-	$CancelDate=$_POST["VisitDate"];
+	$CancelDate=htmlentities($_POST["VisitDate"]);
 	oostpoort_debug_param("VisitDate", $VisitDate);
 	
 	// *****************************
@@ -820,7 +865,7 @@ function oostpoort_visit_cancel()
 	} 
 	
 	// *****************************
-	// Data ok, update database
+	// Update database
 	// *****************************
 	
 	// Adapt plan date if visit date is before plan date
@@ -853,8 +898,13 @@ function oostpoort_visit_cancel()
 	oostpoort_debug_sql($query);
 	db_query($query); 
 	
+	// *****************************
+	// Create page
+	// *****************************
+	
 	$msg .= t('Bezoek '.$BzkId.' is geannuleerd');
 	drupal_set_message($msg, 'status');
+	watchdog('user', $msg);
 		
 	return 0;
 }
@@ -871,19 +921,19 @@ function oostpoort_visit_ready()
 	// Get posted Inputs
 	// *****************************
    
-	$BzkId=$_POST["BzkId"];
+	$BzkId=htmlentities($_POST["BzkId"]);
 	oostpoort_debug_param("BzkId", $BzkId);
 	
-	$NoVisit=$_POST["NoVisit"];
+	$NoVisit=htmlentities($_POST["NoVisit"]);
 	oostpoort_debug_param("NoVisit", $NoVisit);
 
-   	$VisitType=$_POST["VisitType"];
+	$VisitType=htmlentities($_POST["VisitType"]);
 	oostpoort_debug_param("VisitType", $VisitType);
 
-	$BzkInfo=$_POST["BzkInfo"];
+	$BzkInfo=htmlentities($_POST["BzkInfo"]);
 	oostpoort_debug_param("BzkInfo", $BzkInfo);
 	
-	$VisitDate=$_POST["VisitDate"];
+	$VisitDate=htmlentities($_POST["VisitDate"]);
 	oostpoort_debug_param("VisitDate", $VisitDate);
 	
 	// *****************************
@@ -929,6 +979,7 @@ function oostpoort_visit_ready()
 			$amount++;
 		}
 	}
+	
 	if ($amount=="") {
 		
 		drupal_set_message(t('Geen personen geselecteerd'), 'error');	
@@ -1004,8 +1055,13 @@ function oostpoort_visit_ready()
 			}
 		}
 		
+		// *****************************
+		// Create page
+		// *****************************
+	
 		$msg .= t('Bezoek '.$BzkId.' is afgerond');
 		drupal_set_message($msg, 'status');	
+		watchdog('user', $msg);
    }		
 	
 	return 0;

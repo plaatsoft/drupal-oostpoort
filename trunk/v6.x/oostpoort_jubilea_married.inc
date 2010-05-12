@@ -29,7 +29,7 @@
 */
 
 // ##################################################################################
-// Views
+// State Machine
 // ##################################################################################
 
 function oostpoort_jubilea_married() {
@@ -47,8 +47,16 @@ function oostpoort_jubilea_married() {
 	print theme("page", $page);
 }
 
-function oostpoort_jubilea_married_list()  
-{
+// ##################################################################################
+// Views
+// ##################################################################################
+
+function oostpoort_jubilea_married_list() {
+
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
    $AgeId= $_POST["AgeId"];
 	if ($AgeId=="") {
 		$AgeId=$_SESSION["AgeId"];
@@ -59,6 +67,10 @@ function oostpoort_jubilea_married_list()
 	$_SESSION["AgeId"]=$AgeId;
 	oostpoort_debug_param("AgeId", $AgeId);
 
+	// *****************************
+	// Create page
+	// *****************************
+	
 	// Build page
 	$page .= '<form name="OostpoortForm" method="POST" >';
 	$page .= '<div class="oostpoort">';

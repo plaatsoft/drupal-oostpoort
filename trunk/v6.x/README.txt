@@ -74,20 +74,25 @@
  - BugFix: During address selection, go to detail page, return, selection of address was lost!  
  - Build for Drupal 6.x  
 
- 10-05-2010 (Week 20) v6.x-0.8
+ 12-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
  - Show only address in the block where the visitor is active.
  - Bugfixes: Solve some minor issues after first deployment on my demo drupal6 site.
  - Added support for lightbox2 drupal module. Nice photo popup effect!
  - Improve module directory structure.
  - Improve breadcrumb menu. 
+ - Improve code syntax and source documentation.
+ - Improve admin visit input validation.
+ - Make all sql query safe for sql insertion.
+ - Birthday email notification (cron job).
+ - Added birthday node page.
  - This is the first beta release for beta testers.
  - Build for Drupal 6.x
     
 Nice to have
 ------------
-- Make all sql query safe for sql insertion.
+
 - Add more information to database: Married location, etc.....
 - Google map intergration.
-- Birthday email notification.
+
 - Bug: Remove addresses with no members after csv upload.  

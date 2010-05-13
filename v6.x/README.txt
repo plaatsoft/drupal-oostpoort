@@ -7,92 +7,89 @@
  - General CSV upload.
  - Added Member image upload.
  - Create Data Model.
- - Build for Drupal 5.x
+ - Proof-of-concept build for Drupal 5.x
 
  15-09-2009 Version v5.x-0.2
  - Added Family overview page.
  - Added Age report page.
  - Added Jubilee report page.
- - Build for Drupal 5.x
+ - Proof-of-concept build for Drupal 5.x
 
- 10-04-2010 (Week 15) v6.x-0.3 
- - Convert module for Drupal 5 to Drupal 6.
- - Convert existing data to mysql format.
- - Create datamodel.
+ 10-04-2010 (Week 15) v6.x-0.3
+ - Started PHP programming. 
+ - Convert proof-of-concept module from Drupal 5 to Drupal 6.
+ - Switch from oracle datamodel to mysql datamodel.
  - Build for Drupal 6.x
 
  18-04-2010 (Week 16) v6.x-0.4
- - Started PHP programming.
  - Create Google Code repository.   
  - Create Ohloh project account.
  - Create information page on PlaatSoft website.
- - Create Drupal project "Oostpoort"
- - Based HTML on standard Drupal style sheet
+ - Create Drupal project "Oostpoort" on drupal.org
+ - Based HTML output on standard Drupal Style sheet.
  - Start building first pages.
  - Build for Drupal 6.x
 
  25-04-2010 (Week 17) v6.x-0.5
  - Create admin visit page.
- - Add functionality to update visitors data.
+ - Added functionality to update visitors data.
  - Replace button by links (based on JavaScript)
  - Build for Drupal 6.x
 
  02-05-2010 (Week 18)v6.x-0.6
  - Created visit pages including history information.
- - Added back links to every page.
- - Bugfix: Solve reload button (Multi insert) issue.
+ - Added "return" links to previous page.
  - Cleanup available data. 
  - Created family pages.
  - Created three reports.
- - Added family and member image upload.
+ - Added image upload.
  - Cleanup code. 
 	- Move all utilities functions to separate file.
 	- Remove not used code and files. 
- - Added CSV member upload.
- 	- Create data filter to replace special character with standard UTF-8 characters.
- - Improve multi table select.
+ - Added CSV data upload.
+ - Added CSV data filter to replace non ASCII character.
+ - Added multi table select functionality.
  - Bugfix: No "visit wanted" is now working fine.
  - Bugfix: Now member AdrId is also update during CSV upload.
- - Added security access for the visit part.
+ - Bugfix: Solve reload button (Multi insert) issue.
  - Build for Drupal 6.x
 
  09-05-2010 (Week 19) v6.x-0.7
- - Added date picker.
- - Added Access security for all user type's. 
+ - Added jquery date picker.
+ - Added access security control based on user type's. 
  - Show more information about family in visit address select page.
  - Show more information about previous visit in visit search page.
  - Show more statistics information on visit admin list page. 
- - Return to old datamodel.
- - Clean available data.
+ - Cleanup available data.
  - Added version banner on main menu page.
  - Added latest csv upload date on main menu page.
- - Optimise HTML output for Internet Explorer (IE) and Firefox.
+ - Optimise HTML output for Internet Explorer (6.x, 7.x and 8.x) and Firefox (3.x).
  - Improve two reports.
  - Added functionality to remove members (Drupal admin rights needed) 
- - BugFix: KerkLidNr is not loaded!
- - BugFix: Member record is not completly update when record is found during CSV upload.
- - BugFix: During address selection, go to detail page, return, selection of address was lost!  
+ - BugFix: KerkLidNr was not loaded (fixed)!
+ - BugFix: Member record was not completly updated during CSV upload.
  - Build for Drupal 6.x  
 
  12-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
- - Show only address in the block where the visitor is active.
- - Bugfixes: Solve some minor issues after first deployment on my demo drupal6 site.
+ - Show only addresses in the block where the visitor is active.
  - Added support for lightbox2 drupal module. Nice photo popup effect!
  - Improve module directory structure.
  - Improve breadcrumb menu. 
  - Improve code syntax and source documentation.
- - Improve admin visit input validation.
- - Make all sql query safe for sql insertion.
- - Birthday email notification (cron job).
- - Added birthday node page.
- - This is the first beta release for beta testers.
+ - Improve form input validation.
+ - Make all SQL queries safe for SQL insertion.
+ - Added birthday email notification (cron job).
+ - Added birthday summary block page.
+ - Bugfixes: Solve some minor issues after first deployment on my demo drupal6 site.
  - Build for Drupal 6.x
+ - This is the first beta release for beta testers.
     
 Nice to have
 ------------
-
 - Add more information to database: Married location, etc.....
 - Google map intergration.
 
+Now issues
+----------
 - Bug: Remove addresses with no members after csv upload.  

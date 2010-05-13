@@ -365,7 +365,7 @@ function oostpoort_family_view($readonly) {
 
 	$page .= '</div>';
 	$page .= '</form>';
-    return $page;
+	return $page;
 }	
 
 function oostpoort_member_view($readonly) {   
@@ -436,34 +436,34 @@ function oostpoort_member_view($readonly) {
 	$page .= '<h4>'.t('Nederland').'</h4>';	
 
 	$page .= oostpoort_form_item(
-							t('Persoon Id:'),
-							$PrsId,
-							"",
-							$readonly);
+					t('Persoon Id:'),
+					$PrsId,
+					"",
+					$readonly);
 							
 	$page .= oostpoort_form_item(
-							t('Kerkelijke lid nummer:'),
-							$data->PrsKerklidnummer,
-							"",
-							$readonly);
+					t('Kerkelijke lid nummer:'),
+					$data->PrsKerklidnummer,
+					"",
+					$readonly);
 							
 	$page .= oostpoort_form_item(
-							t('Geslacht'),							
-							oostpoort_view_geslacht($data->PrsGeslacht),
-							"",
-							$readonly);
+					t('Geslacht:'),							
+					oostpoort_view_geslacht($data->PrsGeslacht),
+					"",
+					$readonly);
 
 	$page .= oostpoort_form_item(
-							t('Geboorte datum:'),							
-							oostpoort_convert_date($data->PrsGeboorteDatum),
-							"",
-							$readonly);
+					t('Geboorte datum:'),							
+					oostpoort_convert_date($data->PrsGeboorteDatum),
+					"",
+					$readonly);
 							
 	$page .= oostpoort_form_item(
-							t('Huwelijksdatum:'),							
-							oostpoort_convert_date($data->PrsHuwelijksDatum),
-							"",
-							$readonly);
+					t('Huwelijksdatum:'),							
+					oostpoort_convert_date($data->PrsHuwelijksDatum),
+					"",
+					$readonly);
 								
 	$page .= '</fieldset>' ;
 	
@@ -471,46 +471,46 @@ function oostpoort_member_view($readonly) {
 	$page .= '<legend>Extra gegevens</legend>';
 		
 	$page .= oostpoort_form_item(
-							t('Roepnaam:'),							
-							oostpoort_view_text("FirstName", 30, 30, $data->PrsRoepnaam, $readonly),
-							t('Roepnaam van persoon.'),
-							$readonly);
+					t('Roepnaam:'),							
+					oostpoort_view_text("FirstName", 30, 30, $data->PrsRoepnaam, $readonly),
+					t('Roepnaam van persoon.'),
+					$readonly);
 							
 	$page .= oostpoort_form_item(
-							t('Telefoon:'),							
-							oostpoort_view_text("Phone", 15, 15, $data->AdrTelefoon, $readonly),
-							t('Telefoonnummer van persoon.'),
-							$readonly);
+					t('Telefoon:'),							
+					oostpoort_view_text("Phone", 15, 15, $data->AdrTelefoon, $readonly),
+					t('Telefoonnummer van persoon.'),
+					$readonly);
 
 	$page .= oostpoort_form_item(
-							t('Mobiel:'),							
-							oostpoort_view_text("Mobile", 15, 15, $data->PrsMobiel, $readonly),
-							t('Mobiele nummer van persoon.'),
-							$readonly);
+					t('Mobiel:'),							
+					oostpoort_view_text("Mobile", 15, 15, $data->PrsMobiel, $readonly),
+					t('Mobiele nummer van persoon.'),
+					$readonly);
 					
 	$page .= oostpoort_form_item(
-							t('Email:'),							
-							oostpoort_view_text("Email", 60, 100, $data->PrsEmail, $readonly),
-							t('Email adres van persoon.'),
-							$readonly);
+					t('Email:'),							
+					oostpoort_view_text("Email", 60, 100, $data->PrsEmail, $readonly),
+					t('Email adres van persoon.'),
+					$readonly);
 							
 	$page .= oostpoort_form_item(
-							t('Kring lid:'),							
-							oostpoort_view_checkbox("Active", $data->PrsKringLid, $readonly),
-							t('Actief op een bijbelkring, Alfa groep en/of groeigroep.'),
-							$readonly);
+					t('Kring lid:'),							
+					oostpoort_view_checkbox("Active", $data->PrsKringLid, $readonly),
+					t('Actief op een bijbelkring, Alfa groep en/of groeigroep.'),
+					$readonly);
 	    	
 	$page .= oostpoort_form_item(
-							t('Notitie:'),							
-							oostpoort_view_note("BezoekInfo", $data->PrsBezoekInfo, $readonly),
-							t('Hier kunt U algemene niet vertrouwelijke informatie vastleggen. Bv. Beroep, Hobby, etc...'),
-							$readonly);
+					t('Notitie:'),							
+					oostpoort_view_note("BezoekInfo", $data->PrsBezoekInfo, $readonly),
+					t('Hier kunt U algemene niet vertrouwelijke informatie vastleggen. Bv. Beroep, Hobby, etc...'),
+					$readonly);
 	    	
 	$page .= oostpoort_form_item(
-							t('Pasfoto:'),							
-							'<input name="uploadedfile" size="100" type="file" />' ,
-							t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B',
-							$readonly);
+					t('Pasfoto:'),							
+					'<input name="uploadedfile" size="100" type="file" />' ,
+					t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B',
+					$readonly);
 						
 	if (! $readonly) {	 
 		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';

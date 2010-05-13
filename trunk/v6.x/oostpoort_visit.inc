@@ -324,7 +324,7 @@ function oostpoort_visit_view($readonly) {
 	order by 
 		a.Bzk_Id desc ';
 	
-   	oostpoort_debug_sql($query);
+	oostpoort_debug_sql($query);
 	$queryResult = db_query($query); 
 	while ($data = db_fetch_object($queryResult)) {
 		$page .= oostpoort_visit_part($data, true);

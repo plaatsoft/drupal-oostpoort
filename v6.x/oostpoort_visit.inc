@@ -809,8 +809,7 @@ function oostpoort_visit_select() {
  * @return  1  validation error
  *          0  ok
  */
-function oostpoort_visit_cancel()
-{	
+function oostpoort_visit_cancel() {	
 	// *****************************
 	// Get posted Inputs
 	// *****************************

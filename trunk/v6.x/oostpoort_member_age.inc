@@ -37,13 +37,25 @@ function oostpoort_member_age() {
 	$Action=$_POST['Action'];
 
 	oostpoort_debug_param("Action", $Action);
-	        	  
-	if ($Action=="MemberView") {
-     	$page = oostpoort_member_view(true);     	
-     	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Terug').'</a>';     	
-	} else {
-		$page = oostpoort_member_age_list();
+
+	switch ($Action) {
+   
+		case 'MemberView':
+			// Create Page
+     		$page = oostpoort_member_view(true);
+     		$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Terug').'</a>';
+
+     		// Overwrite default breadcrumb menu
+			$node["child1"] = '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
+			$node["child2"] = t('Lid Detail');
+			oostpoort_breadcrumb($node);
+			break;
+			
+		default: 
+			$page = oostpoort_member_age_list();
+			break;
 	}
+	
 	print theme("page", $page);
 }
 
@@ -76,7 +88,35 @@ function oostpoort_member_age_list() {
 	}
 	$_SESSION['EndDate']=$EndDate; 
 	oostpoort_debug_param("EndDate", $EndDate);
-	
+
+	// *****************************
+	// Query
+	// *****************************
+
+	$query  = 'select ';
+	$query .= ' a.Prs_Id as PrsId, ';
+	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
+	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+	$query .= ' a.Prs_Geboortedatum >= "'.oostpoort_convert_date_reverse($StartDate).'" and ';
+	$query .= ' a.Prs_Geboortedatum <= "'.oostpoort_convert_date_reverse($EndDate).'" ';
+	$query .= 'order by ';
+	$query .= ' a.Prs_Geboortedatum desc';
+
+	oostpoort_debug_sql($query);
+   	$queryResult = db_query($query);
+   	
 	// *****************************
 	// Create page
 	// *****************************
@@ -109,32 +149,9 @@ function oostpoort_member_age_list() {
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoeken'));
 	
 	$page .= '</fieldset>';
- 
-	$query  = 'select ';
-	$query .= ' a.Prs_Id as PrsId, ';
-	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
-	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
-	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
-	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
-	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
-	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
-	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
-	$query .= ' b.Adr_Plaats as AdrPlaats, ';
-	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
-	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
-	$query .= 'from ';
-	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
-	$query .= 'where ';
-	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
-	$query .= ' a.Prs_Geboortedatum >= "'.oostpoort_convert_date_reverse($StartDate).'" and ';
-	$query .= ' a.Prs_Geboortedatum <= "'.oostpoort_convert_date_reverse($EndDate).'" ';
-	$query .= 'order by ';
-	$query .= ' a.Prs_Geboortedatum desc';
 
-	oostpoort_debug_sql($query);
-   	$queryResult = db_query($query);
-   	$page .= oostpoort_member_age_table($queryResult,1);
-
+	$page .= oostpoort_member_age_table($queryResult,1);
+	   	
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</div>';

@@ -39,12 +39,7 @@ function oostpoort_family($PrsId=0) {
 	// *****************************
 	
 	$Action=htmlentities($_POST['Action']);
-	if ($Action=="") {
-		$Action=$_SESSION['Action'];
-	}
-	
 	oostpoort_debug_param("Action", $Action);
-	$_SESSION['Action']=$Action;
 	
 	if ($PrsId==0) {
 		// Standard request, following posted action.
@@ -67,9 +62,10 @@ function oostpoort_family($PrsId=0) {
    
 		case 'FamilyView':
 		case 'AddFamilyPicture':
+		case 'SaveFamily':
 			$page = oostpoort_family_view(false);
 			break;
-			
+					
 		case 'MemberEdit':
 			$page = oostpoort_member_view(false);
 			break;
@@ -78,12 +74,22 @@ function oostpoort_family($PrsId=0) {
 			$page = oostpoort_member_view(true);
 			break;
 			
-		case 'Delete':	
+		case 'DeleteMember':	
 			oostpoort_member_delete();
 			$page .= oostpoort_family_view(false);
 			break;
+		
+		case 'DeleteFamilyPicture':
+			oostpoort_delete_picture();
+			$page = oostpoort_family_view(false);
+			break;
 			
-		case 'Save':	
+		case 'DeleteMemberPicture':
+			oostpoort_delete_picture();
+			$page = oostpoort_member_view(false);
+			break;
+			
+		case 'SaveMember':	
 			oostpoort_save_picture("Prs",$PrsId);
 			$error = oostpoort_member_save();
 			if ($error==0) {
@@ -259,7 +265,7 @@ function oostpoort_family_view($readonly) {
 	
 	if (!$readonly) {
 		// Breadcrumb menu
-		$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
+		$node["child1"] = l(t('Leden Gegevens'),OOSTPOORT_FAMILY);
 		$node["child2"] = t('Familie overzicht');
 		oostpoort_breadcrumb($node);
 
@@ -352,17 +358,25 @@ function oostpoort_family_view($readonly) {
 		if ($Action=="AddFamilyPicture") { 
 			$page .= '<div class="form-item">';
 			$page .= '<label>'.t('Foto bestand').':</label>';
-			$page .= '<input name="uploadedfile" type="file" size="100" onChange="submit();" />';
+			$page .= '<input name="uploadedfile" type="file" size="100" />';
 			$page .= '<div class="description">Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan '.ini_get('upload_max_filesize').'B</div>';
 			$page .= '</div>';
+			
+			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'SaveFamily',t('Opslaan'));
 		} else {
-			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'AddFamilyPicture',t('Foto')).' | ';
+			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'AddFamilyPicture',t('Foto Toevoegen'));
+			if (oostpoort_check_picture("Adr",$AdrId)) {
+				$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'DeleteFamilyPicture',t('Foto Verwijderen'));
+			} 
 		}
-		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
 	}
 
 	$page .= '</fieldset>';
-
+	
+	if (!$readonly) {
+		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
+	}
+		
 	$page .= '</div>';
 	$page .= '</form>';
 	return $page;
@@ -396,6 +410,7 @@ function oostpoort_member_view($readonly) {
 	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' a.Prs_KringlidJN as PrsKringLid, ';
 	$query .= ' a.Prs_BezoekInfo as PrsBezoekInfo, ';
+	$query .= ' (select Bst_Omschrijving from oostpoort_burgelijkestaat where Bst_ID=a.Prs_Bst_ID) as Burgelijkestaat, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as straat, ';
 	$query .= ' b.Adr_Plaats as AdrPlaats, ';
 	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
@@ -419,7 +434,7 @@ function oostpoort_member_view($readonly) {
 	$page .= '<div class="oostpoort">';
 		
 	// Breadcrumb menu
-	$node["child1"] = oostpoort_hiddenlink('OostpoortForm','','','List',t('Leden Gegevens'));
+	$node["child1"] = l(t('Leden Gegevens'),OOSTPOORT_FAMILY);
 	$node["child2"] = t('Familie overzicht');
 	$node["child3"] = t('Lid overzicht');
 	oostpoort_breadcrumb($node);
@@ -465,6 +480,12 @@ function oostpoort_member_view($readonly) {
 					"",
 					$readonly);
 								
+	$page .= oostpoort_form_item(
+					t('Burgelijkestaat:'),							
+					$data->Burgelijkestaat,
+					"",
+					$readonly);
+					
 	$page .= '</fieldset>' ;
 	
 	$page .= '<fieldset>' ;
@@ -508,20 +529,25 @@ function oostpoort_member_view($readonly) {
 	    	
 	$page .= oostpoort_form_item(
 					t('Pasfoto:'),							
-					'<input name="uploadedfile" size="100" type="file" />' ,
+					oostpoort_input_picture($readonly),
 					t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B',
 					$readonly);
 						
 	if (! $readonly) {	 
-		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Save',t('Opslaan')).' | ';
+		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'SaveMember',t('Opslaan'));
+		if (oostpoort_check_picture("Prs",$PrsId)) {
+			$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'DeleteMemberPicture',t('Foto Verwijderen'));
+		} 
 		if (user_access('access administration pages')) {
-			$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'Delete',t('Verwijder')).' | ';
-		}
-		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
+			$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'DeleteMember',t('Persoon Verwijderen'));
+		}		
 	}
   
-   $page .= '</fieldset>' ;  
-	
+	$page .= '</fieldset>' ;
+
+	if (! $readonly) {
+		$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$data->AdrId,'FamilyView',t('Terug'));
+	}	
 	$page .= '</div>';
 	$page .= '</form>';  
 	
@@ -532,6 +558,52 @@ function oostpoort_member_view($readonly) {
 // ##################################################################################
 // Actions
 // ##################################################################################
+
+function oostpoort_delete_picture() {
+	
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
+	$file="";
+	
+	if ( isset($_POST["PrsId"])) {
+		
+		$Id=htmlentities($_POST["PrsId"]);
+		$file='Prs'.$Id.'.jpg';
+		
+	} else if (isset($_POST["AdrId"])) {
+		
+		$Id=htmlentities($_POST["AdrId"]);	
+		$file='Adr'.$Id.'.jpg';
+	}
+	oostpoort_debug_param("Id", $Id);
+	
+	// *****************************
+	// Action
+	// *****************************
+	
+	if ($file!="") {
+		
+		$target = file_create_path(OOSTPOORT_IMAGE_DIR.'/'.$file);
+		if (file_exists($target)) {	
+			unlink($target);
+		}
+		
+		$target = file_create_path(OOSTPOORT_THUMBNAILS_DIR.'/'.$file);
+		if (file_exists($target)) {	
+			unlink($target);
+		}	
+	
+		// *****************************
+		// Create message
+		// *****************************
+		
+		$msg .= t('Foto').' '.$Id.' '.t('verwijderd');
+		drupal_set_message($msg, 'status');
+		watchdog('user', $msg);
+	}
+}
 
 function oostpoort_member_save() {
 	

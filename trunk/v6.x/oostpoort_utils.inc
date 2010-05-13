@@ -143,9 +143,7 @@ function oostpoort_view_checkbox( $id, $value, $readonly ) {
 	} else {
 		if (($value=="WAAR") or ($value=="on")) {
 			$page = '<input type="checkbox" checked="true" disabled="true" />';
-		} else {
-			$page = '<input type="checkbox" disabled="true" />';
-		}
+		} 
 	}
 	return $page;
 }
@@ -301,10 +299,12 @@ function oostpoort_view_date($id, $value, $readonly) {
  */
 function oostpoort_view_note($id, $value, $readonly) {
 
-   if ( ! $readonly ) {
-		return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';
+   	if ( $readonly ) {
+   		if ($value!="") {
+			return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
+   		}
 	} else {
-	   return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
+   		return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';
 	}
 }
 
@@ -335,6 +335,13 @@ function oostpoort_view_type($id, $value, $readonly) {
       $page .= $data->Bzt_Omschrijving;
    }
    return $page;
+}
+
+function oostpoort_input_picture($readonly) {
+	if (!$readonly) {
+		$page = '<input name="uploadedfile" size="100" type="file" />'; 
+	}
+	return $page;
 }
 
 /**
@@ -415,6 +422,20 @@ function oostpoort_convert_date_reverse($date) {
 // ********************************************
 // Picture methods
 // ********************************************
+
+function oostpoort_check_picture($Group,$Id) {
+	
+	// Construct a valid drupal path for the named file
+   $file=OOSTPOORT_THUMBNAILS_DIR.'/'.$Group.$Id.'.jpg';
+   $target = file_create_path($file);
+
+   // Check to see if the file exists
+   if (file_exists($target)) {
+   	  return true;
+   } else {
+      return false;
+   }
+}
 
 /**
  * Load picture

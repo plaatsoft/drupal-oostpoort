@@ -44,13 +44,25 @@ function oostpoort_jubilea_birthday() {
 	// *****************************
 	// Process statemachine
 	// *****************************
- 	  
-	if ($Action=="MemberView") {
-     	$page = oostpoort_member_view(true);     	
-     	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Terug').'</a>';     	
-	} else {
-		$page = oostpoort_jubilea_birthday_list();
+ 	
+	switch ($Action) {
+   
+		case 'MemberView':
+			// Create Page
+			$page = oostpoort_member_view(true);     	
+     		$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Terug').'</a>';     	
+
+     		// Overwrite default breadcrumb menu
+			$node["child1"] = '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">'.t('Verjaardagsjubilaris Rapport').'</a>';
+			$node["child2"] = t('Lid Detail');
+			oostpoort_breadcrumb($node);
+			break;
+		
+		default: 
+			$page = oostpoort_jubilea_birthday_list();
+			break;
 	}
+	
 	print theme("page", $page);
 }
 

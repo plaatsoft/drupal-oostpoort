@@ -70,7 +70,7 @@
  - BugFix: Member record was not completly updated during CSV upload.
  - Build for Drupal 6.x  
 
- 12-05-2010 (Week 20) v6.x-0.8
+ 13-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
  - Show only addresses in the block where the visitor is active.
  - Added support for lightbox2 drupal module. Nice photo popup effect!
@@ -81,6 +81,7 @@
  - Make all SQL queries safe for SQL insertion.
  - Added birthday email notification (cron job).
  - Added birthday summary block page.
+ - Added picture remove.
  - Bugfixes: Solve some minor issues after first deployment on my demo drupal6 site.
  - Build for Drupal 6.x
  - This is the first beta release for beta testers.

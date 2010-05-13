@@ -91,7 +91,44 @@ function oostpoort_view_geslacht($label) {
       return t('Vrouw');
    }
 }
+/** 
+ * View text input field.
+ */
+function oostpoort_view_text($id, $size, $maxSize, $value, $readonly) {
+	
+	if ($readonly) {
+		return $value;
+	} else {	
+		return '<input id="text" name="'.$id.'" size="'.$size.'" maxlength="'.$maxSize.'" type="text" value="'.$value.'">';
+	}
+}
 
+/** 
+ * Oostpoort form item.
+ */
+function oostpoort_form_item($label,$value,$description, $readonly) {
+	
+	if ($value!="") {
+		
+		$page .= '<div class="form-item">';
+		
+		$page .= '<label>';
+		$page .= $label;
+		$page .= '</label>';
+		
+		$page .= $value;
+		
+		if (($description!="") && !$readonly) {
+			$page .= '<div class="description">';
+			$page .= $description;
+			$page .= '</div>';
+		}
+		
+		$page .= '</div>';
+	}
+	return $page;
+}
+	
 /**
  * View Checkbox type
  */

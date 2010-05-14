@@ -1,0 +1,6 @@
+name = "Oostpoort"
+description = "Oostpoort leden administratie"
+package = "Other"
+version = "6.x-0.8"
+project = "oostpoort"
+core = 6.x

@@ -157,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `oostpoort_persoon` (
   `Prs_Huidig_Adr_ID` decimal(4,0) NOT NULL,
   `Prs_Vorig_Adr_ID` decimal(4,0) NOT NULL,
   `Prs_Geboortedatum` date NOT NULL,
+  `Prs_GeboortePlaats` varchar( 30 ) NOT NULL, 
   `Prs_Huwelijksdatum` date NOT NULL,
   `Prs_Adresmutatiedatum` date NOT NULL,
   `Prs_ImportNieuwdatum` date NOT NULL,

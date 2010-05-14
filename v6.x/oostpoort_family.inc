@@ -293,7 +293,6 @@ function oostpoort_family_view($readonly) {
 	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
-	$page .= '<h4>'.t('Nederland').'</h4>';		
 	$page .= '<h4>'.$data->AdrTelefoon.'</h4>';	
 		
 	$query  = 
@@ -406,6 +405,7 @@ function oostpoort_member_view($readonly) {
 	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
 	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
 	$query .= ' a.Prs_Geboortedatum as PrsGeboorteDatum, ';
+	$query .= ' a.Prs_GeboortePlaats as PrsGeboortePlaats, ';
 	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksDatum, ';
 	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' a.Prs_KringlidJN as PrsKringLid, ';
@@ -448,7 +448,6 @@ function oostpoort_member_view($readonly) {
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
-	$page .= '<h4>'.t('Nederland').'</h4>';	
 
 	$page .= oostpoort_form_item(
 					t('Persoon Id:'),
@@ -468,14 +467,19 @@ function oostpoort_member_view($readonly) {
 					"",
 					$readonly);
 
+	$tmp = oostpoort_convert_date($data->PrsGeboorteDatum);
+	if (($tmp!="") && ($data->PrsGeboortePlaats!="")) {
+		$tmp.= ' ('.$data->PrsGeboortePlaats.')';
+	}
+	
 	$page .= oostpoort_form_item(
-					t('Geboorte datum:'),							
-					oostpoort_convert_date($data->PrsGeboorteDatum),
+					t('Geboren:'),							
+					$tmp,
 					"",
 					$readonly);
-							
+	
 	$page .= oostpoort_form_item(
-					t('Huwelijksdatum:'),							
+					t('Huwelijk:'),							
 					oostpoort_convert_date($data->PrsHuwelijksDatum),
 					"",
 					$readonly);

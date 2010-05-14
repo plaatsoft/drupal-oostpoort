@@ -257,6 +257,23 @@ function oostpoort_family_view($readonly) {
 	oostpoort_debug_param("Action", $Action);
 
 	// *****************************
+	// Query
+	// *****************************
+	
+	$query  = 'select ';
+	$query .= ' concat(a.Adr_Straat, " " ,a.Adr_Huisnr) as straat, ';
+	$query .= ' a.Adr_Plaats as AdrPlaats, ';
+	$query .= ' a.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' a.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= ' oostpoort_adres a ';
+	$query .= 'where ';
+	$query .= ' a.Adr_Id='.$AdrId;
+	oostpoort_debug_sql($query);
+	$queryResult = db_query($query); 
+	$data = db_fetch_object($queryResult);
+	
+	// *****************************
 	// Create page
 	// *****************************
 
@@ -273,19 +290,6 @@ function oostpoort_family_view($readonly) {
 	}
 	oostpoort_save_picture("Adr",$AdrId);
 						
-	$query  = 'select ';
-	$query .= ' concat(a.Adr_Straat, " " ,a.Adr_Huisnr) as straat, ';
-	$query .= ' a.Adr_Plaats as AdrPlaats, ';
-	$query .= ' a.Adr_Postcode as AdrPostcode, ';	
-	$query .= ' a.Adr_Telefoon as AdrTelefoon ';	
-	$query .= 'from ';
-	$query .= ' oostpoort_adres a ';
-	$query .= 'where ';
-	$query .= ' a.Adr_Id='.$AdrId;
-	oostpoort_debug_sql($query);
-	$queryResult = db_query($query); 
-	$data = db_fetch_object($queryResult);
-		
 	$page .= '<fieldset>' ;
 	$page .= '<legend></legend>';
 
@@ -330,7 +334,6 @@ function oostpoort_family_view($readonly) {
 
 	// Show all found members
 	$page .= '<tbody>';
-	$page_tmp='';
 	while ($data = db_fetch_object($queryResult))
 	{
 		if ((++$i%2)==0) {

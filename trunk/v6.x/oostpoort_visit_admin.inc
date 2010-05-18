@@ -162,7 +162,9 @@ function oostpoort_visit_admin_list() {
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<th><b>'.t('Foto').'</b></th>';
+	if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		$page .= '<th><b>'.t('Foto').'</b></th>';
+	}
 	$page .= '<th><b>'.t('Actief').'</b></th>';
 	$page .= '<th><b>'.t('Medewerker').'</b></th>';
 	$page .= '<th><b>'.t('Admin').'</b></th>';
@@ -182,9 +184,13 @@ function oostpoort_visit_admin_list() {
 		} else {
 			$page .= '<tr class="odd">';
 		} 
-		$page .= '<td>';
-		$page .= oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false);
-		$page .= '</td>';
+		
+		if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		
+			$page .= '<td>';
+			$page .= oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false);
+			$page .= '</td>';
+		}
 
 		$page .= '<td>';
 		$page .= oostpoort_view_checkbox("Active", $data->MdwActief, true);
@@ -375,7 +381,10 @@ function oostpoort_visit_admin_member()
 			
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Medewerker</legend>';
-	$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right", true);
+	
+	if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		$page .= oostpoort_load_picture("Prs",$data->PrsId,0,0,"right", true);
+	}
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
@@ -398,11 +407,6 @@ function oostpoort_visit_admin_member()
 	$page .= '<div class="form-item">';
 	$page .= '<label>'.t('Geboorte Datum').':</label>';
 	$page .= oostpoort_convert_date($data->PrsGeboorteDatum);
-	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Huwelijks Datum').':</label>';
-	$page .= oostpoort_convert_date($data->PrsHuwelijksDatum);
 	$page .= '</div>';
 	
 	$page .= '</fieldset>' ;

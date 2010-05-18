@@ -323,10 +323,15 @@ function oostpoort_family_view($readonly) {
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<th><b>'.t('Foto').'</b></th>';
+	if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		$page .= '<th><b>'.t('Foto').'</b></th>';
+	}
 	$page .= '<th><b>'.t('Naam').'</b></th>';	
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
-	$page .= '<th><b>'.t('Huwelijk').'</b></th>';
+	
+	if (oostpoort_check_access()) {
+		$page .= '<th><b>'.t('Huwelijk').'</b></th>';
+	}
 	$page .= '<th><b>'.t('Mobiel').'</b></th>';
 	$page .= '<th><b>'.t('Email').'</b></th>';	
 	$page .= '</tr>';
@@ -341,14 +346,19 @@ function oostpoort_family_view($readonly) {
 		} else {
 			$page .= '<tr class="odd">';
 		}
-		$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
+		if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+			$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
+		}
 		if ($readonly) {
 			$page .= '<td>'.$data->Naam.'</td>';
 		} else { 
 			$page .= '<td>'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberEdit', $data->Naam)."</td>";
 		}
 		$page .= '<td class="active">'.oostpoort_convert_date($data->PrsGeboorteDatum).'</td>';
-		$page .= '<td>'.oostpoort_convert_date($data->PrsHuwelijksdatum).'</td>';
+		
+		if (oostpoort_check_access()) {
+			$page .= '<td>'.oostpoort_convert_date($data->PrsHuwelijksdatum).'</td>';
+		}
 		$page .= '<td>'.$data->PrsMobiel.'</td>';
 		$page .= '<td>'.oostpoort_view_email($data->PrsEmail).'</td>';
 		$page .= '</tr>';
@@ -447,23 +457,28 @@ function oostpoort_member_view($readonly) {
 	$page .= '<fieldset>' ;	
 	$page .= '<legend>'.t('Kerkelijke bureau gegevens').'</legend>';
 	
-	$page .= oostpoort_load_picture("Prs",$PrsId,0,0,"right", true);
+	if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		$page .= oostpoort_load_picture("Prs",$PrsId,0,0,"right", true);
+	}
 	$page .= '<h4>'.$data->Naam.'</h4>';	
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
 
-	$page .= oostpoort_form_item(
-					t('Persoon Id:'),
-					$PrsId,
-					"",
-					$readonly);
+	if (user_access('access administration pages')) {
+	
+		$page .= oostpoort_form_item(
+						t('Persoon Id:'),
+						$PrsId,
+						"",
+						$readonly);
 							
-	$page .= oostpoort_form_item(
-					t('Kerkelijke lid nummer:'),
-					$data->PrsKerklidnummer,
-					"",
-					$readonly);
-							
+		$page .= oostpoort_form_item(
+						t('Kerkelijke lid nummer:'),
+						$data->PrsKerklidnummer,
+						"",
+						$readonly);
+	}
+	
 	$page .= oostpoort_form_item(
 					t('Geslacht:'),							
 					oostpoort_view_geslacht($data->PrsGeslacht),
@@ -481,17 +496,20 @@ function oostpoort_member_view($readonly) {
 					"",
 					$readonly);
 	
-	$page .= oostpoort_form_item(
-					t('Huwelijk:'),							
-					oostpoort_convert_date($data->PrsHuwelijksDatum),
-					"",
-					$readonly);
+	if (oostpoort_check_access()) {
+	
+		$page .= oostpoort_form_item(
+						t('Huwelijk:'),							
+						oostpoort_convert_date($data->PrsHuwelijksDatum),
+						"",
+						$readonly);
 								
-	$page .= oostpoort_form_item(
-					t('Burgelijkestaat:'),							
-					$data->Burgelijkestaat,
-					"",
-					$readonly);
+		$page .= oostpoort_form_item(
+						t('Burgelijkestaat:'),							
+						$data->Burgelijkestaat,
+						"",
+						$readonly);
+	}
 					
 	$page .= '</fieldset>' ;
 	
@@ -507,7 +525,7 @@ function oostpoort_member_view($readonly) {
 	$page .= oostpoort_form_item(
 					t('Telefoon:'),							
 					oostpoort_view_text("Phone", 15, 15, $data->AdrTelefoon, $readonly),
-					t('Telefoonnummer van persoon.'),
+					t('Telefoonnummer van familie adres.'),
 					$readonly);
 
 	$page .= oostpoort_form_item(
@@ -533,18 +551,24 @@ function oostpoort_member_view($readonly) {
 					oostpoort_view_note("BezoekInfo", $data->PrsBezoekInfo, $readonly),
 					t('Hier kunt U algemene niet vertrouwelijke informatie vastleggen. Bv. Beroep, Hobby, etc...'),
 					$readonly);
-	    	
-	$page .= oostpoort_form_item(
-					t('Pasfoto:'),							
-					oostpoort_input_picture($readonly),
-					t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B',
-					$readonly);
+	
+	if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+		$page .= oostpoort_form_item(
+						t('Pasfoto:'),							
+						oostpoort_input_picture($readonly),
+						t('Alleen jpg foto formaat wordt ondersteund en foto mag niet groter zijn dan ').ini_get('upload_max_filesize').'B',
+						$readonly);
+	}
 						
 	if (! $readonly) {	 
 		$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'SaveMember',t('Opslaan'));
-		if (oostpoort_check_picture("Prs",$PrsId)) {
-			$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'DeleteMemberPicture',t('Foto Verwijderen'));
-		} 
+		
+		if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+			if (oostpoort_check_picture("Prs",$PrsId)) {
+				$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'DeleteMemberPicture',t('Foto Verwijderen'));
+			} 
+		}
+		
 		if (user_access('access administration pages')) {
 			$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','PrsId',$PrsId,'DeleteMember',t('Persoon Verwijderen'));
 		}		

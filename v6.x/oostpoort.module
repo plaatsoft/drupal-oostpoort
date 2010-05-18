@@ -34,7 +34,7 @@
 // ##################################################################################
 
 // Version banner
-define('OOSTPOORT_VERSION', 'v0.8');
+define('OOSTPOORT_VERSION', 'v0.9');
 
 // Oostpoort Files store
 define('OOSTPOORT_IMAGE_DIR',       file_directory_path().'/oostpoort');
@@ -201,6 +201,13 @@ function oostpoort_settings() {
 
   $form['general'] = array('#type' => 'fieldset', '#title' => t('General settings'));
 
+  $form['general']['oostpoort_show_member_picture'] = array(
+     '#type' => 'select',
+     '#title' => t('Show member picture'),
+     '#default_value' => variable_get('oostpoort_show_member_picture',1),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / disable member picture.'));
+	  
   $form['general']['oostpoort_last_upload_date'] = array(
      '#type' => 'textfield',
      '#title' => t('Date'),

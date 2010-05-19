@@ -28,10 +28,6 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// ##################################################################################
-// SUPPORT FUNCTIONS
-// ##################################################################################
-
 // ********************************************
 // Debug methods
 // ********************************************
@@ -652,79 +648,6 @@ function oostpoort_validate_number($str) {
     return false;
 }
 
-/**
- * Function check user access
- * @returns true if access is allowed else false 
- */
-function oostpoort_check_access() {
-	
-	global $user;
-    
-	if ( !isset($_SESSION['MdwId']) )  { 
-  
-		$sql .= '
-			select 
-				Mdw_ID 
-			from 
-				oostpoort_medewerker 
-			where 
-				Mdw_UID='.$user->uid;  
-		oostpoort_debug_sql($sql);
-		$queryResult = db_query($sql);
-		$data = db_fetch_object($queryResult);
-	
-		$_SESSION['MdwId']=$data->Mdw_ID;
-	}
-	
-	if ($_SESSION['MdwId']!="") {	
-		return true;
-	} else {
-		return false;
-	}
-}
-
-/**
- * Function check user access
- * @returns true if access is allowed else false 
- */
-function oostpoort_check_admin_access() {
-	
-	global $user;
-    
-	// Drupal admin complet access.
-	if (user_access('access administration pages')) {
-		return true;
-	}
-	
-	// Check medewerker admin access.
-	if ( !isset($_SESSION['MdwAdmin']) )  { 
-  
-		$sql .= '
-			select 
-				Mdw_Admin as MdwAdmin
-			from 
-				oostpoort_medewerker 
-			where 
-				Mdw_UID='.$user->uid;
-		  
-		oostpoort_debug_sql($sql);
-		$queryResult = db_query($sql);
-		$data = db_fetch_object($queryResult);
-	
-		$_SESSION['MdwAdmin']=$data->MdwAdmin;
-		if ($_SESSION['MdwAdmin']=='WAAR') {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	if ($_SESSION['MdwAdmin']=='WAAR') {		
-		return true;
-	} else {
-		return false;
-	}
-}
-
 function oostpoort_keep_selection() {
 		
 	foreach( $_POST as $var => $value) {
@@ -755,6 +678,86 @@ function oostpoort_get_block($MdwId) {
   	
   	$BlkId=$result->BlkId;	
   	return $BlkId;
+}
+
+// ********************************************
+// Autorisation
+// ********************************************
+
+/**
+ * Function check user access
+ * @returns true if user is a active visit member else false 
+ */
+function oostpoort_visit_member_access() {
+	
+	global $user;
+	 
+	if ( !isset($_SESSION['MdwId']) )  { 
+  
+		$sql .= '
+			select 
+				Mdw_ID 
+			from 
+				oostpoort_medewerker 
+			where 
+				Mdw_ActiefJN="WAAR" and 
+				Mdw_UID='.$user->uid;  
+		oostpoort_debug_sql($sql);
+		$queryResult = db_query($sql);
+		$data = db_fetch_object($queryResult);
+	
+		$_SESSION['MdwId']=$data->Mdw_ID;
+	}
+	
+	// Drupal admin has full access.
+	if (user_access('access administration pages')) {
+		return true;
+	}
+	
+	if ($_SESSION['MdwId']!="") {	
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Function check user access
+ * @returns true if user is active visit member admin
+ */
+function oostpoort_visit_member_admin_access() {
+	
+	global $user;
+    	
+	// Check medewerker admin access.
+	if ( !isset($_SESSION['MdwAdmin']) )  { 
+  
+		$sql .= '
+			select 
+				Mdw_Admin as MdwAdmin
+			from 
+				oostpoort_medewerker 
+			where 
+				Mdw_ActiefJN="WAAR" and 
+				Mdw_UID='.$user->uid;
+		  
+		oostpoort_debug_sql($sql);
+		$queryResult = db_query($sql);
+		$data = db_fetch_object($queryResult);
+	
+		$_SESSION['MdwAdmin']=$data->MdwAdmin;
+	}
+	
+	// Drupal admin has full access.
+	if (user_access('access administration pages')) {
+		return true;
+	}
+	
+	if ($_SESSION['MdwAdmin']=='WAAR') {		
+		return true;
+	} else {
+		return false;
+	}
 }
 
 // ##################################################################################

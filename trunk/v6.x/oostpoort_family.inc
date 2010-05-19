@@ -329,7 +329,7 @@ function oostpoort_family_view($readonly) {
 	$page .= '<th><b>'.t('Naam').'</b></th>';	
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	
-	if (oostpoort_check_access()) {
+	if (oostpoort_visit_member_access()) {
 		$page .= '<th><b>'.t('Huwelijk').'</b></th>';
 	}
 	$page .= '<th><b>'.t('Mobiel').'</b></th>';
@@ -356,7 +356,7 @@ function oostpoort_family_view($readonly) {
 		}
 		$page .= '<td class="active">'.oostpoort_convert_date($data->PrsGeboorteDatum).'</td>';
 		
-		if (oostpoort_check_access()) {
+		if (oostpoort_visit_member_access()) {
 			$page .= '<td>'.oostpoort_convert_date($data->PrsHuwelijksdatum).'</td>';
 		}
 		$page .= '<td>'.$data->PrsMobiel.'</td>';
@@ -496,7 +496,7 @@ function oostpoort_member_view($readonly) {
 					"",
 					$readonly);
 	
-	if (oostpoort_check_access()) {
+	if (oostpoort_visit_member_access()) {
 	
 		$page .= oostpoort_form_item(
 						t('Huwelijk:'),							

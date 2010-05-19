@@ -34,6 +34,16 @@
 
 function oostpoort_jubilea_birthday() {
 	
+	//echo var_dump($_POST);
+	
+	// *****************************
+	// Check access for this page.
+	// *****************************
+	
+	if (!oostpoort_visit_member_access()) {
+		return drupal_access_denied();
+	}
+	
 	// *****************************
 	// Process POST variables
 	// *****************************

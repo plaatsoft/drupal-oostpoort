@@ -139,7 +139,9 @@ function oostpoort_view_checkbox( $id, $value, $readonly ) {
 	} else {
 		if (($value=="WAAR") or ($value=="on")) {
 			$page = '<input type="checkbox" checked="true" disabled="true" />';
-		} 
+		} else {
+			$page = '<input type="checkbox" disabled="true" />';				
+		}
 	}
 	return $page;
 }

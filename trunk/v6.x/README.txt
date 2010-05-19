@@ -90,6 +90,8 @@
  - Make member picture optional (Admin setting).
  - Show member and church Id only for drupal administrator users.
  - Hide Married date and Married state for non church visit users.
+ - Added functionality the cancel planned visited.
+ - Added functionality to adapted a saved visit report.
 
 Nice to have
 ------------

@@ -66,36 +66,37 @@ function oostpoort_mainmenu( ) {
 	$page .= '<a href="'.url(OOSTPOORT_FAMILY).'">Bekijk leden gegevens</a>';
 	$page .= '</dt>';
 	$page .= '<dd>';
-	$page .= t('bekijk adres gegevens en andere relevate informatie over leden. *');
+	$page .= t('Bekijk adres gegevens en andere relevante informatie over leden. *');
 	$page .= '</dd>';
   
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen. *');
-	$page .= '</dd>';
+   // Only active visit members can access this page.
+	if (oostpoort_visit_member_access()) {
+	
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">Leeftijdscategorie rapport</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Dit rapport geeft een ledenlijst weer gebaseerd op leeftijdsgrenzen. *');
+		$page .= '</dd>';
 
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilaris rapport</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Dit rapport geeft alle verjaarsjubilea weer. *');
-	$page .= '</dd>';
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_JUBILEA_BIRTHDAY).'">Verjaardagsjubilaris rapport</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Dit rapport geeft alle verjaarsjubilea weer. *');
+		$page .= '</dd>';
 
-	$page .= '<dt>';
-	$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilaris rapport</a>';
-	$page .= '</dt>';
-	$page .= '<dd>';
-	$page .= t('Dit rapport geeft alle huwelijksjubilea weer. *');
-	$page .= '</dd>';
+		$page .= '<dt>';
+		$page .= '<a href="'.url(OOSTPOORT_JUBILEA_MARRIED).'">Huwelijksjubilaris rapport</a>';
+		$page .= '</dt>';
+		$page .= '<dd>';
+		$page .= t('Dit rapport geeft alle huwelijksjubilea weer. *');
+		$page .= '</dd>';
   
-	$page .= '<dt>';
-	$page .= '&nbsp;';
-	$page .= '</dt>';
+		$page .= '<dt>';
+		$page .= '&nbsp;';
+		$page .= '</dt>';
 
-   // Only visit members can access this page.
-	if (oostpoort_check_access()) {
 		$page .= '<dt>';
 		$page .= '<a href="'.url(OOSTPOORT_VISIT).'">Bezoekwerk</a>';
 		$page .= '</dt>';
@@ -104,8 +105,8 @@ function oostpoort_mainmenu( ) {
 		$page .= '</dd>';
 	}
 	
-	//only administrators can access these pages.
-    if (oostpoort_check_admin_access()) {
+	// only active visit member admins can access these pages.
+    if (oostpoort_visit_member_admin_access()) {
    
 		$page .= '<dt>';
 		$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';

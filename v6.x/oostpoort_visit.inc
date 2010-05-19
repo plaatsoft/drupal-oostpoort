@@ -36,12 +36,8 @@ function oostpoort_visit() {
 	
 	//echo var_dump($_POST);
 	
-	// *****************************
 	// Check access for this page.
-	// *****************************
-	
-   // Check access for this page.
-	if (!oostpoort_check_access()) {
+	if (!oostpoort_visit_member_access()) {
 		return drupal_access_denied();
 	}
 	
@@ -104,9 +100,7 @@ function oostpoort_visit() {
 		default: 
 			$page = oostpoort_visit_list();
 			break;
-		
 	}
-	
 	print theme("page", $page);
 }
 
@@ -144,8 +138,8 @@ function oostpoort_visit_list() {
 	// title
 	drupal_set_title(t('Bezoekwerk' ) );
 
-   //only administrators can switch between visit members.
-   if (user_access('access administration pages')) {
+   //only visit member admins can switch between visit members.
+   if (oostpoort_visit_member_admin_access()) {
   
 		$page .= '<fieldset>' ;	
 		$page .= '<legend>'.t('Filteren').'</legend>';
@@ -583,28 +577,32 @@ function oostpoort_visit_search() {
 	
 	// Breadcrumb menu
 	$node["child1"] = l(t('Bezoekwerk'),OOSTPOORT_VISIT);
-	$node["child2"] = t('Bezoek plannen');
+	$node["child2"] = t('Bezoek toevoegen');
 	oostpoort_breadcrumb($node);
 	
-	drupal_set_title(t('Bezoeken plannen' ) );
+	drupal_set_title(t('Bezoeken toevoegen' ) );
 	
 	$page .= '<fieldset>' ;
 	$page .= '<legend>Filteren</legend>';
 	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Straatnaam').' :</label>';
-	$page .= '<input id="text" name="Search" size="40" maxlength="40" type="text" value="'.$Search.'"> ';
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoek'));
-	$page .= '<div class="description">';
-	$page .= t('Filteren op straatnaam.');
-	$page .= '</div>';
-	$page .= '</div>';
+	$page .= oostpoort_form_item(
+						t('Straatnaam'),
+						oostpoort_view_text("Search", 40, 40, $Search, false).' '.
+						oostpoort_sortbar($Sort,"Search"),
+						t('Filteren op straatnaam.'),
+						false);
 	
-	$page .= oostpoort_sortbar($Sort,"Search");
+	$page .= oostpoort_form_item(
+						t('Bezoek niet gewenst:'),
+						oostpoort_view_checkbox("NoVisit", $NoVisit, false),
+						"Filter `bezoek niet gewenst` addressen weg",
+						false);
+						
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','Search',t('Zoek'));
 	
 	$page .= '</fieldset>' ;
   
-   	$page .= t('Selecteer nieuwe adressen om te bezoeken.');
+	$page .= t('Selecteer nieuwe adressen om te bezoeken.');
 
 	// Query Database
 	$query  = '

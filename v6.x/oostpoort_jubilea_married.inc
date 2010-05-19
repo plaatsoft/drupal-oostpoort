@@ -33,6 +33,16 @@
 // ##################################################################################
 
 function oostpoort_jubilea_married() {
+
+	//echo var_dump($_POST);
+	
+	// *****************************
+	// Check access for this page.
+	// *****************************
+	
+	if (!oostpoort_visit_member_access()) {
+		return drupal_access_denied();
+	}
 	
 	$Action=$_POST['Action'];
 	oostpoort_debug_param("Action", $Action);

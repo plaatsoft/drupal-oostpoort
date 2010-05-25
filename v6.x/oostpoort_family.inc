@@ -376,9 +376,10 @@ function oostpoort_family_view($readonly) {
 			
 			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'SaveFamily',t('Opslaan'));
 		} else {
-			$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'AddFamilyPicture',t('Foto Toevoegen'));
-			if (oostpoort_check_picture("Adr",$AdrId)) {
-				$page .= ' | '.oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'DeleteFamilyPicture',t('Foto Verwijderen'));
+			if (!oostpoort_check_picture("Adr",$AdrId)) {
+				$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'AddFamilyPicture',t('Foto toevoegen'));
+			} else  {
+				$page .= oostpoort_hiddenlink('OostpoortForm','AdrId',$AdrId,'DeleteFamilyPicture',t('Foto verwijderen'));
 			} 
 		}
 	}
@@ -630,7 +631,7 @@ function oostpoort_delete_picture() {
 		// Create message
 		// *****************************
 		
-		$msg .= t('Foto').' '.$Id.' '.t('verwijderd');
+		$msg .= t('Foto verwijderd');
 		drupal_set_message($msg, 'status');
 		watchdog('user', $msg);
 	}
@@ -705,7 +706,7 @@ function oostpoort_member_save() {
 	// Create message
 	// *****************************
 		
-	$msg .= t('Wijzingen voor persoon '.$PrsId.' zijn opgeslagen.');
+	$msg .= t('Wijzingen zijn opgeslagen.');
 	drupal_set_message($msg, 'status');
 	watchdog('user', $msg);
 	
@@ -743,7 +744,7 @@ function oostpoort_member_delete() {
 		// Create message
 		// *****************************
 	
-		$msg .= t('Persoon '.$PrsId.' is verwijderd.');
+		$msg .= t('Persoon is verwijderd.');
 		drupal_set_message($msg, 'status');
 		watchdog('user', $msg);
 	}

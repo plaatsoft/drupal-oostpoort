@@ -86,7 +86,7 @@
  - Build for Drupal 6.x
  - This is the first beta release for beta testers.
     
-18-05-2010 (Week 31) v6.x-0.9
+21-05-2010 (Week 31) v6.x-0.9
  - Make member picture optional (Admin setting).
  - Show member and church Id only for drupal administrator users.
  - Hide Married date and Married state for non church visit users.

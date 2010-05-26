@@ -35,7 +35,7 @@
 function oostpoort_upload_csv() {
 
 	// Check access for this page.
-	if (!oostpoort_check_admin_access()) {
+	if (!oostpoort_visit_member_admin_access()) {
 		return drupal_access_denied();
 	}
 			

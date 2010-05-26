@@ -83,21 +83,6 @@ function oostpoort_jubilea_birthday() {
 function oostpoort_jubilea_birthday_list() {
 
 	// *****************************
-	// Get posted Inputs
-	// *****************************
-	
-    $AgeId= $_POST["AgeId"];
-	if ($AgeId=="") {
-		$AgeId=$_SESSION["AgeId"];
-		if ($AgeId=="") {
-	   		$AgeId=50;
-		}
-	}
-	$_SESSION["AgeId"]=$AgeId;
-
-	oostpoort_debug_param("AgeId", $AgeId);
-	
-	// *****************************
 	// Create page
 	// *****************************
 
@@ -113,52 +98,67 @@ function oostpoort_jubilea_birthday_list() {
 	drupal_set_title(t('Verjaardagsjubilaris Rapport'));
 		
 	$page .= '<fieldset>' ;
-	$page .= '<legend>'.t('Filteren').'</legend>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Leeftijd:').' '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_age_range("AgeId", $AgeId);
-	$page .= ' '.t('jaar');
-	$page .= '<div class="description">'.t('Selecteer een jubilea leeftijd, daarna worden alle jubilarisen getoond.').'</div>';
-	$page .= '</div>';
-	
+	$page .= '<b>'.t('Rapport loopt over de volgende periode:').'</b>'.'<br/>';
+	$page .= t('2 maanden terug t/m 4 maanden vooruit.');
 	$page .= '</fieldset>' ;
 
-	list($year, $month, $day) = split('[/.-]', date("Y-m-d"));
-	$yearStart=$year-$AgeId;
-	$yearEnd=$year-$AgeId+1;	
-	$startDate = $yearStart."-".$month."-".$day;
-	$endDate = $yearEnd."-".$month."-".$day;
+	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100);
+		
+	foreach ($x as $AgeId)
+	{
+		$page .= '<fieldset>' ;
+		$page .= '<legend>';
+		$page .= t('Dit zijn de verjaardagsjubilarrisen van').' ';
+		if ($AgeId<55) {
+			$page .= $AgeId.' '.t('jaar.');
+		} else {
+			$page .= $AgeId.' '.t('jaar en ouder.');
+		}
+		$page .= '</legend>';
 	
-	$query = 'select ';
-	$query .= ' a.Prs_Id as PrsId, ';
-	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
-	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
-	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
-	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
-	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
-	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
-	$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
-	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
-	$query .= ' b.Adr_Plaats as AdrPlaats, ';
-	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
-	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
-	$query .= 'from ';
-	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
-	$query .= 'where ';
-	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
-	if ($AgeId!=100) {
-		$query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
+		$periode_start=oostpoort_offset_date( -2*31 );
+		list($year, $month, $day) = split('-', $periode_start);
+		$yearStart=$year-$AgeId;
+		$startDate = $yearStart."-".$month."-".$day;
+	
+		$periode_end=oostpoort_offset_date( 4*31 );
+		list($year, $month, $day) = split('-', $periode_end);
+		$yearEnd=$year-$AgeId;
+		$endDate = $yearEnd."-".$month."-".$day;
+			
+		$query = 'select ';
+		$query .= ' a.Prs_Id as PrsId, ';
+		$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+		$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+		$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+		$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+		$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
+		$query .= ' a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
+		$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+		$query .= ' b.Adr_Plaats as AdrPlaats, ';
+		$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+		$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+		$query .= 'from ';
+		$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+		$query .= 'where ';
+		$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+		if ($AgeId!=100) {
+			$query .= ' a.Prs_Geboortedatum >= "'.$startDate.'" and ';
+			$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" and ';
+		} else {
+			$query .= ' a.Prs_Geboortedatum <= "'.$startDate.'" and ';
+		}
+		$query .= ' a.Prs_Kerklidnummer != 0 ';
+		$query .= 'order by ';
+		$query .= ' a.Prs_Geboortedatum';
+
+		oostpoort_debug_sql($query);
+		$queryResult = db_query($query);
+		$page .= oostpoort_jubilea_birthday_table($queryResult,1);
+		
+		$page .= '</fieldset>';
+
 	}
-	$query .= ' a.Prs_Geboortedatum <= "'.$endDate.'" and ';
-	$query .= ' a.Prs_Kerklidnummer != 0 ';
-	$query .= 'order by ';
-	$query .= ' a.Prs_Geboortedatum';
-
-	oostpoort_debug_sql($query);
-   $queryResult = db_query($query);
-   $page .= oostpoort_jubilea_birthday_table($queryResult,1);
-
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</div>';		
@@ -168,14 +168,13 @@ function oostpoort_jubilea_birthday_list() {
 }
 
 function oostpoort_jubilea_birthday_table($queryResult, $mode) {
+		
 	$page .= '<table>';
 
    $page .= '<thead>';
 	// Show Banner
 	$page .= '<tr>';
-	$page .= '<th><b>'.t('Kerk Lidnr.').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
-	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
 	$page .= '<th><b>'.t('Plaats').'</b></th>';
 	$page .= '<th><b>'.t('Postcode').'</b></th>';
@@ -194,18 +193,10 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode) {
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-		
-		$page_tmp .= '<td>';
-     	$page_tmp .= $data->PrsKerklidnummer;
-     	$page_tmp .= '</td>';
-     			
+				
      	$page_tmp .= '<td>';
      	$page_tmp .= oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam);
      	$page_tmp .= '</td>';
-
-		$page_tmp .= '<td>';
-		$page_tmp .= oostpoort_view_geslacht($data->PrsGeslacht);
-		$page_tmp .= '</td>';
 		
 		$page_tmp .= '<td>'.$data->Straat.'</td>';
 		$page_tmp .= '<td>'.$data->AdrPlaats.'</td>';  
@@ -230,25 +221,6 @@ function oostpoort_jubilea_birthday_table($queryResult, $mode) {
 	$page .= '</table>';
 
 	return $page;
-}
-
-function oostpoort_age_range($id, $AgeId) {
-
-	$page.='<select name="'.$id.'" onChange="submit();" >';
-	
-	$x=array(50, 65, 70, 75, 80, 85, 90, 95, 100);
-		
-	foreach ($x as $value)
-	{
-		$page.='<option value="'.$value.'" ';
-		if ($value==$AgeId) {
-			$page.='selected="selected" ';
-		}
-		$page.='>'.$value.'</option>';
-	}
-	$page.='</select>';
-	  
-   return $page;
 }
 
 // ##################################################################################

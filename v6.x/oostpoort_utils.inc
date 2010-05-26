@@ -369,8 +369,8 @@ function oostpoort_breadcrumb($node) {
 }
 
 
-function oostpoort_sortbar($Sort,$Action)
-{
+function oostpoort_sortbar($Sort,$Action) {
+
 	$sort_bar=array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q","R","S","T","U","V","W","X","Y","Z");
 	for ($i=0; $i<26; $i++)
 	{
@@ -389,6 +389,15 @@ function oostpoort_sortbar($Sort,$Action)
 // Convert methods
 // ********************************************
 
+function oostpoort_offset_date($day) {
+
+	list($year1, $month1, $day1) = split('-', date("Y-m-d"));
+	$date1 = mktime(0,0,0,$month1,$day1,$year1);
+	$date1 += (60*60*24*$day);
+	$tmp= getdate($date1);
+	return $tmp["year"].'-'.$tmp["mon"]."-".$tmp["mday"];
+}
+	
 /**
  * View Date type
  */

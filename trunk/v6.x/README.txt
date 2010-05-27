@@ -20,6 +20,7 @@
  - Convert proof-of-concept module from Drupal 5 to Drupal 6.
  - Switch from oracle datamodel to mysql datamodel.
  - Build for Drupal 6.x
+ - Internal release
 
  18-04-2010 (Week 16) v6.x-0.4
  - Create Google Code repository.   
@@ -29,12 +30,14 @@
  - Based HTML output on standard Drupal Style sheet.
  - Start building first pages.
  - Build for Drupal 6.x
+ - Internal release
 
  25-04-2010 (Week 17) v6.x-0.5
  - Create admin visit page.
  - Added functionality to update visitors data.
  - Replace button by links (based on JavaScript)
  - Build for Drupal 6.x
+ - Internal release
 
  02-05-2010 (Week 18)v6.x-0.6
  - Created visit pages including history information.
@@ -53,6 +56,7 @@
  - Bugfix: Now member AdrId is also update during CSV upload.
  - Bugfix: Solve reload button (Multi insert) issue.
  - Build for Drupal 6.x
+ - Internal release
 
  09-05-2010 (Week 19) v6.x-0.7
  - Added jquery date picker.
@@ -69,6 +73,7 @@
  - BugFix: KerkLidNr was not loaded (fixed)!
  - BugFix: Member record was not completly updated during CSV upload.
  - Build for Drupal 6.x  
+ - Internal release
 
  13-05-2010 (Week 20) v6.x-0.8
  - Added BlockId to all address entries.
@@ -88,14 +93,29 @@
     
 21-05-2010 (Week 31) v6.x-0.9
  - Make member picture optional (Admin setting).
- - Show member and church Id only for drupal administrator users.
- - Hide Married date and Married state for non church visit users.
- - Added functionality the cancel planned visited.
- - Added functionality to adapted a saved visit report.
+ - Show member Id and church Id only for drupal administrator users.
+ - Hide Married date and Married state for non visit members.
+ - Added functionality to cancel planned visited.
+ - Added functionality to adapted a saved (finished) visit report.
+ - Build for Drupal 6.x
+ - Internal release
+
+26-05-2010 (Week 32) v6.x-1.0
+ - Added Dooplid and Belijdenislid information to database and views.
+ - Improve Married and Birthday report. 
+ - Improve family view.
+ - Bugfix: Improve csv output data filtering.
+ - Bugfix: Delete member is working again.
+ - Bugfix: When new member is added all date fields are now correctly filled.
+ - Build for Drupal 6.x
+ - First official release for public us!
+ 
+Todo:
+ - Modify telefoonnummer in visit screen.
+ - Filter novisit in visit address selection. 
 
 Nice to have
 ------------
-- Add more information to database: Married location, etc.....
 - Google map intergration.
 
 Now issues

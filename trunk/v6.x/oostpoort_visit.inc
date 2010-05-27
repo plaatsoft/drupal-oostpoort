@@ -517,56 +517,48 @@ function oostpoort_visit_part($data, $readonly) {
 		$type = 4;
 	}
 		
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Bezoek ID').': </label>';
-	$page .= $data->BzkId;
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Bezoekmedewerker').': </label>';
-	$page .= $data->Naam;
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Datum').': '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_view_date("VisitDate", $VisitDate, $readonly);
-	if (!$readonly) {
-		$page .= '<div class="description">';
-		$page .= t('Datum wanneer bezoek is uitgevoerd of geannuleerd.');
-		$page .= '</div>';
-	} 
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Bezoek type').': '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_view_type("VisitType", $VisitType, $readonly);
-	if (!$readonly) {
-		$page .= '<div class="description">';
-		$page .= t('Selecteer wat voor type bezoek is uitgevoerd.');
-		$page .= '</div>';
-	}
-	$page .= '</div>';
-		
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Notities').': '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_view_note("BzkInfo", $BzkInfo, $readonly);
-	if (!$readonly) {
-		$page .= '<div class="description">';
-		$page .= t('Hier kunt u algemene niet vertrouwelijke informatie over het bezoek vastleggen.');
-		$page .= '</div>';
-	}
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Geen bezoek gewenst').': </label>';
-	$page .= oostpoort_view_checkbox("NoVisit",$NoVisit ,$readonly);
-	if (!$readonly) {
-		$page .= '<div class="description">';
-		$page .= t('Als bezoek niet meer gewenst is selecteer deze optie. Er zullen dan geen bezoeken meer worden ingepland.');
-		$page .= '</div>';
-	}
-	$page .= '</div>';
-		
+	$page .= oostpoort_form_item(
+					t('Bezoek ID:'),							
+					$data->BzkId,
+					'',
+					true);
+					
+	$page .= oostpoort_form_item(
+					t('Bezoekmedewerker:'),							
+					$data->Naam,
+					'',
+					true);
+						
+	$page .= oostpoort_form_item(
+					t('Datum:').oostpoort_view_manitory(),							
+					oostpoort_view_date("VisitDate", $VisitDate, $readonly),
+					t('Datum wanneer bezoek is uitgevoerd of geannuleerd.'),
+					$readonly);
+						
+	$page .= oostpoort_form_item(
+					t('Bezoek type:').oostpoort_view_manitory(),							
+					oostpoort_view_type("VisitType", $VisitType, $readonly),
+					t('Selecteer wat voor type bezoek is uitgevoerd.'),
+					$readonly);
+						
+	$page .= oostpoort_form_item(
+					t('Telefoon:'),							
+					oostpoort_view_text("Phone", 15, 15, $data->AdrTelefoon, $readonly),
+					t('Telefoonnummer van familie adres.'),
+					$readonly);
+					
+	$page .= oostpoort_form_item(
+					t('Notities:').oostpoort_view_manitory(),							
+					oostpoort_view_note("BzkInfo", $BzkInfo, $readonly),
+					t('Hier kunt u algemene niet vertrouwelijke informatie over het bezoek vastleggen.'),
+					$readonly);
+					
+	$page .= oostpoort_form_item(
+					t('Geen bezoek gewenst:'),							
+					oostpoort_view_checkbox("NoVisit",$NoVisit ,$readonly),
+					t('Als bezoek niet meer gewenst is selecteer deze optie. Er zullen dan geen bezoeken meer worden ingepland.'),
+					$readonly);
+			
 	// Get Address members.
 	
 	if (!$readonly) {
@@ -574,9 +566,10 @@ function oostpoort_visit_part($data, $readonly) {
 		$query  = 'select ';
 		$query .= '  a.Prs_Id as PrsId, ';
 		$query .= '  concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
-		$query .= '  a.Prs_GeslachtMV as PrsGeslacht, '; 
 		$query .= '  a.Prs_Geboortedatum as PrsGeboorteDatum, ';
-		$query .= '  a.Prs_Huwelijksdatum as PrsHuwelijksdatum ';
+		$query .= '  a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
+		$query .= '  a.Prs_DoopDatum as PrsDoopDatum, ';
+		$query .= '  a.Prs_BelijdenisDatum as PrsBelijdenisDatum '; 
 		$query .= 'from ';
 		$query .= '  oostpoort_persoon a ';
 		$query .= 'where ';
@@ -589,9 +582,10 @@ function oostpoort_visit_part($data, $readonly) {
 		$query  = 'select ';
 		$query .= '  a.Prs_Id as PrsId, ';
 		$query .= '  concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
-		$query .= '  a.Prs_GeslachtMV as PrsGeslacht, '; 
 		$query .= '  a.Prs_Geboortedatum as PrsGeboorteDatum, ';
-		$query .= '  a.Prs_Huwelijksdatum as PrsHuwelijksdatum ';
+		$query .= '  a.Prs_Huwelijksdatum as PrsHuwelijksdatum, ';
+		$query .= '  a.Prs_DoopDatum as PrsDoopDatum, ';
+		$query .= '  a.Prs_BelijdenisDatum as PrsBelijdenisDatum '; 
 		$query .= 'from ';
 		$query .= '  oostpoort_persoon a, oostpoort_bezoekpersoon b ';
 		$query .= 'where ';
@@ -610,9 +604,10 @@ function oostpoort_visit_part($data, $readonly) {
 	$page .= '<tr>';
 	$page .= '<th><b>'.t('Aanwezig').oostpoort_view_manitory().'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
-	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th class="active"><b>'.t('Geboren').'</b></th>';
 	$page .= '<th><b>'.t('Huwelijk').'</b></th>';	
+	$page .= '<th><b>'.t('Doop lid').'</b></th>';
+	$page .= '<th><b>'.t('Belijdend lid').'</b></th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
 
@@ -650,9 +645,17 @@ function oostpoort_visit_part($data, $readonly) {
 	
 		$page .= '<td>'.oostpoort_view_checkbox( "Active-".$persoon->PrsId, $Active, $readonly).'</td>';
 		$page .= '<td>'.$persoon->Naam.'</td>';
-		$page .= '<td>'.oostpoort_view_geslacht($persoon->PrsGeslacht).'</td>';
 		$page .= '<td class="active">'.oostpoort_convert_date($persoon->PrsGeboorteDatum).'</td>';
 		$page .= '<td>'.oostpoort_convert_date($persoon->PrsHuwelijksdatum).'</td>';
+		
+		$on="";
+		if ($data->PrsDoopDatum!=0) $on="on";
+		$page .= '<td>'.oostpoort_view_checkbox("Doop", $on, true).'</td>';
+					
+		$on="";
+		if ($data->PrsBelijdenisDatum!=0) $on="on";
+		$page .= '<td>'.oostpoort_view_checkbox("Belijdenis", $on, true).'</td>';	
+			
 		$page .= '<td>'.$persoon->PrsMobiel.'</td>';
 		$page .= '<td>'.$persoon->PrsEmail.'</td>';
 		$page .= '</tr>';
@@ -1002,6 +1005,9 @@ function oostpoort_action_cancel() {
 	$CancelDate=htmlentities($_POST["VisitDate"]);
 	oostpoort_debug_param("VisitDate", $VisitDate);
 	
+	$Phone=htmlentities($_POST["Phone"]);
+	oostpoort_debug_param("Phone", $Phone);
+	
 	// *****************************
 	// Input Validation
 	// *****************************
@@ -1075,6 +1081,11 @@ function oostpoort_action_cancel() {
 	
 	oostpoort_debug_sql($query);
 	db_query($query); 
+
+   if ($Phone!="") {
+
+     bla bla
+   }
 	
 	// *****************************
 	// Create page
@@ -1113,6 +1124,9 @@ function oostpoort_action_ready()
 	
 	$VisitDate=htmlentities($_POST["VisitDate"]);
 	oostpoort_debug_param("VisitDate", $VisitDate);
+
+	$Phone=htmlentities($_POST["Phone"]);
+	oostpoort_debug_param("Phone", $Phone);
 	
 	// *****************************
 	// Input Validation

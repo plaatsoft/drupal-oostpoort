@@ -104,7 +104,6 @@ function oostpoort_member_age_list() {
 
 	$query  = 'select ';
 	$query .= ' a.Prs_Id as PrsId, ';
-	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
 	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
 	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
@@ -175,7 +174,6 @@ function oostpoort_member_age_table($queryResult, $mode) {
 
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<th><b>'.t('KerkLidNr').'</b></th>';
 	$page .= '<th><b>'.t('Naam').'</b></th>';
 	$page .= '<th><b>'.t('Geslacht').'</b></th>';
 	$page .= '<th><b>'.t('Straat').'</b></th>';
@@ -196,11 +194,7 @@ function oostpoort_member_age_table($queryResult, $mode) {
 		} else {
 			$page_tmp .= '<tr class="odd">';
 		}
-      
-		$page_tmp .= '<td>';
-     	$page_tmp .= $data->PrsKerklidnummer;
-     	$page_tmp .= '</td>';
-     			
+      		
      	$page_tmp .= '<td>';
      	$page_tmp .= oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'MemberView', $data->Naam);
      	$page_tmp .= '</td>';

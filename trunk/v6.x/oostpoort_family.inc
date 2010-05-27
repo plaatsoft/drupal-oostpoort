@@ -34,7 +34,7 @@
 
 function oostpoort_family($PrsId=0) {
 	
-	echo var_dump($_POST);
+	//echo var_dump($_POST);
 	
 	// *****************************
 	// Process POST an SESSION variables
@@ -293,7 +293,6 @@ function oostpoort_family_view($readonly) {
 	oostpoort_save_picture("Adr",$AdrId);
 						
 	$page .= '<fieldset>' ;
-	$page .= '<legend></legend>';
 
 	$page .= oostpoort_load_picture("Adr",$AdrId, 0, 0,"right", true);
 	
@@ -423,6 +422,8 @@ function oostpoort_member_view($readonly) {
 	$query .= ' a.Prs_Kerklidnummer as PrsKerklidnummer, ';
 	$query .= ' a.Prs_KringlidJN as PrsKringLid, ';
 	$query .= ' a.Prs_BezoekInfo as PrsBezoekInfo, ';
+	$query .= ' a.Prs_ImportNieuwdatum as PrsImportNieuwdatum, ';
+	$query .= ' a.Prs_ImportWijzigingdatum as PrsImportWijzigingdatum, ';
 	$query .= ' (select Bst_Omschrijving from oostpoort_burgelijkestaat where Bst_ID=a.Prs_Bst_ID) as Burgelijkestaat, ';
 	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as straat, ';
 	$query .= ' b.Adr_Plaats as AdrPlaats, ';
@@ -539,11 +540,25 @@ function oostpoort_member_view($readonly) {
 						"",
 						$readonly);
 						
+		$page .= oostpoort_form_item(
+						t('Import nieuw datum:'),
+						oostpoort_convert_date($data->PrsImportNieuwdatum),
+						"",
+						$readonly);
+						
+										
+		$page .= oostpoort_form_item(
+						t('Import laatste wijziging datum:'),
+						oostpoort_convert_date($data->PrsImportWijzigingdatum),
+						"",
+						$readonly);
+						
+						
 		$page .= '</fieldset>' ;
 	}
 	
 	$page .= '<fieldset>' ;
-	$page .= '<legend>Extra gegevens</legend>';
+	$page .= '<legend>'.t('Extra gegevens').'</legend>';
 		
 	$page .= oostpoort_form_item(
 					t('Roepnaam:'),							

@@ -107,14 +107,14 @@ function oostpoort_jubilea_birthday_list() {
 	foreach ($x as $AgeId)
 	{
 		$page .= '<fieldset>' ;
-		$page .= '<legend>';
-		$page .= t('Dit zijn de verjaardagsjubilarrisen van').' ';
-		if ($AgeId<55) {
-			$page .= $AgeId.' '.t('jaar.');
+		$page .= '<legend><i>';
+		$page .= t('Verjaardagsjubilarrisen').' ';
+		if ($AgeId<100) {
+			$page .= $AgeId.' '.t('jaar');
 		} else {
-			$page .= $AgeId.' '.t('jaar en ouder.');
+			$page .= $AgeId.' '.t('jaar en ouder');
 		}
-		$page .= '</legend>';
+		$page .= '</i></legend>';
 	
 		$periode_start=oostpoort_offset_date( -2*31 );
 		list($year, $month, $day) = split('-', $periode_start);

@@ -104,6 +104,8 @@
  - Added Dooplid and Belijdenislid information to database and views.
  - Improve Married and Birthday report. 
  - Improve family view.
+ - Improve visit member admin page.
+ - Modify telefoonnummer in visit screen.
  - Bugfix: Improve csv output data filtering.
  - Bugfix: Delete member is working again.
  - Bugfix: When new member is added all date fields are now correctly filled.
@@ -111,7 +113,7 @@
  - First official release for public us!
  
 Todo:
- - Modify telefoonnummer in visit screen.
+
  - Filter novisit in visit address selection. 
 
 Nice to have

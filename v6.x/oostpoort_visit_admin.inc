@@ -389,104 +389,90 @@ function oostpoort_visit_admin_member()
 	$page .= '<h4>'.$data->straat.'</h4>';	
 	$page .= '<h4>'.$data->AdrPostcode.'&nbsp;&nbsp;'.$data->AdrPlaats.'</h4>';	
 
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Medewerker Id').':</label>';
-	$page .= $data->PrsId;
-	$page .= '</div>';
+	$page .= oostpoort_form_item(
+					t('Medewerker Id:'),							
+					$data->PrsId,
+					'',
+					true);
+
+	$page .= oostpoort_form_item(
+					t('Kerkelijke lid nummer:'),							
+					$data->PrsKerklidnummer,
+					'',
+					true);
 		
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Kerkelijke lid nummer').':</label>';
-	$page .= $data->PrsKerklidnummer;
-	$page .= '</div>';
+	$page .= oostpoort_form_item(
+					t('Geslacht:'),							
+					oostpoort_view_geslacht($data->PrsGeslacht),
+					'',
+					true);
 	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Geslacht').':</label>';
-	$page .= oostpoort_view_geslacht($data->PrsGeslacht);
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Geboorte Datum').':</label>';
-	$page .= oostpoort_convert_date($data->PrsGeboorteDatum);
-	$page .= '</div>';
-	
+	$page .= oostpoort_form_item(
+					t('Geboorte Datum:'),							
+					oostpoort_convert_date($data->PrsGeboorteDatum),
+					'',
+					true);
+					
 	$page .= '</fieldset>' ;
 	
 	$page .= '<fieldset>' ;
 	
 	$page .= '<legend>'.t('Instellingen').'</legend>';
 		
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Eigenaar').': </label>';
-	$page .= oostpoort_view_owner($owner, false);
-	$page .= '<div class="description">';
-	$page .= t('Selecteer hier de login naam van de bezoekmedewerker. Zo lang een bezoekmedewerker niet gekoppeld is aan een drupal login account kan hij geen bezoeken in plannen.');
-	$page .= '</div>';
-	$page .= '</div>';
+	$page .= oostpoort_form_item(
+					t('Eigenaar:'),							
+					oostpoort_view_owner($owner, false),
+					t('Selecteer hier de login naam van de bezoekmedewerker. Zo lang een bezoekmedewerker niet gekoppeld is aan een drupal login account kan hij geen bezoeken in plannen.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Roepnaam:').oostpoort_view_manitory(),							
+					oostpoort_view_text("FirstName", 30, 30, $firstName, false),
+					t('Roepnaam van bezoekmedewerker.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Telefoon:').oostpoort_view_manitory(),							
+					oostpoort_view_text("Phone", 15, 15, $phone, false),
+					t('Telefoon nummer van bezoekmedewerker.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Mobiel:').oostpoort_view_manitory(),							
+					oostpoort_view_text("Mobile", 15, 15, $mobile, false),
+					t('Mobiele nummer van bezoekmedewerker.'),
+					false);
 
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Roepnaam').': '.oostpoort_view_manitory().'</label>';
-	$page .= '<input id="text" name="FirstName" size="30" maxlength="30" type="text" value="'.$firstName.'">';
-	$page .= '<div class="description">';
-	$page .= t('Roepnaam van bezoekmedewerker.');
-	$page .= '</div>';
-	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Telefoon').': '.oostpoort_view_manitory().'</label>';
-	$page .= '<input id="text" name="Phone" size="15" maxlength="15" type="text" value="'.$phone.'">';
-	$page .= '<div class="description">';
-	$page .= t('Telefoon nummer van bezoekmedewerker.');
-	$page .= '</div>';
-	$page .= '</div>';
+	$page .= oostpoort_form_item(
+					t('Email:').oostpoort_view_manitory(),							
+					oostpoort_view_text("Email", 60, 100, $email, false),
+					t('Email adres van bezoekmedewerker.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Blok:').oostpoort_view_manitory(),							
+					oostpoort_view_block($block, false, true),
+					t('Selecteer blok waar bezoekmedewerker actief is.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Actief:'),							
+					oostpoort_view_checkbox("Active", $active, false),
+					t('Actief of niet actief bezoekmedewerker.'),
+					false);
+					
+	$page .= oostpoort_form_item(
+					t('Admin:'),							
+					oostpoort_view_checkbox("Admin", $admin, false),
+					t('Heeft bezoekmedewerker (Admin rechten) zodat hij bezoekmedewerkers kan beheren.'),
+					false);
 	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Mobiel').':</label>';
-	$page .= '<input id="text" name="Mobile" size="15" maxlength="15" type="text" value="'.$mobile.'">';
-	$page .= '<div class="description">';
-	$page .= t('Mobiele nummer van bezoekmedewerker.');
-	$page .= '</div>';
-	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Email').':  '.oostpoort_view_manitory().'</label>';
-	$page .= '<input id="text" name="Email" size="60" maxlength="100" type="text" value="'.$email.'">';
-	$page .= '<div class="description">';
-	$page .= t('Email adres van bezoekmedewerker.');
-	$page .= '</div>';
-	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Blok').':  '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_view_block($block, false, true);
-	$page .= '<div class="description">';
-	$page .= t('Selecteer blok waar bezoekmedewerker actief is.');
-	$page .= '</div>';
-	$page .= '</div>';
-
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Actief').':</label>';
-	$page .= oostpoort_view_checkbox("Active", $active, false);	  
-	$page .= '<div class="description">';
-	$page .= t('Actief of niet actief bezoekmedewerker.');
-	$page .= '</div>';
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Admin').':</label>';
-	$page .= oostpoort_view_checkbox("Admin", $admin, false);	  
-	$page .= '<div class="description">';
-	$page .= t('Heeft bezoekmedewerker (Admin rechten) zodat hij bezoekmedewerkers kan beheren.');
-	$page .= '</div>';
-	$page .= '</div>';
-	
-	$page .= '<div class="form-item">';
-	$page .= '<label>'.t('Rol Omschrijving').': '.oostpoort_view_manitory().'</label>';
-	$page .= oostpoort_view_role($role, false);
-	$page .= '<div class="description">';
-	$page .= t('Selecteer welk rol deze medewerker heeft.');
-	$page .= '</div>';
-	$page .= '</div>';
-    	 
+	$page .= oostpoort_form_item(
+					t('Rol Omschrijving:'),							
+					oostpoort_view_role($role, false),
+					t('Selecteer welk rol deze medewerker heeft.'),
+					false);
+					
 	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId',$data->PrsId,'Save',t('Opslaan'));
 		
 	// Only members without any visit can be deleted
@@ -571,7 +557,9 @@ function oostpoort_visit_admin_search() {
 		$page .= '<table>';
 		$page .= '<thead>';
 		$page .= '<tr>';
-		$page .= '<th>'.t('Foto').'</b></th>';
+		if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+			$page .= '<th>'.t('Foto').'</b></th>';
+		}
 		$page .= '<th class="active"><b>'.t('Naam').'</b></th>';
 		$page .= '<th><b>'.t('Geslacht').'</b></th>';  
 		$page .= '<th><b>'.t('Geboren').'</b></th>';
@@ -588,7 +576,9 @@ function oostpoort_visit_admin_search() {
 				$page .= '<tr class="odd">';
 			}
   
-			$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
+			if ( variable_get('oostpoort_show_member_picture',1)==1 ) {
+				$page .= '<td>'.oostpoort_load_picture("Prs",$data->PrsId, 30, 25, "Left", false).'</td>';
+			}
 			$page .= '<td class="active">'.oostpoort_hiddenlink('OostpoortForm', 'PrsId', $data->PrsId, 'Add', $data->Naam).'</td>';	  
 			$page .= '<td>'.oostpoort_view_geslacht($data->PrsGeslacht).'</td>'; 
 			$page .= '<td>'.oostpoort_convert_date($data->PrsGeboortedatum).'</td>'; 

@@ -100,7 +100,7 @@
  - Build for Drupal 6.x
  - Internal release
 
-26-05-2010 (Week 32) v6.x-1.0
+28-05-2010 (Week 32) v6.x-1.0
  - Added Dooplid and Belijdenislid information to database and views.
  - Improve Married and Birthday report. 
  - Improve family view.
@@ -110,12 +110,9 @@
  - Bugfix: Delete member is working again.
  - Bugfix: When new member is added all date fields are now correctly filled.
  - Build for Drupal 6.x
+ - Filter novisit in visit address selection.
  - First official release for public us!
  
-Todo:
-
- - Filter novisit in visit address selection. 
-
 Nice to have
 ------------
 - Google map intergration.

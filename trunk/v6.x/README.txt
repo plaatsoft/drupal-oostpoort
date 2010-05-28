@@ -91,7 +91,7 @@
  - Build for Drupal 6.x
  - This is the first beta release for beta testers.
     
-21-05-2010 (Week 31) v6.x-0.9
+21-05-2010 (Week 21) v6.x-0.9
  - Make member picture optional (Admin setting).
  - Show member Id and church Id only for drupal administrator users.
  - Hide Married date and Married state for non visit members.
@@ -100,18 +100,18 @@
  - Build for Drupal 6.x
  - Internal release
 
-28-05-2010 (Week 32) v6.x-1.0
- - Added Dooplid and Belijdenislid information to database and views.
- - Improve Married and Birthday report. 
- - Improve family view.
- - Improve visit member admin page.
- - Modify telefoonnummer in visit screen.
- - Bugfix: Improve csv output data filtering.
- - Bugfix: Delete member is working again.
- - Bugfix: When new member is added all date fields are now correctly filled.
- - Build for Drupal 6.x
- - Filter novisit in visit address selection.
- - First official release for public us!
+28-05-2010 (Week 22) v6.x-1.0
+ – Added Dooplid and Belijdenislid information to database and views.
+ – Improve Married and Birthday report.
+ – Improve family view.
+ – Improve visit member admin page.
+ – Add functionality to modify the phone number in visit screen.
+ – Filter novisit in visit address selection.
+ – Improve csv output data filtering.
+ – Bugfix: Delete member is working again.
+ – Bugfix: When new member is added all date fields are now correctly filled.
+ – Build for Drupal 6.x
+ - Note: First official release for public us!
  
 Nice to have
 ------------

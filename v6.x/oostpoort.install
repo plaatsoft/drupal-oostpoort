@@ -157,16 +157,23 @@ function oostpoort_install() {
 
 }
 
-function oostpoort_update_1000() {
+function oostpoort_update_0090() {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
 	db_query("ALTER TABLE `oostpoort_persoon` ADD `Prs_DoopDatum` DATE NOT NULL AFTER `Prs_GeboortePlaats`");
-	db_query("ALTER TABLE `oostpoort_persoon` ADD `Prs_BelijdenisDatum` DATE NOT NULL AFTER `Prs_DoopDatum`");
       break;
   }
 }
 
+function oostpoort_update_1000() {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+	db_query("ALTER TABLE `oostpoort_persoon` ADD `Prs_BelijdenisDatum` DATE NOT NULL AFTER `Prs_DoopDatum`");
+      break;
+  }
+}
 
 /**
 * Implementation of hook_uninstall().

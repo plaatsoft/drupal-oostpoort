@@ -412,7 +412,7 @@ function oostpoort_visit_view($readonly) {
 		a.Bzk_Adr_Id = c.Adr_Id and
 		a.Bzk_Adr_Id='.$AdrId.' and ';
 		
-	if ($Bzk_Id!="") {
+	if ($BzkId!="") {
 		$query .= " a.Bzk_Id != '.$BzkId.' and ";
 	}
 	

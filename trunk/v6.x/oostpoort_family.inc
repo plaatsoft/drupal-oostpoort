@@ -526,7 +526,7 @@ function oostpoort_member_view($readonly) {
 	if (user_access('access administration pages')) {
 	
 		$page .= '<fieldset>' ;	
-		$page .= '<legend>'.t('Technisch information (drupal adminstrator)').'</legend>';
+		$page .= '<legend>'.t('Technisch informatie (drupal adminstrator)').'</legend>';
 
 		$page .= oostpoort_form_item(
 						t('Persoon Id:'),

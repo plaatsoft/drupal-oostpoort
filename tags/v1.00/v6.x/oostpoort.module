@@ -1,0 +1,406 @@
+<?php
+
+/** 
+ *  Church Administration (oostpoort) module for drupal 
+ *
+ *  Copyright (C) 2009-2010
+ *  =======================
+ *
+ *  Created by wplaat
+ *
+ *  For more information visit the following website.
+ *  Website : http://www.plaatsoft.nl 
+ *
+ *  Or send an email to the following address.
+ *  Email   : info@plaatsoft.nl
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, version 2.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+// ##################################################################################
+// Defines
+// ##################################################################################
+
+// Version banner
+define('OOSTPOORT_VERSION', 'v1.0');
+
+// Oostpoort Files store
+define('OOSTPOORT_IMAGE_DIR',       file_directory_path().'/oostpoort');
+define('OOSTPOORT_THUMBNAILS_DIR',  file_directory_path().'/oostpoort/thumbnails');
+
+// Oostpoort URLs
+define('OOSTPOORT_MENU',            'oostpoort');
+
+define('OOSTPOORT_FAMILY',     		'oostpoort/family');
+
+define('OOSTPOORT_JUBILEA_BIRTHDAY','oostpoort/jubilea/birthday');
+define('OOSTPOORT_JUBILEA_MARRIED', 'oostpoort/jubilea/married');
+define('OOSTPOORT_MEMBER_AGE',      'oostpoort/member/age');
+
+define('OOSTPOORT_VISIT',           'oostpoort/visit');
+define('OOSTPOORT_VISIT_ADMIN',     'oostpoort/visit/admin');
+define('OOSTPOORT_UPLOAD_CSV',      'oostpoort/upload/csv');
+
+// ##################################################################################
+// Load all php, js and css files
+// ##################################################################################
+
+// PHP module files
+module_load_include('inc', 'oostpoort', 'oostpoort_utils'); 
+module_load_include('inc', 'oostpoort', 'oostpoort_mainmenu');
+module_load_include('inc', 'oostpoort', 'oostpoort_family');
+module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_birthday');
+module_load_include('inc', 'oostpoort', 'oostpoort_jubilea_married');
+module_load_include('inc', 'oostpoort', 'oostpoort_member_age');
+module_load_include('inc', 'oostpoort', 'oostpoort_visit');
+module_load_include('inc', 'oostpoort', 'oostpoort_visit_admin');
+module_load_include('inc', 'oostpoort', 'oostpoort_upload_csv');
+
+// ADD Java Scripts files
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/js/oostpoort.js');
+drupal_add_js(drupal_get_path('module', 'oostpoort'). '/js/ui.datepicker.js');
+
+drupal_add_js('
+	$(function() {
+		$("#datepicker").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: "dd-mm-yy",
+			appendText: " (dd-mm-yyyy)",
+			dayNamesMin: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
+			monthNames: ["Januari","February","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"]
+		});
+	});','inline');
+
+// Add CSS files
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/css/oostpoort.css');
+drupal_add_css(drupal_get_path('module', 'oostpoort') .'/css/datepicker.css');
+
+// ##################################################################################
+// Drupal hooks
+// ##################################################################################
+
+/**
+ * help hook()
+ * @return help texts
+ */
+function oostpoort_help($path, $arg) {
+
+  $output = '';
+  switch ($path) {
+    case 'admin/modules#description':
+      $output .= t('Oostpoort leden administratie module');
+      break;
+  }
+  return $output;
+}
+
+/**
+  * Valid permisions for this module
+  * @return array an array of valid permission for the module
+  */
+function oostpoort_perm() 
+{
+  return array('view member','edit member');
+}
+
+function oostpoort_mail($key, &$message, $params) 
+{
+  $message['subject'] = $params['subject']; 
+  $message['body'] = $params['body'];
+}
+
+/**
+ * menu hook()
+ * @return array of menu items
+ */
+function oostpoort_menu() {
+
+  $items[OOSTPOORT_MENU] = array(
+                   'title' => t('Oostpoort Menu'),
+                   'page callback' => 'oostpoort_mainmenu',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_FAMILY] = array(
+                   'title' => t('Oostpoort familie lijst'),
+                   'page callback' => 'oostpoort_family',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_MEMBER_AGE] = array(
+                   'title' => t('Oostpoort ledenlijst leeftijd'),
+                   'page callback' => 'oostpoort_member_age',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_JUBILEA_BIRTHDAY] = array(
+                   'title' => t('Oostpoort jubilea verjaarday'),
+                   'page callback' => 'oostpoort_jubilea_birthday',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_JUBILEA_MARRIED] = array(
+                   'title' => t('Oostpoort jubilea huwelijk'),
+                   'page callback' => 'oostpoort_jubilea_married',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+						
+  $items[OOSTPOORT_VISIT] = array(
+                   'title' => t('Oostpoort bezoekwerk'),
+                   'page callback' => 'oostpoort_visit',
+                   'access arguments' => array('view member'),
+                   'type' => MENU_CALLBACK);
+
+  $items[OOSTPOORT_UPLOAD_CSV] = array(
+                   'title' => t('Oostpoort CSV upload'),
+                   'page callback' => 'oostpoort_upload_csv',
+                   'access arguments' => array('edit member'),
+                   'type' => MENU_CALLBACK);
+						 
+  $items[OOSTPOORT_VISIT_ADMIN] = array(
+                   'title' => t('Oostpoort bezoekwerk administratie'), 
+                   'page callback' => 'oostpoort_visit_admin',
+                   'access arguments' => array('edit member'),
+                   'type' => MENU_CALLBACK);
+
+  $items['admin/settings/oostpoort'] = array(
+                   'title' => 'Oostpoort',
+                   'description' => t('Leden administratie instellingen.'),
+                   'page callback' => 'drupal_get_form',
+                   'page arguments' => array('oostpoort_settings'),
+                   'access arguments' => array('administer site configuration'),
+                   'type' => MENU_NORMAL_ITEM);
+
+  return $items;
+}
+
+
+/**
+ * Module configuration settings
+ * @return settings HTML or deny access
+ */
+function oostpoort_settings() {
+
+	//only administrators can access this module	
+	if (!user_access('access administration pages')) {
+		return drupal_access_denied();
+	}
+
+  $form['general'] = array('#type' => 'fieldset', '#title' => t('General settings'));
+
+  $form['general']['oostpoort_show_member_picture'] = array(
+     '#type' => 'select',
+     '#title' => t('Show member picture'),
+     '#default_value' => variable_get('oostpoort_show_member_picture',1),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / disable member picture.'));
+	  
+  $form['general']['oostpoort_last_upload_date'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Date'),
+     '#default_value' => variable_get('oostpoort_last_upload_date', ''),
+     '#description' => t("Enter the date (dd-mm-yyyy) when the last csv file was uploaded."),
+     '#maxlength' => '10',
+     '#size' => '11');
+	  
+	$form['general']['oostpoort_last_cron_date'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Date'),
+     '#default_value' => variable_get('oostpoort_last_cron_date', ''),
+     '#description' => t("Enter the date (dd-mm-yyyy) when the last cron was executed."),
+     '#maxlength' => '10',
+     '#size' => '11');
+     
+  $form['map'] = array('#type' => 'fieldset', '#title' => t('Map settings'));
+
+  $form['map']['oostpoort_map_link'] = array(
+     '#type' => 'select',
+     '#title' => t('Activate map'),
+     '#default_value' => variable_get('oostpoort_map_link',0),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / Disable Activate Google map.'));
+
+  $form['map']['oostpoort_map_key'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Google code access key'),
+     '#default_value' => variable_get('oostpoort_map_key', ''),
+     '#description' => t("Enter google code access key"),
+     '#maxlength' => '50',
+     '#size' => '50');
+         
+  $form['birthday'] = array('#type' => 'fieldset', '#title' => t('Birthday notification settings'));
+
+  $form['birthday']['oostpoort_birthday_notification'] = array(
+     '#type' => 'select',
+     '#title' => t('Birthday email notification'),
+     '#default_value' => variable_get('oostpoort_birthday_notification',0),
+     '#options' => array( 0 => t('No'), 1 => t('Yes') ),
+     '#description' => t('Enable / disable email birthday notification.'));
+
+  $form['birthday']['oostpoort_birthday_subject'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Subject of birtday e-mail'),
+     '#default_value' => variable_get('oostpoort_birthday_subject','Happy birthday %username from %site_name'),
+     '#maxlength' => 180,
+     '#description' => t('Customize the subject of your birthday e-mail, which is sent to members upon their birthday.') .' '. t('Available variables are:') .' %username, %site_name');
+
+  $form['birthday']['oostpoort_birthday_body'] = array(
+     '#type' => 'textarea',
+     '#title' => t('Body of birthday e-mail'),
+     '#default_value' => variable_get('oostpoort_birthday_body',"Dear %username,\r\n\r\nCongratulation with your %user_age ste birthday.\r\nHave a nice day!\r\n"),
+     '#rows' => 15,
+     '#description' => t('Customize the body of the birthday e-mail, which is sent to members upon their birthday.') .' '. t('Available variables are:') .' %username, %user_age, %site_name');
+
+  return system_settings_form($form);
+}
+
+
+/**
+  * Find all family members which are celebrating their birthday to day and send them an email.
+  * @return emails
+  */
+function oostpoort_cron() {
+
+  // If birthday notification is enabled check all users.
+  if ( variable_get('oostpoort_birthday_notification',0)==1 ) {
+		
+		$now=date("d-m-Y");
+		list($nowYear, $nowMonth, $nowDay) = split("-",$now);
+		$nowDate = mktime(0,0,0,$nowMonth,$nowDay,$nowYear);
+		
+		$prev=variable_get("oostpoort_last_cron_date","01-01-2000");
+		list($prevYear, $prevMonth, $prevDay) = split("-",$prev);
+		$prevDate = mktime(0,0,0,$prevMonth,$prevDay,$prevYear);
+		
+		// If date mismatch (next day have arrived), send birthday email
+		if ( $nowDate!=$prevDate ) {
+	
+			// Update last cron run 
+			variable_set("oostpoort_last_cron_date", $now);
+			
+			watchdog('cron', t('Oostpoort birthday cron'));
+      	
+			// Fetch all users which are celebrating there birtday today!			
+			$query  = 'select ';
+			$query .= '  concat(a.Prs_Voorletters, " ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+			$query .= '  a.Prs_Geboortedatum as PrsGeboorteDatum, ';
+			$query .= '  a.Prs_EmailAdres as PrsEmail ';
+			$query .= 'from ';
+			$query .= '  oostpoort_persoon a ';
+			$query .= 'where ';
+			$query .= '  a.Prs_Geboortedatum LIKE  "%'.date('-m-d').'" ';
+			$query .= 'order by ';
+			$query .= '  PrsGeboorteDatum ';
+					
+			$result = db_query($query);
+			while ($data = db_fetch_object($result)) {
+        
+				$username = $data->Naam;        
+				$email = $data->PrsEmail;		  
+				$siteName = variable_get('site_name', 'Drupal');
+
+				// Calculate member age
+				list($year, $month, $day) = split('[/.-]', $data->PrsGeboorteDatum);
+				$userAge  = date('Y')-$year;
+
+				// if user has an email address and is not older then 90 yeats send an email.
+				if (($email!='') && ($user_age<90)) {
+			
+					$from=$siteName.'<'.variable_get('site_mail', ini_get('sendmail_from')).'>';
+	
+					$subject=variable_get('oostpoort_birthday_subject','Happy birthday %username from %site_name');
+					$subject=str_replace("%username", $username, $subject);
+					$subject=str_replace("%site_name", $siteName, $subject);
+	
+					$body=variable_get('oostpoort_birthday_body',"Dear %userName,\r\n\r\nCongratulation with your %userAge ste birthday.\r\nHave a nice day!\r\n");
+					$body=str_replace("%username", $username, $body);
+					$body=str_replace("%user_age", $userAge, $body);
+					$body=str_replace("%site_name", $site_name, $body);
+
+					if (drupal_mail('Oostpoort', 'send', $email, user_preferred_language($user), array('subject'=>$subject,'body'=>$body))) {           
+			 
+						watchdog('cron', t('Verjaardagsemail naar').' '.$email.' '.t('is verzonden'));
+					
+					} else {
+			 
+						watchdog('cron', t('Verjaardagsemail naar').' '.$email.' '.t('is mislukt.'));
+					}
+				}
+			}
+		}
+	}
+}
+
+/**
+  * Find all family members which are celebrating their birthday today and make a block of it.
+  * @return emails
+  */
+function oostpoort_block($op='list', $delta=0) {
+
+  // listing of blocks, such as on the admin/block page
+  if ($op == "list") {
+
+    $block[0]["info"] = t('Verjaardagen');
+    return $block;
+
+  } else if ($op == 'view') {
+
+		// our block content
+		// content variable that will be returned for display
+		$block_content = '';
+
+		if (user_access('view member')) {
+	 	
+			$query  = 'select ';
+			$query .= '  Prs_id as PrsId, ';
+			$query .= '  concat(a.Prs_Voorletters, " ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+			$query .= '  a.Prs_Geboortedatum as PrsGeboorteDatum, ';
+			$query .= '  a.Prs_EmailAdres as PrsEmail ';
+			$query .= 'from ';
+			$query .= '  oostpoort_persoon a ';
+			$query .= 'where ';
+			$query .= '  a.Prs_Geboortedatum LIKE "%'.date('-m-d').'" ';
+			$query .= 'order by ';
+			$query .= '  a.Prs_Achternaam ';
+			
+			$queryResult = db_query($query);
+			while ($data = db_fetch_object($queryResult)) {
+
+				// Calculate member age
+				list($year, $month, $day) = split('[/.-]', $data->PrsGeboorteDatum);
+				$userAge  = date('Y')-$year;
+				
+				$block_content .= l($data->Naam.' ['.$userAge.']', OOSTPOORT_FAMILY.'/'.$data->PrsId );				
+				$block_content .= '<br/>';
+			}
+		}
+
+		// check to see if there was any content before setting up the block
+		if ($block_content == '') {
+			// no content today, return nothing.
+			return;
+		}
+	 
+		// set up the block
+		$block['subject'] = t('Verjaardagen');
+		$block['content'] = $block_content;
+		return $block;
+	}
+}
+
+// ##################################################################################
+// THE END
+// ##################################################################################

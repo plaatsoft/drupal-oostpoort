@@ -447,6 +447,20 @@ function oostpoort_visit_view($readonly) {
    return $page;  
 }
 
+/**
+ * oostpoort_visit_part
+ *
+ * Show all address with can be visited.
+ * Visit members can selected addresses 
+ * and add then to there own visit list.
+ *
+ * @param data			The the show data.
+ * @param readonly 	The readonly flag
+ *
+ * @return The HTML code
+ *
+ * @author wplaat
+ */
 function oostpoort_visit_part($data, $readonly) {
 
 	// *****************************
@@ -672,6 +686,17 @@ function oostpoort_visit_part($data, $readonly) {
 	return $page;
 }
 
+/**
+ * oostpoort_visit_select
+ *
+ * Show all address with can be visited.
+ * Visit members can selected addresses 
+ * and add then to there own visit list.
+ *
+ * @return The HTML code
+ *
+ * @author wplaat
+ */
 function oostpoort_visit_select() {
   	
 	// *****************************
@@ -697,7 +722,10 @@ function oostpoort_visit_select() {
 	}	
 	$_SESSION['Sort']=$Sort;
 	oostpoort_debug_param("Sort", $Sort);
-		
+	
+	$NoVisitFilter=htmlentities($_POST['NoVisitFilter']);
+	oostpoort_debug_param("NoVisitFilter", $NoVisitFilter);
+	
 	// *****************************
 	// Build page
 	// *****************************
@@ -718,20 +746,20 @@ function oostpoort_visit_select() {
 	$page .= oostpoort_form_item(
 						t('Straatnaam'),
 						oostpoort_view_text("Search", 40, 40, $Search, false).' '.
-						oostpoort_sortbar($Sort,"Search"),
+						oostpoort_sortbar($Sort,"VisitSearch"),
 						t('Filteren op straatnaam.'),
 						false);
 	
 	$page .= oostpoort_form_item(
 						t('Bezoek niet gewenst:'),
-						oostpoort_view_checkbox("NoVisit", $NoVisit, false),
+						oostpoort_view_checkbox("NoVisitFilter", $NoVisitFilter, false),
 						"Filter `bezoek niet gewenst` addressen weg",
 						false);
 						
 	$page .= oostpoort_hiddenlink('OostpoortForm','','','VisitSearch',t('Zoek'));
 	
 	$page .= '</fieldset>' ;
-  
+    
 	// Query Database
 	$query  = '
 	
@@ -742,12 +770,12 @@ function oostpoort_visit_select() {
     	a.Adr_postcode as AdrPostcode, 
     	a.Adr_Telefoon as AdrTelefoon,  
     	a.Adr_Blk_Id as AdrBlkId,
-    	(select concat(Prs_Tussenvoegsels, " ", substring_index(Prs_Achternaam,"-",1)) from oostpoort_persoon where Prs_Huidig_Adr_Id=a.Adr_id limit 1) as Naam, 
     	(select Bzk_Id from oostpoort_bezoek where Bzk_Adr_Id=a.Adr_Id order by Bzk_Id desc limit 1) as BzkId,
  		(select Bzk_GeplandDatum from oostpoort_bezoek where Bzk_id=BzkId) as BzkGeplandDatum,
 		(select Bzk_AfgelegdDatum from oostpoort_bezoek where Bzk_id=BzkId) as BzkAfgelegdDatum ,
 		(select Bzk_GeannuleerdDatum from oostpoort_bezoek where Bzk_id=BzkId) as BzkGeannuleerdDatum,
 		(select Bzk_BezoekNietGewenstDatum from oostpoort_bezoek where Bzk_id=BzkId) as BzkBezoekNietGewenstDatum,
+		(select concat(Prs_Tussenvoegsels, " ", substring_index(Prs_Achternaam,"-",1)) from oostpoort_persoon where Prs_Huidig_Adr_Id=a.Adr_id limit 1) as Naam, 
 		(select concat(IF(b.Prs_Roepnaam="",b.Prs_Voorletters, b.Prs_Roepnaam), " ", b.Prs_Tussenvoegsels, " ", b.Prs_Achternaam) from oostpoort_persoon b, oostpoort_bezoek c where c.Bzk_id=BzkId and b.prs_id=c.bzk_mdw_id) as BzkBezoekPersoon
 	from 
 		oostpoort_adres a  
@@ -764,7 +792,7 @@ function oostpoort_visit_select() {
 		order by 
 			Straatnaam'; 
   
-   	oostpoort_debug_sql($query);
+   oostpoort_debug_sql($query);
 	$queryResult = db_query($query);
   
 	// Show Banner
@@ -784,8 +812,15 @@ function oostpoort_visit_select() {
 	// Show all found address
 	$page .= '<tbody>';
 	$page_tmp='';
-	while ($data = db_fetch_object($queryResult))
-	{
+	while ($data = db_fetch_object($queryResult)) {		
+	
+	    // Filter out addresses without members and addresses with NoVisit flag.
+		 // To hard to add this stuff in the query.
+		if ((strlen($data->Naam)<2) || 
+			 (($NoVisitFilter!="") && ($data->BzkBezoekNietGewenstDatum!=0))) {
+			continue;
+		}
+		
 		if ((++$i%2)==0) {
 			$page_tmp .= '<tr class="even">';
 		} else {
@@ -832,7 +867,7 @@ function oostpoort_visit_select() {
 			$page_tmp.=oostpoort_convert_date($data->BzkGeplandDatum).'<br/>';
 			$page_tmp.= $data->BzkBezoekPersoon;
 			
-		} else 
+		} 
 		$page_tmp .= '</div>';
 		$page_tmp .= '</td>';
 		

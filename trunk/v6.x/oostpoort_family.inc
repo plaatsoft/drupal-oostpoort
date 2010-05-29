@@ -278,11 +278,12 @@ function oostpoort_family_view($readonly) {
 	// *****************************
 	// Create page
 	// *****************************
-
-	$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
-	$page .= '<div class="oostpoort">';
 	
 	if (!$readonly) {
+	
+		$page .= '<form enctype="multipart/form-data" name="OostpoortForm" method="POST" >';
+		$page .= '<div class="oostpoort">';
+		
 		// Breadcrumb menu
 		$node["child1"] = l(t('Leden Gegevens'),OOSTPOORT_FAMILY);
 		$node["child2"] = t('Familie overzicht');
@@ -384,10 +385,10 @@ function oostpoort_family_view($readonly) {
 	
 	if (!$readonly) {
 		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Terug'));
+		$page .= '</div>';
+		$page .= '</form>';
 	}
 		
-	$page .= '</div>';
-	$page .= '</form>';
 	return $page;
 }	
 
@@ -526,7 +527,7 @@ function oostpoort_member_view($readonly) {
 	if (user_access('access administration pages')) {
 	
 		$page .= '<fieldset>' ;	
-		$page .= '<legend>'.t('Technisch informatie (drupal adminstrator)').'</legend>';
+		$page .= '<legend>'.t('Technische informatie (drupal adminstrator)').'</legend>';
 
 		$page .= oostpoort_form_item(
 						t('Persoon Id:'),

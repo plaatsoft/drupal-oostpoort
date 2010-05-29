@@ -299,7 +299,7 @@ function oostpoort_view_note($id, $value, $readonly) {
 
    	if ( $readonly ) {
    		if ($value!="") {
-			return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
+			return '<textarea class="form-textarea resizable" cols="100" rows="4" DISABLED>'.$value.'</textarea>';
    		}
 	} else {
    		return '<textarea class="form-textarea resizable" name="'.$id.'" cols="100" rows="4" maxlength="1000">'.$value.'</textarea>';

@@ -171,7 +171,7 @@ function oostpoort_visit_admin_list() {
 	$page .= '<th><b>'.t('Rol').'</b></th>';
 	$page .= '<th><b>'.t('Blok').'</b></th>';
 	$page .= '<th><b>'.t('Login').'</b></th>';   
-	$page .= '<th><b>'.t('Opmerkingen').'</b></th>';   
+	$page .= '<th><b>'.t('Overige').'</b></th>';   
 	$page .= '</tr>';
 	$page .= '</thead>';
 
@@ -218,7 +218,7 @@ function oostpoort_visit_admin_list() {
 		
 		$page .= '<td>';
 		$page .= '<div class="description">';
-		$page .= 'Geplande: '.$data->GeplandTotal.'<br/>';
+		$page .= 'Ingeplande: '.$data->GeplandTotal.'<br/>';
 		$page .= 'Afgelegd: '.$data->AfgelegdTotal.'<br/>';
 		$page .= 'Geannuleerd: '.$data->GeannuleerdTotal.'<br/>';
 		$page .= 'Niet gewenst: '.$data->BezoekNietGewenstTotal.'<br/>';
@@ -232,7 +232,7 @@ function oostpoort_visit_admin_list() {
 	$page .= '</table>';
     
 	// Button bar
- 	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId','0','Search',t('Toevoegen')).' | ';
+ 	$page .= oostpoort_hiddenlink('OostpoortForm','PrsId','0','Search',t('Bezoekmedewerker toevoegen')).' | ';
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 
 	$page .= '</div>';

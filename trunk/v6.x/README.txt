@@ -1,5 +1,36 @@
- Release Notes
- -------------
+General
+-------
+This module contains a simple (oostpoort) church admin module.
+
+This software is open source and may be copied, distributed or modified under the
+terms of the GNU General Public License (GPL) Version 2
+
+Created by wplaat (Plaatsoft)
+ 
+For more information visit the following website.
+Website : http://www.plaatsoft.nl 
+ 
+Or send an email to the following address.
+Email   : info@plaatsoft.nl
+
+Requirements
+------------
+This module requires the latest development version 6.x of Drupal.
+The GD library must be active in the PHP Apache module, or else images will not work!
+
+Installation
+------------
+1. Copy the oospoort folder and its contents to the Drupal modules/ directory. 
+   Drupal should automatically detect it and create the necessary database queries.
+2. Go to 'administer -> modules' and enable the oostpoort module.
+3. Enable module permissions 'administrator -> Settings > permissions.
+4. Setting can be changed in 'Administer > Settings > Oostpoort'
+5. Create a new drupal menu which is pointing to the following URL http://!your URL!/oostpoort.
+   Now you can access the oostpoort module by this URL.
+6. Populate database with an initial CSV upload file.
+ 
+Release Notes
+-------------
  
  10-09-2009 Version v5.x-0.1
  - Member list page.
@@ -124,4 +155,4 @@ Nice to have
 
 Now issues
 ----------
-- Bug: Remove addresses with no members after csv upload.  
+- Remove addresses with no members after csv upload.

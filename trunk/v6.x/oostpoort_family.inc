@@ -765,7 +765,6 @@ function oostpoort_member_delete() {
 	
 	$PrsId=htmlentities($_POST["PrsId"]);
 	oostpoort_debug_param("PrsId", $PrsId);
-	echo '['.$PrsId.']';
 	
 	if ($PrsId=="") {
 		return 1;

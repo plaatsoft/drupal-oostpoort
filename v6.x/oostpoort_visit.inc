@@ -168,7 +168,7 @@ function oostpoort_visit_list() {
 		$page .= oostpoort_view_visiters("MdwId", $MdwId).' ';	
 		$page .= oostpoort_hiddenlink('OostpoortForm','','','List',t('Zoek'));			
 		$page .= '<div class="description">';
-		$page .= t('Selecteer hier de bezoekmedewerker daarna worden alle ingeplande bezoeken getoond.');
+		$page .= t('Selecteer hier de bezoekmedewerker, daarna worden alle ingeplande bezoeken getoond.');
 		$page .= '</div>';
 		$page .= '</div>';
 			

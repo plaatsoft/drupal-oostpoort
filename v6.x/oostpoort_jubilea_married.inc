@@ -88,7 +88,7 @@ function oostpoort_jubilea_married_list() {
 		
 		$page .= '<fieldset>' ;
 		$page .= '<legend><i>';
-		$page .= t('Huwelijksjubilarrisen').' ';
+		$page .= t('Huwelijksjubilarisen').' ';
 		if ($AgeId<55) {
 			$page .= $AgeId.' '.t('jaar');
 		} else {

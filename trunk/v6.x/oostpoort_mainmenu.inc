@@ -48,7 +48,7 @@ function oostpoort_mainmenu( ) {
 
 	$page .= '<div class="oostpoort">';
 
-	drupal_set_title(t('Leden Administratie').' '.OOSTPOORT_VERSION);
+	drupal_set_title(t('Leden administratie').' '.OOSTPOORT_VERSION);
 
 	$page .= '<br/>';
 	
@@ -112,14 +112,14 @@ function oostpoort_mainmenu( ) {
 		$page .= '<a href="'.url(OOSTPOORT_VISIT_ADMIN).'">Bezoekwerk administratie</a>';
 		$page .= '</dt>';
 		$page .= '<dd>';
-		$page .= t('Op deze pagina kunnen bezoekmedewerkers worden beheerder.');
+		$page .= t('Op deze pagina kunnen bezoekmedewerkers worden beheerd.');
 		$page .= '</dd>';
   
 		$page .= '<dt>';
 		$page .= '<a href="'.url(OOSTPOORT_UPLOAD_CSV).'">Nieuw ledenbestand laden</a>';
 		$page .= '</dt>';
 		$page .= '<dd>';
-		$page .= t('Op deze pagina kunnen nieuwe leden bestanden worden ingeladen.');
+		$page .= t('Op deze pagina kan een nieuw leden bestand worden ingeladen.');
 		$page .= '</dd>';
 	}
 

@@ -540,6 +540,7 @@ function oostpoort_save_picture($Group,$AdrId)
 			} else {
 				// Not resize needed, move file to storage place
 				copy($_FILES['uploadedfile']['tmp_name'],OOSTPOORT_IMAGE_DIR.'/'.$filename);
+				chmod(OOSTPOORT_IMAGE_DIR.'/'.$filename, 0666);
 			}
 
 			if ($error==0)	{
@@ -586,6 +587,7 @@ function oostpoort_save_picture($Group,$AdrId)
 				} else {
 					// Not resize needed, move file to storage place
 					copy(OOSTPOORT_IMAGE_DIR.'/'.$filename, OOSTPOORT_THUMBNAILS_DIR.'/'.$filename);
+					chmod(OOSTPOORT_THUMBNAILS_DIR.'/'.$filename, 0666);					
 				}
 
 				if ($error=='0') {

@@ -539,11 +539,12 @@ function oostpoort_save_picture($Group,$AdrId)
 				}
 			} else {
 				// Not resize needed, move file to storage place
-				copy($_FILES['uploadedfile']['tmp_name'],OOSTPOORT_IMAGE_DIR.'/'.$filename);
-				chmod(OOSTPOORT_IMAGE_DIR.'/'.$filename, 0666);
+				copy($_FILES['uploadedfile']['tmp_name'],OOSTPOORT_IMAGE_DIR.'/'.$filename);				
 			}
 
 			if ($error==0)	{
+				chmod(OOSTPOORT_IMAGE_DIR.'/'.$filename, 0666);
+			
 				// Create thumbnails directory store
 				if(!is_dir(OOSTPOORT_THUMBNAILS_DIR)) {
 					if( !mkdir(OOSTPOORT_THUMBNAILS_DIR) )	{
@@ -587,10 +588,11 @@ function oostpoort_save_picture($Group,$AdrId)
 				} else {
 					// Not resize needed, move file to storage place
 					copy(OOSTPOORT_IMAGE_DIR.'/'.$filename, OOSTPOORT_THUMBNAILS_DIR.'/'.$filename);
-					chmod(OOSTPOORT_THUMBNAILS_DIR.'/'.$filename, 0666);					
 				}
-
+				
 				if ($error=='0') {
+				
+					chmod(OOSTPOORT_THUMBNAILS_DIR.'/'.$filename, 0666);	
 				
 					$msg .= t('Foto is opgeslagen.');
 					drupal_set_message($msg, 'status');

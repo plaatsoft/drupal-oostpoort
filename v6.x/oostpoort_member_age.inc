@@ -32,6 +32,13 @@
 // State Machine
 // ##################################################################################
 
+/**
+ * Report state machine
+ *
+ * @author wplaat
+ *
+ * @output HTML page.
+ */
 function oostpoort_member_age() {
 	
 	//echo var_dump($_POST);
@@ -58,20 +65,32 @@ function oostpoort_member_age() {
 			$node["child1"] = '<a href="'.url(OOSTPOORT_MEMBER_AGE).'">'.t('Leeftijdscategorie Rapport').'</a>';
 			$node["child2"] = t('Lid Detail');
 			oostpoort_breadcrumb($node);
+			print theme("page", $page);
 			break;
+			
+		case 'CsvExport':
+		    // Createmcsv export
+			oostpoort_member_age_csv_export();
+			break; 
 			
 		default: 
 			$page = oostpoort_member_age_list();
+			print theme("page", $page);
 			break;
 	}
-	
-	print theme("page", $page);
 }
 
 // ##################################################################################
 // Views
 // ##################################################################################
 
+/**
+ * Process user report request
+ *
+ * @author wplaat
+ *
+ * @output HTML page.
+ */
 function oostpoort_member_age_list() {
 
 	// *****************************
@@ -159,7 +178,8 @@ function oostpoort_member_age_list() {
 	$page .= '</fieldset>';
 
 	$page .= oostpoort_member_age_table($queryResult,1);
-	   	
+	
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','CsvExport',t('Export gegevens'))." | ";   	
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</div>';
@@ -168,6 +188,13 @@ function oostpoort_member_age_list() {
 	return $page;
 }
 
+/**
+ * Build report HTML table
+ *
+ * @author wplaat
+ *
+ * @output HTML table.
+ */
 function oostpoort_member_age_table($queryResult, $mode) {
 
 	$page .= '<table>';
@@ -228,6 +255,121 @@ function oostpoort_member_age_table($queryResult, $mode) {
 	$page .= '</table>';
 
 	return $page;
+}
+
+
+/**
+ * Export Report Data to CSV (Excel) formaat
+ *
+ * @author wplaat
+ *
+ * @output HTML File download.
+ */
+function oostpoort_member_age_csv_export() {
+
+	$myFile = file_directory_path().'/export.csv';
+	
+	$fp = fopen( $myFile, 'w');
+
+	// *****************************
+	// Get posted Inputs
+	// *****************************
+	
+	$StartDate=$_POST["StartDate"];
+	if ($StartDate=="") {
+		$StartDate=$_SESSION['StartDate']; 
+		if ($StartDate=="") {
+			$StartDate=date("d-m-Y");	
+		}
+	} 
+	$_SESSION['StartDate']=$StartDate; 
+	oostpoort_debug_param("StartDate", $StartDate);
+	
+	$EndDate= $_POST["EndDate"];
+	if ($EndDate=="") {
+		$EndDate=$_SESSION['EndDate'];
+		if ($EndDate=="") { 
+	   		$EndDate=date("d-m-Y");
+		}
+	}
+	$_SESSION['EndDate']=$EndDate; 
+	oostpoort_debug_param("EndDate", $EndDate);
+
+	// *****************************
+	// Query
+	// *****************************
+
+	$query  = 'select ';
+	$query .= ' a.Prs_Id as PrsId, ';
+	$query .= ' concat(IF(a.Prs_Roepnaam="",a.Prs_Voorletters, a.Prs_Roepnaam)," ", a.Prs_Tussenvoegsels, " ", a.Prs_Achternaam) as Naam, ';
+	$query .= ' a.Prs_GeslachtMV as PrsGeslacht, ';
+	$query .= ' a.Prs_EmailAdres as PrsEmail, ';
+	$query .= ' a.Prs_TelefoonMobiel as PrsMobiel, ';
+	$query .= ' a.Prs_Geboortedatum as PrsGeboortedatum, ';
+	$query .= ' concat(b.Adr_Straat, " " ,b.Adr_Huisnr) as Straat, ';
+	$query .= ' b.Adr_Plaats as AdrPlaats, ';
+	$query .= ' b.Adr_Postcode as AdrPostcode, ';	
+	$query .= ' b.Adr_Telefoon as AdrTelefoon ';	
+	$query .= 'from ';
+	$query .= '  oostpoort_persoon a, oostpoort_adres b ';
+	$query .= 'where ';
+	$query .= ' a.Prs_Huidig_Adr_ID=b.Adr_id and ';
+	$query .= ' a.Prs_Geboortedatum >= "'.oostpoort_convert_date_reverse($StartDate).'" and ';
+	$query .= ' a.Prs_Geboortedatum <= "'.oostpoort_convert_date_reverse($EndDate).'" ';
+	$query .= 'order by ';
+	$query .= ' a.Prs_Geboortedatum desc';
+
+	oostpoort_debug_sql($query);
+   	$queryResult = db_query($query);
+   	
+	// *****************************
+	// Create export
+	// *****************************
+	
+	fwrite($fp,'NAAM,GESLACHT,STRAAT,POSTCODE,GEBOREN');
+	fwrite($fp,"\r\n");
+
+	// Show all found members
+	while ($data = db_fetch_object($queryResult)) {
+	
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", $data->Naam);
+		fwrite($fp,$tmp);
+		fwrite($fp,',');
+
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", oostpoort_view_geslacht($data->PrsGeslacht));
+		fwrite($fp,$tmp);
+		fwrite($fp,',');
+
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", $data->Straat);
+		fwrite($fp,$tmp);
+		fwrite($fp,',');
+
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", $data->AdrPostcode);
+		fwrite($fp,$tmp);
+		fwrite($fp,',');
+
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", oostpoort_convert_date($data->PrsGeboortedatum));
+		fwrite($fp,$tmp);
+		fwrite($fp,"\r\n");
+	}
+	fclose($fp);
+
+	header('HTTP/1.1 200 OK');
+	header('Date: ' . date("D M j G:i:s T Y"));
+	header('Last-Modified: ' . date("D M j G:i:s T Y"));
+	header("Content-Type: application/force-download"); // changed to force download
+	header("Content-Lenght: " . (string)(filesize($myFile)));
+	header("Content-Transfer-Encoding: Binary"); // added
+	header('Content-Disposition: attachment; filename="export.csv"' );
+	readfile($myFile);
+
+	// Delete csv file
+	unlink($myFile);
 }
 
 // ##################################################################################

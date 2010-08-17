@@ -145,9 +145,12 @@ Release Notes
  - Note: First official release for public us!
  
 29-05-2010 (Week 23) v6.x-1.1
- - Hotfix: Double visit report is filter out.
+ - Hotfix: Double visit reports are filter out.
  - Hotfix: Now all pages work correct with Microsoft Internet Explorer
  - Improve visit overview page.
+
+17-09-2010 v6.x-1.2
+ - Added csv export functionality for Age report data.
 
 Nice to have
 ------------

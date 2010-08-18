@@ -179,7 +179,7 @@ function oostpoort_member_age_list() {
 
 	$page .= oostpoort_member_age_table($queryResult,1);
 	
-	$page .= oostpoort_hiddenlink('OostpoortForm','','','CsvExport',t('Export gegevens'))." | ";   	
+	$page .= oostpoort_hiddenlink('OostpoortForm','','','CsvExport',t('Download gegevens'))." | ";   	
 	$page .= '<a href="'.url(OOSTPOORT_MENU).'">'.t('Terug').'</a>';
 	
 	$page .= '</div>';
@@ -259,7 +259,7 @@ function oostpoort_member_age_table($queryResult, $mode) {
 
 
 /**
- * Export Report Data to CSV (Excel) formaat
+ * Download report data (in CSV (Excel) data formaat)
  *
  * @author wplaat
  *
@@ -326,7 +326,7 @@ function oostpoort_member_age_csv_export() {
 	// Create export
 	// *****************************
 	
-	fwrite($fp,'NAAM,GESLACHT,STRAAT,POSTCODE,GEBOREN');
+	fwrite($fp,t('NAAM,GESLACHT,STRAAT,PLAATS,POSTCODE,GEBOREN'));
 	fwrite($fp,"\r\n");
 
 	// Show all found members
@@ -347,6 +347,11 @@ function oostpoort_member_age_csv_export() {
 		fwrite($fp,$tmp);
 		fwrite($fp,',');
 
+		// Replace found comma with space
+		$tmp=str_replace(array(","), " ", $data->AdrPlaats);
+		fwrite($fp,$tmp);
+		fwrite($fp,',');
+		
 		// Replace found comma with space
 		$tmp=str_replace(array(","), " ", $data->AdrPostcode);
 		fwrite($fp,$tmp);
